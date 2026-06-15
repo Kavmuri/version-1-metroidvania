@@ -1,0 +1,98 @@
+[gd_scene format=3 uid="uid://cl7bil1d3h8ja"]
+
+[ext_resource type="Script" uid="uid://dp2pe5ew224mw" path="res://Enemies/enemy_crab.gd" id="1_bihbv"]
+[ext_resource type="Texture2D" uid="uid://dkroll6eii6vk" path="res://Enemies/crab-idle.png" id="1_meo72"]
+[ext_resource type="Texture2D" uid="uid://b1yqhhfux4sn8" path="res://Enemies/crab-walk.png" id="2_bihbv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tongn"]
+atlas = ExtResource("1_meo72")
+region = Rect2(0, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fwp4q"]
+atlas = ExtResource("1_meo72")
+region = Rect2(48, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mdf7y"]
+atlas = ExtResource("1_meo72")
+region = Rect2(96, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ms6dh"]
+atlas = ExtResource("1_meo72")
+region = Rect2(144, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cbl4q"]
+atlas = ExtResource("2_bihbv")
+region = Rect2(0, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sldjm"]
+atlas = ExtResource("2_bihbv")
+region = Rect2(48, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2alf8"]
+atlas = ExtResource("2_bihbv")
+region = Rect2(96, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xmpgj"]
+atlas = ExtResource("2_bihbv")
+region = Rect2(144, 0, 48, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2q1hj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tongn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fwp4q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mdf7y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ms6dh")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cbl4q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sldjm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2alf8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xmpgj")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 9.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0xvsd"]
+radius = 13.0
+
+[node name="EnemyCrab" type="CharacterBody2D" unique_id=1681054994]
+script = ExtResource("1_bihbv")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1985894946]
+position = Vector2(0, -15)
+sprite_frames = SubResource("SpriteFrames_2q1hj")
+animation = &"walk"
+autoplay = "idle"
+frame = 3
+frame_progress = 0.87935144
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=134483752]
+position = Vector2(0, -13)
+shape = SubResource("CircleShape2D_0xvsd")
+debug_color = Color(0.86217195, 0.54204893, 1, 0.41960785)
+
+[node name="Timer" type="Timer" parent="." unique_id=869344980]
+wait_time = 3.0
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
