@@ -1,0 +1,36 @@
+[gd_scene load_steps=11 format=3 uid="uid://worldprocedural123"]
+
+[ext_resource type="Script" path="res://Scripts/generacion_procedural.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://c7v7v7v7v7v7v" path="res://Levels/ProceduralTemplates/spawn_room.tscn" id="2_spawn"]
+[ext_resource type="PackedScene" uid="uid://r8r8r8r8r8r8r" path="res://Levels/ProceduralTemplates/room_generic.tscn" id="3_room"]
+[ext_resource type="PackedScene" uid="uid://c1c1c1c1c1c1c" path="res://Levels/ProceduralTemplates/corridor_h.tscn" id="4_corridor"]
+[ext_resource type="PackedScene" uid="uid://d9d9d9d9d9d9d" path="res://Levels/ProceduralTemplates/deadend_left.tscn" id="5_deadend"]
+[ext_resource type="Script" path="res://Scripts/spawn_player.gd" id="6_spawn_script"]
+[ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player/player.tscn" id="7_player"]
+[ext_resource type="PackedScene" uid="uid://mapaui123456" path="res://Levels/ProceduralTemplates/mapa_ui.tscn" id="8_mapa"]
+[ext_resource type="Script" path="res://Scripts/gestor_enemigos.gd" id="9_gestor"]
+
+[node name="WorldProcedural" type="Node2D"]
+script = ExtResource("1_script")
+plantillas_spawn = Array[PackedScene]([ExtResource("2_spawn")])
+plantillas_habitaciones = Array[PackedScene]([ExtResource("3_room"), ExtResource("4_corridor")])
+plantillas_deadends = Array[PackedScene]([ExtResource("5_deadend")])
+
+[node name="gestorEnemigos" type="Node" parent="."]
+script = ExtResource("9_gestor")
+
+[node name="spawnPlayer" type="Node2D" parent="."]
+script = ExtResource("6_spawn_script")
+escena_jugador = ExtResource("7_player")
+escena_mapa_ui = ExtResource("8_mapa")
+
+[node name="Background" type="CanvasLayer" parent="."]
+layer = -10
+
+[node name="ColorRect" type="ColorRect" parent="Background"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.05, 0.1, 1)

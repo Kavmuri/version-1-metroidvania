@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://c1c1c1c1c1c1c"]
+
+[node name="CorridorH" type="Node2D"]
+
+[node name="ReferenceRect" type="ReferenceRect" parent="."]
+offset_right = 640.0
+offset_bottom = 180.0
+border_color = Color(1, 1, 0, 1)
+
+[node name="puertas" type="Node2D" parent="."]
+
+[node name="salida_izq" type="Marker2D" parent="puertas"]
+position = Vector2(0, 90)
+
+[node name="salida_der" type="Marker2D" parent="puertas"]
+position = Vector2(640, 90)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+offset_right = 640.0
+offset_bottom = 180.0
+color = Color(0.2, 0.2, 0.2, 1)

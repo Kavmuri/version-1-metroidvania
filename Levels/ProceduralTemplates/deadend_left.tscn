@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://d9d9d9d9d9d9d"]
+
+[node name="DeadendLeft" type="Node2D"]
+
+[node name="ReferenceRect" type="ReferenceRect" parent="."]
+offset_right = 320.0
+offset_bottom = 360.0
+border_color = Color(0, 0, 1, 1)
+
+[node name="puertas" type="Node2D" parent="."]
+
+[node name="salida_der" type="Marker2D" parent="puertas"]
+position = Vector2(320, 180)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+offset_right = 320.0
+offset_bottom = 360.0
+color = Color(0.25, 0.12, 0.12, 1)
