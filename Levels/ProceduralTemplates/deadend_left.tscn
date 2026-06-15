@@ -1,4 +1,7 @@
-[gd_scene format=3 uid="uid://d9d9d9d9d9d9d"]
+[gd_scene load_steps=2 format=3 uid="uid://d9d9d9d9d9d9d"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(320, 20)
 
 [node name="DeadendLeft" type="Node2D"]
 
@@ -10,10 +13,24 @@ border_color = Color(0, 0, 1, 1)
 [node name="puertas" type="Node2D" parent="."]
 
 [node name="salida_der" type="Marker2D" parent="puertas"]
-position = Vector2(320, 180)
+position = Vector2(320, 280)
 
 [node name="ColorRect" type="ColorRect" parent="."]
 z_index = -1
 offset_right = 320.0
 offset_bottom = 360.0
 color = Color(0.25, 0.12, 0.12, 1)
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(160, 350)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="ColorRect" type="ColorRect" parent="Floor"]
+offset_left = -160.0
+offset_top = -10.0
+offset_right = 160.0
+offset_bottom = 10.0
+color = Color(0.5, 0.3, 0.3, 1)

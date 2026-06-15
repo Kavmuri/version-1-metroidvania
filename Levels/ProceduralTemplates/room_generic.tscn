@@ -1,4 +1,7 @@
-[gd_scene format=3 uid="uid://r8r8r8r8r8r8r"]
+[gd_scene load_steps=2 format=3 uid="uid://r8r8r8r8r8r8r"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(640, 20)
 
 [node name="RoomGeneric" type="Node2D"]
 
@@ -10,10 +13,10 @@ border_color = Color(0, 1, 0, 1)
 [node name="puertas" type="Node2D" parent="."]
 
 [node name="salida_izq" type="Marker2D" parent="puertas"]
-position = Vector2(0, 180)
+position = Vector2(0, 280)
 
 [node name="salida_der" type="Marker2D" parent="puertas"]
-position = Vector2(640, 180)
+position = Vector2(640, 280)
 
 [node name="salida_arriba" type="Marker2D" parent="puertas"]
 position = Vector2(320, 0)
@@ -26,3 +29,17 @@ z_index = -1
 offset_right = 640.0
 offset_bottom = 360.0
 color = Color(0.12, 0.18, 0.15, 1)
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(320, 350)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="ColorRect" type="ColorRect" parent="Floor"]
+offset_left = -320.0
+offset_top = -10.0
+offset_right = 320.0
+offset_bottom = 10.0
+color = Color(0.3, 0.5, 0.3, 1)

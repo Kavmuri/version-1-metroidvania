@@ -1,4 +1,7 @@
-[gd_scene format=3 uid="uid://c7v7v7v7v7v7v"]
+[gd_scene load_steps=2 format=3 uid="uid://c7v7v7v7v7v7v"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(640, 20)
 
 [node name="SpawnRoom" type="Node2D"]
 
@@ -10,10 +13,10 @@ border_color = Color(1, 0, 0, 1)
 [node name="puertas" type="Node2D" parent="."]
 
 [node name="salida_izq" type="Marker2D" parent="puertas"]
-position = Vector2(0, 180)
+position = Vector2(0, 280)
 
 [node name="salida_der" type="Marker2D" parent="puertas"]
-position = Vector2(640, 180)
+position = Vector2(640, 280)
 
 [node name="salida_arriba" type="Marker2D" parent="puertas"]
 position = Vector2(320, 0)
@@ -22,10 +25,38 @@ position = Vector2(320, 0)
 position = Vector2(320, 360)
 
 [node name="spawn" type="Marker2D" parent="."]
-position = Vector2(320, 180)
+position = Vector2(320, 200)
 
 [node name="ColorRect" type="ColorRect" parent="."]
 z_index = -1
 offset_right = 640.0
 offset_bottom = 360.0
 color = Color(0.18, 0.12, 0.25, 1)
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(320, 350)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="ColorRect" type="ColorRect" parent="Floor"]
+offset_left = -320.0
+offset_top = -10.0
+offset_right = 320.0
+offset_bottom = 10.0
+color = Color(0.4, 0.4, 0.5, 1)
+
+[node name="Platform" type="StaticBody2D" parent="."]
+position = Vector2(320, 250)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="ColorRect" type="ColorRect" parent="Platform"]
+offset_left = -320.0
+offset_top = -10.0
+offset_right = 320.0
+offset_bottom = 10.0
+color = Color(0.4, 0.4, 0.5, 1)
