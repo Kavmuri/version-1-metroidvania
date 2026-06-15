@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://dthah4vkcidmn"]
+
+[ext_resource type="PackedScene" uid="uid://l57pk0qnf1fp" path="res://escenas/personajes/enemigos/enemigo_2.tscn" id="1_1kuei"]
+[ext_resource type="Texture2D" uid="uid://cllh1pp7chgrb" path="res://sprites/enemigos/bidepalUnit/spritesheet.png" id="2_e4hh2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nsqg4"]
+size = Vector2(49, 52.5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lcf2o"]
+atlas = ExtResource("2_e4hh2")
+region = Rect2(0, 0, 80, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iiftd"]
+atlas = ExtResource("2_e4hh2")
+region = Rect2(80, 0, 80, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rl6cv"]
+atlas = ExtResource("2_e4hh2")
+region = Rect2(160, 0, 80, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xepum"]
+atlas = ExtResource("2_e4hh2")
+region = Rect2(240, 0, 80, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gh503"]
+atlas = ExtResource("2_e4hh2")
+region = Rect2(320, 0, 80, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rxe0u"]
+atlas = ExtResource("2_e4hh2")
+region = Rect2(400, 0, 80, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1dh31"]
+atlas = ExtResource("2_e4hh2")
+region = Rect2(480, 0, 80, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1kuei"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lcf2o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iiftd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rl6cv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xepum")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gh503")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rxe0u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1dh31")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 12.0
+}]
+
+[node name="bidepalUnit" unique_id=1077313423 instance=ExtResource("1_1kuei")]
+
+[node name="hitbox pj" parent="." index="0" unique_id=517861878]
+position = Vector2(-1, 5.75)
+shape = SubResource("RectangleShape2D_nsqg4")
+
+[node name="AnimatedSprite2D" parent="cuerpo" parent_id_path=PackedInt32Array(1681720978) index="0" unique_id=1221346947]
+sprite_frames = SubResource("SpriteFrames_1kuei")

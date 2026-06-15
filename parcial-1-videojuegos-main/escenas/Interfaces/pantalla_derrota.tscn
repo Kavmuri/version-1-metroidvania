@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://chitfvdxxgbca"]
+
+[ext_resource type="Script" uid="uid://b85i1jhlbkbng" path="res://scripts/pantalla_derrota.gd" id="1_j3x5f"]
+
+[node name="pantallaDerrota" type="CanvasLayer" unique_id=591013246]
+script = ExtResource("1_j3x5f")

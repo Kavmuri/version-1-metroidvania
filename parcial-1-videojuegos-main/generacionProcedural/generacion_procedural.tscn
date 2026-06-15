@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://csj1rwy0r00p1"]
+
+[ext_resource type="Script" uid="uid://cncic45iyo0in" path="res://scripts/generacion_procedural.gd" id="1_mn6u6"]
+[ext_resource type="PackedScene" uid="uid://6xgwdu4lsege" path="res://escenas/mapa/salasSpawns/spawn_v_1.tscn" id="2_cqwdt"]
+[ext_resource type="PackedScene" uid="uid://dheebf3l4caeg" path="res://escenas/mapa/salasSpawns/spawn_v_2.tscn" id="3_1q3gn"]
+[ext_resource type="PackedScene" uid="uid://tnfhbshwfooj" path="res://escenas/mapa/salasSpawns/spawn_v_3.tscn" id="4_4fngh"]
+[ext_resource type="PackedScene" uid="uid://cu1v731cad0ir" path="res://escenas/mapa/Salas/sala_v_1.tscn" id="5_pnaif"]
+[ext_resource type="PackedScene" uid="uid://c12idu5klfn4x" path="res://escenas/mapa/Salas/sala_v_2.tscn" id="6_wkofp"]
+[ext_resource type="PackedScene" uid="uid://cm81ujvfiped7" path="res://escenas/mapa/Salas/sala_v_3.tscn" id="7_8b7un"]
+[ext_resource type="PackedScene" uid="uid://df48lruiaim03" path="res://escenas/mapa/Pasillo vertical/pasillo_ver_v_1.tscn" id="8_fy64r"]
+[ext_resource type="PackedScene" uid="uid://bikpnn1bd1oq6" path="res://escenas/mapa/Pasillo vertical/pasillo_ver_v_2.tscn" id="9_he41m"]
+[ext_resource type="PackedScene" uid="uid://bf206btfwvjhe" path="res://escenas/mapa/Pasillo vertical/pasillo_ver_v_3.tscn" id="10_ckapi"]
+[ext_resource type="PackedScene" uid="uid://c4ca4pl73er3c" path="res://escenas/mapa/Pasillo horizontal/pasillo_hor_v_1.tscn" id="11_721ba"]
+[ext_resource type="PackedScene" uid="uid://dm1kyxlhoqgr6" path="res://escenas/mapa/Pasillo horizontal/pasillo_hor_v_2.tscn" id="12_ru86p"]
+[ext_resource type="PackedScene" uid="uid://cyw7adxr6a7ty" path="res://escenas/mapa/Pasillo horizontal/pasillo_hor_v_3.tscn" id="13_le8b6"]
+[ext_resource type="PackedScene" uid="uid://cue7ry3eagyqf" path="res://escenas/mapa/Cruces/cruce_v_1.tscn" id="14_q5cjn"]
+[ext_resource type="PackedScene" uid="uid://ctmttcvnlnmtl" path="res://escenas/mapa/Cruces/cruce_v_2.tscn" id="15_mmtfa"]
+[ext_resource type="PackedScene" uid="uid://cwj3x4lf3gklq" path="res://escenas/mapa/Cruces/cruce_v_3.tscn" id="16_pg1te"]
+[ext_resource type="PackedScene" uid="uid://daaubjkn4wrwt" path="res://escenas/mapa/Deadend abajo/down_end_v_1.tscn" id="17_rwlmb"]
+[ext_resource type="PackedScene" uid="uid://bbg7dwdthwm3n" path="res://escenas/mapa/Deadend abajo/down_end_v_2.tscn" id="18_ucjr1"]
+[ext_resource type="PackedScene" uid="uid://b8y2insycejtx" path="res://escenas/mapa/Deadend arriba/up_end_v_1.tscn" id="19_a732x"]
+[ext_resource type="PackedScene" uid="uid://bb47gdluubhhg" path="res://escenas/mapa/Deadend arriba/up_end_v_2.tscn" id="20_1gi5y"]
+[ext_resource type="PackedScene" uid="uid://c6a6cs5q6knr1" path="res://escenas/mapa/Deadend derecha/der_end_lv_1.tscn" id="21_4kase"]
+[ext_resource type="PackedScene" uid="uid://b4r44fq12g30" path="res://escenas/mapa/Deadend derecha/der_end_lv_2.tscn" id="22_wmuyd"]
+[ext_resource type="PackedScene" uid="uid://gy5vu3430hjf" path="res://escenas/mapa/Deadend derecha/der_end_lv_3.tscn" id="23_051s3"]
+[ext_resource type="PackedScene" uid="uid://tt4v5hhxcl3f" path="res://escenas/mapa/Deadend Izquierda/izq_end_lv_1.tscn" id="24_vr124"]
+[ext_resource type="PackedScene" uid="uid://urj45f825y5g" path="res://escenas/mapa/Deadend Izquierda/izq_end_lv_2.tscn" id="25_wljka"]
+[ext_resource type="PackedScene" uid="uid://dsb7fdtt6fw0h" path="res://escenas/mapa/Deadend Izquierda/izq_end_lv_3.tscn" id="26_jyxj5"]
+[ext_resource type="Script" uid="uid://c6h5ev4lf4ccr" path="res://scripts/spawn_player.gd" id="27_1q3gn"]
+[ext_resource type="PackedScene" uid="uid://5yyyefewnqd2" path="res://escenas/personajes/player/player.tscn" id="28_pnaif"]
+[ext_resource type="PackedScene" uid="uid://dthah4vkcidmn" path="res://escenas/personajes/enemigos/bidepal_unit.tscn" id="28_ru86p"]
+[ext_resource type="PackedScene" uid="uid://djhgl4jly15p5" path="res://escenas/Interfaces/mini_mapa.tscn" id="29_wkofp"]
+[ext_resource type="Script" uid="uid://5dk3wj038est" path="res://scripts/gestor_enemigos.gd" id="30_le8b6"]
+[ext_resource type="PackedScene" uid="uid://b4k3t3ujb2a0" path="res://escenas/personajes/enemigos/enemigo_1.tscn" id="32_mmtfa"]
+[ext_resource type="PackedScene" uid="uid://l57pk0qnf1fp" path="res://escenas/personajes/enemigos/enemigo_2.tscn" id="33_pg1te"]
+[ext_resource type="PackedScene" uid="uid://ojt6222im33v" path="res://escenas/personajes/enemigos/mecha.tscn" id="34_rwlmb"]
+[ext_resource type="PackedScene" uid="uid://bo3844butlcmc" path="res://escenas/personajes/enemigos/pesadilla.tscn" id="36_a732x"]
+[ext_resource type="PackedScene" uid="uid://dwdhqifctq8ka" path="res://escenas/personajes/enemigos/rana_mutante.tscn" id="37_1gi5y"]
+[ext_resource type="Script" uid="uid://h3og2miovg5k" path="res://scripts/menu_debug.gd" id="37_le8b6"]
+[ext_resource type="Script" uid="uid://do62q4dlfy2hi" path="res://scripts/GestorMusica.gd" id="38_rwlmb"]
+[ext_resource type="AudioStream" uid="uid://c8ynar1pr4m6c" path="res://audio/36-Awake-Vampire-Survivors_-Ode-to-Castlevania.ogg" id="39_ucjr1"]
+[ext_resource type="AudioStream" uid="uid://b2jkr5d0aqbeg" path="res://audio/Blood-Relations-of-Heaven-and-Earth-Akumajo-Dracula-X-Chronicle.ogg" id="40_a732x"]
+[ext_resource type="AudioStream" uid="uid://d05t5djk8862n" path="res://audio/Castlevania_-Harmony-of-Dissonance_-Successor-of-Fate-Arrangement.ogg" id="41_1gi5y"]
+
+[node name="juegoInicial" type="Node2D" unique_id=1626807922]
+
+[node name="generacionProcedural" type="Node2D" parent="." unique_id=81851033]
+script = ExtResource("1_mn6u6")
+plantillas_spawn = Array[PackedScene]([ExtResource("2_cqwdt"), ExtResource("3_1q3gn"), ExtResource("4_4fngh")])
+plantillas_habitaciones = Array[PackedScene]([ExtResource("5_pnaif"), ExtResource("6_wkofp"), ExtResource("7_8b7un"), ExtResource("8_fy64r"), ExtResource("9_he41m"), ExtResource("10_ckapi"), ExtResource("11_721ba"), ExtResource("12_ru86p"), ExtResource("13_le8b6"), ExtResource("14_q5cjn"), ExtResource("15_mmtfa"), ExtResource("16_pg1te")])
+plantillas_deadends = Array[PackedScene]([ExtResource("17_rwlmb"), ExtResource("18_ucjr1"), ExtResource("19_a732x"), ExtResource("20_1gi5y"), ExtResource("21_4kase"), ExtResource("22_wmuyd"), ExtResource("23_051s3"), ExtResource("24_vr124"), ExtResource("25_wljka"), ExtResource("26_jyxj5")])
+
+[node name="gestorEnemigos" type="Node" parent="generacionProcedural" unique_id=619272345]
+script = ExtResource("30_le8b6")
+escenas_enemigos = Array[PackedScene]([ExtResource("28_ru86p"), ExtResource("32_mmtfa"), ExtResource("33_pg1te"), ExtResource("34_rwlmb"), ExtResource("36_a732x"), ExtResource("37_1gi5y")])
+enemigos_por_sala = 7
+
+[node name="spawnPlayer" type="Node2D" parent="generacionProcedural" unique_id=1161556216]
+script = ExtResource("27_1q3gn")
+escena_jugador = ExtResource("28_pnaif")
+escena_mapa_ui = ExtResource("29_wkofp")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=2013781690]
+z_index = -3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25000.0
+offset_top = -25000.0
+offset_right = 25000.0
+offset_bottom = 25000.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.28085482, 0.4882124, 0.6836039, 1)
+
+[node name="menuDebug" type="CanvasLayer" parent="." unique_id=1559755404]
+script = ExtResource("37_le8b6")
+
+[node name="GestorMusica" type="Node" parent="." unique_id=97194540]
+script = ExtResource("38_rwlmb")
+bandas_sonoras = Array[AudioStream]([ExtResource("39_ucjr1"), ExtResource("40_a732x"), ExtResource("41_1gi5y")])
