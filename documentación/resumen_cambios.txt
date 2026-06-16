@@ -27,7 +27,11 @@ Cambios realizados:
    - world_procedural.tscn: Escena principal definitiva que utiliza ParallaxBackground y el generador.
    - Plantillas: Se crearon 4 bases (Spawn, Generic, Deadend, Corridor) con colisiones funcionales para asegurar que el jugador pueda caminar y explorar.
 
+Mejoras de Calidad:
+- Cámara: Se añadió una `Camera2D` al objeto `Player` para que siga al personaje automáticamente. Los límites de la cámara se ajustan dinámicamente al tamaño del laberinto generado.
+- Visuales: Las salas ahora usan el tileset definitivo (`GAME_TILESET1.png`) para el suelo, integrándose mejor con el arte del juego.
+
 Cómo probar:
 - Ejecutar el proyecto (F5). El juego iniciará en el mundo procedural.
 - Usar TAB o M para ver el mapa.
-- Explorar las salas generadas aleatoriamente.
+- Explorar las salas generadas aleatoriamente. La cámara seguirá al jugador en todo momento.

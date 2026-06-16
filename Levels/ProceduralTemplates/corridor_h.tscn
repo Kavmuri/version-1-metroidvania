@@ -1,4 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://c1c1c1c1c1c1c"]
+[gd_scene load_steps=5 format=3 uid="uid://c1c1c1c1c1c1c"]
+
+[ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/GAME_TILESET1.png" id="1_tile"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
+texture = ExtResource("1_tile")
+2:1/0 = 0
+2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+3:1/0 = 0
+3:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[sub_resource type="TileSet" id="TileSet_1"]
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_1")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(640, 20)
@@ -10,6 +23,10 @@ offset_right = 640.0
 offset_bottom = 180.0
 border_color = Color(1, 1, 0, 1)
 
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAKAAoAAAACAAEAAAAKAAoAAAADAAEAAAAKAAoAAAAEAAEAAAAKAAoAAAAFAAEAAAAKAAoAAAAGAAEAAAAKAAoAAAAHAAEAAAAKAAoAAAAIAAEAAAAKAAoAAAAJAAEAAAAKAAoAAAAKAAEAAAAKAAoAAAALAAEAAAAKAAoAAAAMAAEAAAAKAAoAAAANAAEAAAAKAAoAAAAOAAEAAAAKAAoAAAAPAAEAAAAKAAoAAAAQAAEAAAAKAAoAAAARAAEAAAAKAAoAAAASAAEAAAAKAAoAAAATAAEAAAAKAAoAAAAUAAEAAAAKAAoAAAAVAAEAAAAKAAoAAAAWAAEAAAAKAAoAAAAXAAEAAAAKAAoAAAAYAAEAAAAKAAoAAAAZAAEAAAAKAAoAAAAbAAEAAAAKAAoAAAAbAAEAAAAKAAoAAAAaAAEAAAAKAAoAAAAbAAEAAAA=")
+tile_set = SubResource("TileSet_1")
+
 [node name="puertas" type="Node2D" parent="."]
 
 [node name="salida_izq" type="Marker2D" parent="puertas"]
@@ -19,10 +36,10 @@ position = Vector2(0, 160)
 position = Vector2(640, 160)
 
 [node name="ColorRect" type="ColorRect" parent="."]
-z_index = -1
+z_index = -2
 offset_right = 640.0
 offset_bottom = 180.0
-color = Color(0.2, 0.2, 0.2, 1)
+color = Color(0.2, 0.2, 0.2, 0.5)
 
 [node name="Floor" type="StaticBody2D" parent="."]
 position = Vector2(320, 170)
@@ -30,10 +47,3 @@ collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
 shape = SubResource("RectangleShape2D_1")
-
-[node name="ColorRect" type="ColorRect" parent="Floor"]
-offset_left = -320.0
-offset_top = -10.0
-offset_right = 320.0
-offset_bottom = 10.0
-color = Color(0.3, 0.3, 0.3, 1)
