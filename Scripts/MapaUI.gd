@@ -13,6 +13,7 @@ var _abierto: bool = false
 # Tamaño del panel del mapa
 const PANEL_W = 700
 const PANEL_H = 480
+const SCREEN_MARGIN = 24.0
 const PADDING = 24.0
 
 func _ready():
@@ -36,9 +37,9 @@ func _construir_ui():
 	# Fondo del panel
 	var panel_bg = ColorRect.new()
 	panel_bg.color = Color(0.08, 0.08, 0.12, 0.97)
-	var vp_size = get_viewport().get_visible_rect().size
-	panel_bg.position = Vector2((vp_size.x - PANEL_W) / 2.0, (vp_size.y - PANEL_H) / 2.0)
-	panel_bg.size = Vector2(PANEL_W, PANEL_H)
+	var panel_rect = _calcular_panel_rect()
+	panel_bg.position = panel_rect.position
+	panel_bg.size = panel_rect.size
 	_panel.add_child(panel_bg)
 
 	# Borde del panel
@@ -62,15 +63,23 @@ func _construir_ui():
 	instruccion.text = "M / TAB — cerrar"
 	instruccion.add_theme_font_size_override("font_size", 12)
 	instruccion.add_theme_color_override("font_color", Color(1, 1, 1, 0.35))
-	instruccion.position = panel_bg.position + Vector2(PANEL_W - 148, PANEL_H - 28)
+	instruccion.position = panel_bg.position + Vector2(panel_bg.size.x - 148, panel_bg.size.y - 28)
 	_panel.add_child(instruccion)
 
 	# Control de dibujo del mapa (área interior del panel)
 	_dibujo = Control.new()
 	_dibujo.position = panel_bg.position + Vector2(PADDING, PADDING + 28)
-	_dibujo.size = Vector2(PANEL_W - PADDING * 2, PANEL_H - PADDING * 2 - 28)
+	_dibujo.size = Vector2(panel_bg.size.x - PADDING * 2, panel_bg.size.y - PADDING * 2 - 28)
 	_dibujo.draw.connect(_on_dibujar_mapa)
 	_panel.add_child(_dibujo)
+
+func _calcular_panel_rect() -> Rect2:
+	var vp_size = get_viewport().get_visible_rect().size
+	var panel_size = Vector2(
+		min(PANEL_W, max(280.0, vp_size.x - SCREEN_MARGIN * 2.0)),
+		min(PANEL_H, max(220.0, vp_size.y - SCREEN_MARGIN * 2.0))
+	)
+	return Rect2((vp_size - panel_size) * 0.5, panel_size)
 
 func _input(event: InputEvent):
 	if event is InputEventKey and not event.echo:

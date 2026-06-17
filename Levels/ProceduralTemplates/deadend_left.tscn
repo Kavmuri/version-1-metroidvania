@@ -24,7 +24,6 @@ offset_bottom = 360.0
 border_color = Color(0, 0, 1, 1)
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAAWAAMAAAACAAEAAAAWAAMAAAADAAEAAAAWAAMAAAAEAAEAAAAWAAMAAAAFAAEAAAAWAAMAAAAGAAEAAAAWAAMAAAAHAAEAAAAWAAMAAAAIAAEAAAAWAAMAAAAJAAEAAAAWAAMAAAAKAAEAAAAWAAMAAAALAAEAAAAWAAMAAAAMAAEAAAAWAAMAAAANAAEAAAA=")
 tile_set = SubResource("TileSet_1")
 
 [node name="puertas" type="Node2D" parent="."]

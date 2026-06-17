@@ -38,10 +38,8 @@ func iniciar(generador: Node2D):
 	var camara = jugador.get_node_or_null("Camera2D")
 	if camara != null:
 		var limites = _calcular_limites(generador.habitaciones_colocadas)
-		camara.limit_left   = int(limites.position.x)
-		camara.limit_top    = int(limites.position.y)
-		camara.limit_right  = int(limites.position.x + limites.size.x)
-		camara.limit_bottom = int(limites.position.y + limites.size.y)
+		_aplicar_limites_camara(camara, limites)
+		camara.make_current()
 		print("Límites → L:", camara.limit_left, " T:", camara.limit_top, " R:", camara.limit_right, " B:", camara.limit_bottom)
 	else:
 		push_warning("El jugador no tiene Camera2D hijo.")
@@ -83,6 +81,18 @@ func _calcular_limites(habitaciones: Array) -> Rect2:
 		max_y = max(max_y, area.position.y + area.size.y)
 
 	return Rect2(min_x, min_y, max_x - min_x, max_y - min_y)
+
+func _aplicar_limites_camara(camara: Camera2D, limites: Rect2) -> void:
+	var viewport_size = camara.get_viewport_rect().size
+	var centro = limites.get_center()
+	var ancho = max(limites.size.x, viewport_size.x)
+	var alto = max(limites.size.y, viewport_size.y)
+	var ajustado = Rect2(centro - Vector2(ancho, alto) * 0.5, Vector2(ancho, alto))
+
+	camara.limit_left = floori(ajustado.position.x)
+	camara.limit_top = floori(ajustado.position.y)
+	camara.limit_right = ceili(ajustado.position.x + ajustado.size.x)
+	camara.limit_bottom = ceili(ajustado.position.y + ajustado.size.y)
 
 func _obtener_area(hab: Node2D) -> Rect2:
 	var r = hab.get_node_or_null("ReferenceRect")

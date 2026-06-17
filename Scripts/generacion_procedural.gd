@@ -10,6 +10,7 @@ var puertas_abiertas: Array[Dictionary] = []
 var historial_tipos: Array[String] = []
 var opuestos = {"izq": "der", "der": "izq", "arriba": "abajo", "abajo": "arriba"}
 var habitacion_inicio: Node2D = null
+var contenedor_bordes: Node2D = null
 
 # { habitacion_node: [habitacion_vecina, ...] }
 var adyacencia: Dictionary = {}
@@ -19,6 +20,7 @@ func _ready():
 	print("Objetivo: ", objetivo, " habitaciones")
 	generar_mazmorra(objetivo)
 	cerrar_puertas_abiertas()
+	crear_bordes_seguridad()
 	if has_node("spawnPlayer"):
 		$spawnPlayer.iniciar(self)
 	print("\n=== REPORTE FINAL ===")
@@ -39,6 +41,7 @@ func generar_mazmorra(limite: int):
 		return
 
 	var inicio = plantillas_spawn.pick_random().instantiate()
+	_preparar_habitacion_procedural(inicio)
 	habitacion_inicio = inicio
 	add_child(inicio)
 	inicio.global_position = Vector2.ZERO
@@ -73,6 +76,7 @@ func generar_mazmorra(limite: int):
 			continue
 
 		var nueva_hab = plantilla_valida.instantiate()
+		_preparar_habitacion_procedural(nueva_hab)
 		add_child(nueva_hab)
 
 		var p_entrada = obtener_marcador(nueva_hab, nombre_buscado)
@@ -146,6 +150,7 @@ func cerrar_puerta_individual(p_salida: Dictionary) -> bool:
 	var candidatos = _deadends_ordenados_por_tamano(nombre_buscado)
 	for plantilla in candidatos:
 		var sala = plantilla.instantiate()
+		_preparar_habitacion_procedural(sala)
 		add_child(sala)
 
 		var p_entrada = obtener_marcador(sala, nombre_buscado)
@@ -212,6 +217,117 @@ func _registrar_adyacencia(a: Node2D, b: Node2D) -> void:
 	if not adyacencia[b].has(a): adyacencia[b].append(a)
 
 # ─────────────────────────────────────────────────────
+func _preparar_habitacion_procedural(hab: Node2D) -> void:
+	for nombre in ["Player", "EnemyCrab", "PatrolsPoints", "ParallaxBackground"]:
+		var nodo = hab.get_node_or_null(nombre)
+		if nodo != null:
+			nodo.free()
+
+	if hab.get_node_or_null("ReferenceRect") == null:
+		var ref = ReferenceRect.new()
+		ref.name = "ReferenceRect"
+		ref.position = Vector2(-640, -360)
+		ref.size = Vector2(1664, 720)
+		ref.border_color = Color(0.945, 0.875, 0.0, 1.0)
+		hab.add_child(ref)
+
+	var puertas = hab.get_node_or_null("puertas")
+	if puertas == null:
+		puertas = Node2D.new()
+		puertas.name = "puertas"
+		hab.add_child(puertas)
+
+	_asegurar_marcador(puertas, "salida_izq", Vector2(-640, 0))
+	_asegurar_marcador(puertas, "salida_der", Vector2(1024, 0))
+
+	if hab.get_node_or_null("spawn") == null:
+		var spawn = Marker2D.new()
+		spawn.name = "spawn"
+		spawn.position = Vector2(320, -72)
+		hab.add_child(spawn)
+
+func _asegurar_marcador(padre: Node, nombre: String, posicion: Vector2) -> void:
+	var marcador = padre.get_node_or_null(nombre) as Marker2D
+	if marcador == null:
+		marcador = Marker2D.new()
+		marcador.name = nombre
+		padre.add_child(marcador)
+	marcador.position = posicion
+
+func crear_bordes_seguridad() -> void:
+	if contenedor_bordes != null and is_instance_valid(contenedor_bordes):
+		contenedor_bordes.queue_free()
+
+	contenedor_bordes = Node2D.new()
+	contenedor_bordes.name = "BordesSeguridad"
+	add_child(contenedor_bordes)
+
+	for hab in habitaciones_colocadas:
+		_crear_bordes_para_habitacion(hab)
+
+func _crear_bordes_para_habitacion(hab: Node2D) -> void:
+	var area = obtener_area(hab)
+	if area == Rect2():
+		return
+
+	var grosor = 24.0
+	var medio_grosor = grosor * 0.5
+
+	if not _tiene_vecino_en_direccion(hab, "izq"):
+		_crear_borde(Rect2(area.position - Vector2(medio_grosor, 0), Vector2(grosor, area.size.y)))
+	if not _tiene_vecino_en_direccion(hab, "der"):
+		_crear_borde(Rect2(Vector2(area.position.x + area.size.x - medio_grosor, area.position.y), Vector2(grosor, area.size.y)))
+	if not _tiene_vecino_en_direccion(hab, "arriba"):
+		_crear_borde(Rect2(area.position - Vector2(0, medio_grosor), Vector2(area.size.x, grosor)))
+	if not _tiene_vecino_en_direccion(hab, "abajo"):
+		_crear_borde(Rect2(Vector2(area.position.x, area.position.y + area.size.y - medio_grosor), Vector2(area.size.x, grosor)))
+
+func _crear_borde(rect: Rect2) -> void:
+	var cuerpo = StaticBody2D.new()
+	cuerpo.name = "Borde"
+	cuerpo.collision_layer = 1
+	cuerpo.collision_mask = 0
+	cuerpo.global_position = rect.get_center()
+
+	var forma = CollisionShape2D.new()
+	var rect_shape = RectangleShape2D.new()
+	rect_shape.size = rect.size
+	forma.shape = rect_shape
+
+	cuerpo.add_child(forma)
+	contenedor_bordes.add_child(cuerpo)
+
+func _tiene_vecino_en_direccion(hab: Node2D, direccion: String) -> bool:
+	var area = obtener_area(hab)
+	var vecinos: Array = adyacencia.get(hab, [])
+	var tolerancia = 4.0
+
+	for vecino in vecinos:
+		if not is_instance_valid(vecino):
+			continue
+		var area_vecina = obtener_area(vecino)
+		if area_vecina == Rect2():
+			continue
+
+		match direccion:
+			"izq":
+				if abs((area_vecina.position.x + area_vecina.size.x) - area.position.x) <= tolerancia and _rangos_solapan(area.position.y, area.position.y + area.size.y, area_vecina.position.y, area_vecina.position.y + area_vecina.size.y):
+					return true
+			"der":
+				if abs(area_vecina.position.x - (area.position.x + area.size.x)) <= tolerancia and _rangos_solapan(area.position.y, area.position.y + area.size.y, area_vecina.position.y, area_vecina.position.y + area_vecina.size.y):
+					return true
+			"arriba":
+				if abs((area_vecina.position.y + area_vecina.size.y) - area.position.y) <= tolerancia and _rangos_solapan(area.position.x, area.position.x + area.size.x, area_vecina.position.x, area_vecina.position.x + area_vecina.size.x):
+					return true
+			"abajo":
+				if abs(area_vecina.position.y - (area.position.y + area.size.y)) <= tolerancia and _rangos_solapan(area.position.x, area.position.x + area.size.x, area_vecina.position.x, area_vecina.position.x + area_vecina.size.x):
+					return true
+
+	return false
+
+func _rangos_solapan(a_min: float, a_max: float, b_min: float, b_max: float) -> bool:
+	return max(a_min, b_min) < min(a_max, b_max)
+
 func espacio_bloqueado(puerta: Dictionary) -> bool:
 	var pos = puerta.nodo.global_position
 	var offset = Vector2.ZERO
@@ -237,6 +353,7 @@ func buscar_plantilla_compatible_sin_repetir(nombre_puerta: String, plantillas: 
 		if recientes.has(plantilla.resource_path):
 			continue
 		var prueba = plantilla.instantiate()
+		_preparar_habitacion_procedural(prueba)
 		var tiene = obtener_marcador(prueba, nombre_puerta) != null
 		prueba.queue_free()
 		if tiene:
@@ -244,6 +361,7 @@ func buscar_plantilla_compatible_sin_repetir(nombre_puerta: String, plantillas: 
 
 	for plantilla in lista:
 		var prueba = plantilla.instantiate()
+		_preparar_habitacion_procedural(prueba)
 		var tiene = obtener_marcador(prueba, nombre_puerta) != null
 		prueba.queue_free()
 		if tiene:
@@ -256,6 +374,7 @@ func buscar_plantilla_compatible(nombre_puerta: String, plantillas: Array[Packed
 	lista.shuffle()
 	for plantilla in lista:
 		var prueba = plantilla.instantiate()
+		_preparar_habitacion_procedural(prueba)
 		var tiene = obtener_marcador(prueba, nombre_puerta) != null
 		prueba.queue_free()
 		if tiene:

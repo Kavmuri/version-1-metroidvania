@@ -1,24 +1,27 @@
-[gd_scene load_steps=11 format=3 uid="uid://worldprocedural123"]
+[gd_scene load_steps=13 format=3 uid="uid://worldprocedural123"]
 
 [ext_resource type="Script" path="res://Scripts/generacion_procedural.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://c7v7v7v7v7v7v" path="res://Levels/ProceduralTemplates/spawn_room.tscn" id="2_spawn"]
-[ext_resource type="PackedScene" uid="uid://r8r8r8r8r8r8r" path="res://Levels/ProceduralTemplates/room_generic.tscn" id="3_room"]
-[ext_resource type="PackedScene" uid="uid://c1c1c1c1c1c1c" path="res://Levels/ProceduralTemplates/corridor_h.tscn" id="4_corridor"]
-[ext_resource type="PackedScene" uid="uid://d9d9d9d9d9d9d" path="res://Levels/ProceduralTemplates/deadend_left.tscn" id="5_deadend"]
+[ext_resource type="PackedScene" path="res://Levels/ProceduralTemplates/spawn_room.tscn" id="2_spawn"]
+[ext_resource type="PackedScene" path="res://Levels/ProceduralTemplates/room_generic.tscn" id="3_room"]
+[ext_resource type="PackedScene" path="res://Levels/ProceduralTemplates/corridor_h.tscn" id="4_corridor"]
+[ext_resource type="PackedScene" path="res://Levels/ProceduralTemplates/deadend_left.tscn" id="5_deadend"]
 [ext_resource type="Script" path="res://Scripts/spawn_player.gd" id="6_spawn_script"]
 [ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player/player.tscn" id="7_player"]
-[ext_resource type="PackedScene" uid="uid://mapaui123456" path="res://Levels/ProceduralTemplates/mapa_ui.tscn" id="8_mapa"]
+[ext_resource type="PackedScene" path="res://Levels/ProceduralTemplates/mapa_ui.tscn" id="8_mapa"]
 [ext_resource type="Script" path="res://Scripts/gestor_enemigos.gd" id="9_gestor"]
 [ext_resource type="PackedScene" uid="uid://dgqumuicedl0p" path="res://Background/parallax_background.tscn" id="10_parallax"]
+[ext_resource type="PackedScene" path="res://Enemies/enemy_crab.tscn" id="11_enemy_crab"]
+[ext_resource type="PackedScene" path="res://Levels/test_levels/sample_1.tscn" id="12_sample_room"]
 
 [node name="WorldProcedural" type="Node2D"]
 script = ExtResource("1_script")
-plantillas_spawn = Array[PackedScene]([ExtResource("2_spawn")])
-plantillas_habitaciones = Array[PackedScene]([ExtResource("3_room"), ExtResource("4_corridor")])
+plantillas_spawn = Array[PackedScene]([ExtResource("12_sample_room")])
+plantillas_habitaciones = Array[PackedScene]([ExtResource("12_sample_room")])
 plantillas_deadends = Array[PackedScene]([ExtResource("5_deadend")])
 
 [node name="gestorEnemigos" type="Node" parent="."]
 script = ExtResource("9_gestor")
+escenas_enemigos = Array[PackedScene]([ExtResource("11_enemy_crab")])
 
 [node name="spawnPlayer" type="Node2D" parent="."]
 script = ExtResource("6_spawn_script")
