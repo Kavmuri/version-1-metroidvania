@@ -121,7 +121,7 @@ func cerrar_puertas_bloqueadas():
 # ─────────────────────────────────────────────────────
 func cerrar_puertas_abiertas():
 	if plantillas_deadends.is_empty():
-		push_warning("No hay plantillas de dead ends asignadas.")
+		puertas_abiertas.clear()
 		return
 
 	print("\nPuertas abiertas antes de cierre final: ", puertas_abiertas.size())
@@ -237,8 +237,14 @@ func _preparar_habitacion_procedural(hab: Node2D) -> void:
 		puertas.name = "puertas"
 		hab.add_child(puertas)
 
+	for nombre in ["salida_arriba", "salida_abajo"]:
+		var salida_vertical = puertas.get_node_or_null(nombre)
+		if salida_vertical != null:
+			salida_vertical.free()
+
 	_asegurar_marcador(puertas, "salida_izq", Vector2(-640, 0))
 	_asegurar_marcador(puertas, "salida_der", Vector2(1024, 0))
+	_normalizar_colisiones_tilemaps(hab)
 
 	if hab.get_node_or_null("spawn") == null:
 		var spawn = Marker2D.new()
@@ -252,7 +258,22 @@ func _asegurar_marcador(padre: Node, nombre: String, posicion: Vector2) -> void:
 		marcador = Marker2D.new()
 		marcador.name = nombre
 		padre.add_child(marcador)
-	marcador.position = posicion
+
+	if nombre == "salida_izq" and marcador.position == Vector2.ZERO:
+		marcador.position = posicion
+	elif nombre == "salida_der" and marcador.position == Vector2.ZERO:
+		marcador.position = posicion
+
+func _normalizar_colisiones_tilemaps(nodo: Node) -> void:
+	if nodo is TileMapLayer:
+		nodo.collision_enabled = true
+		var tile_set = nodo.tile_set
+		if tile_set != null and tile_set.get_physics_layers_count() > 0:
+			tile_set.set_physics_layer_collision_layer(0, 1)
+			tile_set.set_physics_layer_collision_mask(0, 0)
+
+	for hijo in nodo.get_children():
+		_normalizar_colisiones_tilemaps(hijo)
 
 func crear_bordes_seguridad() -> void:
 	if contenedor_bordes != null and is_instance_valid(contenedor_bordes):

@@ -54,6 +54,11 @@ func iniciar(generador: Node2D):
 	# NUEVO: Si no hay escena de mapa UI pero el script existe, podemos intentar añadirlo directamente
 	# si es que no se pasó como escena (para mayor flexibilidad)
 
+	var debug_ui = load("res://Scripts/debug_unlock_ui.gd").new()
+	generador.add_child(debug_ui)
+	debug_ui.jugador = jugador
+	debug_ui.camara = camara
+
 	var gestor = generador.get_node_or_null("gestorEnemigos")
 	if gestor != null:
 		gestor.iniciar(generador, jugador, generador.adyacencia)

@@ -60,7 +60,7 @@ func _construir_ui():
 
 	# Instrucción de cierre
 	var instruccion = Label.new()
-	instruccion.text = "M / TAB — cerrar"
+	instruccion.text = "TAB - cerrar"
 	instruccion.add_theme_font_size_override("font_size", 12)
 	instruccion.add_theme_color_override("font_color", Color(1, 1, 1, 0.35))
 	instruccion.position = panel_bg.position + Vector2(panel_bg.size.x - 148, panel_bg.size.y - 28)
@@ -83,7 +83,7 @@ func _calcular_panel_rect() -> Rect2:
 
 func _input(event: InputEvent):
 	if event is InputEventKey and not event.echo:
-		if event.keycode == KEY_M or event.keycode == KEY_TAB:
+		if event.keycode == KEY_TAB:
 			if event.pressed:
 				_toggle()
 			get_viewport().set_input_as_handled()
