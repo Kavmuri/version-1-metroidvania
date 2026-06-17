@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://bo3844butlcmc"]
+
+[ext_resource type="PackedScene" uid="uid://l57pk0qnf1fp" path="res://escenas/personajes/enemigos/enemigo_2.tscn" id="1_8y2iw"]
+[ext_resource type="Texture2D" uid="uid://ckx3vyt4edxnq" path="res://sprites/enemigos/pesadilla/idle.png" id="2_l21ln"]
+[ext_resource type="Texture2D" uid="uid://c4p5rrwjetq0f" path="res://sprites/enemigos/pesadilla/run.png" id="3_evv1v"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_edrhy"]
+size = Vector2(69, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_34m2i"]
+atlas = ExtResource("2_l21ln")
+region = Rect2(0, 0, 160, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_upq18"]
+atlas = ExtResource("2_l21ln")
+region = Rect2(160, 0, 160, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8qdr2"]
+atlas = ExtResource("2_l21ln")
+region = Rect2(320, 0, 160, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mkn33"]
+atlas = ExtResource("2_l21ln")
+region = Rect2(480, 0, 160, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cms3c"]
+atlas = ExtResource("3_evv1v")
+region = Rect2(0, 0, 160, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wa7o4"]
+atlas = ExtResource("3_evv1v")
+region = Rect2(160, 0, 160, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mbw04"]
+atlas = ExtResource("3_evv1v")
+region = Rect2(320, 0, 160, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_l5khc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_34m2i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_upq18")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8qdr2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mkn33")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cms3c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wa7o4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mbw04")
+}],
+"loop": true,
+"name": &"new_animation",
+"speed": 10.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n2l4d"]
+size = Vector2(69, 59)
+
+[node name="pesadilla" unique_id=1077313423 instance=ExtResource("1_8y2iw")]
+
+[node name="hitbox pj" parent="." index="0" unique_id=517861878]
+position = Vector2(-15.5, 18.5)
+shape = SubResource("RectangleShape2D_edrhy")
+
+[node name="AnimatedSprite2D" parent="cuerpo" parent_id_path=PackedInt32Array(1681720978) index="0" unique_id=1221346947]
+sprite_frames = SubResource("SpriteFrames_l5khc")
+animation = &"idle"
+
+[node name="CollisionShape2D" parent="hurtbox" parent_id_path=PackedInt32Array(971392028) index="0" unique_id=1370410375]
+position = Vector2(-15.5, 18.5)
+shape = SubResource("RectangleShape2D_n2l4d")

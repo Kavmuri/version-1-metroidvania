@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://1uxyeng7ohn7"]
+
+[ext_resource type="Script" uid="uid://dgpeuun7hjj4t" path="res://escenas/Interfaces/menu_inicio.gd" id="1_q1c1u"]
+[ext_resource type="AudioStream" uid="uid://debuwxk70a3eu" path="res://audio/Prayer-Dead-Cells-Return-To-Castlevania.ogg" id="2_hcx4n"]
+
+[node name="menuInicio" type="Node" unique_id=758846656]
+script = ExtResource("1_q1c1u")
+musica_menu = ExtResource("2_hcx4n")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1414190331]
+stream = ExtResource("2_hcx4n")
