@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dvreujng6yft4"]
 
 [ext_resource type="Texture2D" uid="uid://curuo6mtkvpt3" path="res://Player/player-idle.png" id="1_4ntmi"]
-[ext_resource type="Script" uid="uid://bqdo1j0xt0t6m" path="res://Player/player.gd" id="1_btcbx"]
+[ext_resource type="Script" uid="uid://bqdo1j0xt0t6m" path="res://Player/player1.gd" id="1_btcbx"]
 [ext_resource type="Texture2D" uid="uid://dd11l8ty8yfpw" path="res://Player/player-run.png" id="2_btcbx"]
 [ext_resource type="Texture2D" uid="uid://dmyyvpx3ioca8" path="res://Player/player-jump.png" id="3_gwnis"]
 
@@ -166,7 +166,7 @@ animations = [{
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_o28un"]
 height = 42.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1444006201]
+[node name="Player1" type="CharacterBody2D" unique_id=1444006201]
 collision_layer = 2
 script = ExtResource("1_btcbx")
 
