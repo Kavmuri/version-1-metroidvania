@@ -166,7 +166,7 @@ animations = [{
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_o28un"]
 height = 42.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1444006201]
+[node name="Player1" type="CharacterBody2D" unique_id=1444006201]
 collision_layer = 2
 script = ExtResource("1_btcbx")
 
