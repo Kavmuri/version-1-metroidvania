@@ -29,14 +29,16 @@ func _ready():
 		number_of_points = patrol_points.get_children().size()
 		for point in patrol_points.get_children():
 			point_positions.append(point.global_position)
-		current_point = point_positions[current_point_positions]
+		if number_of_points > 0:
+			current_point = point_positions[current_point_positions]
 	else:
 		print("No patrol points")
 	timer.wait_time = wait_time
 
 	current_state = State.Idle
 
-	timer.start()
+	if number_of_points > 0:
+		timer.start()
 
 func _physics_process(delta):
 	enemy_gravity(delta)
@@ -62,7 +64,12 @@ func enemy_idle(delta):
 	velocity.x = move_toward(velocity.x,0, speed * delta)
 
 
-func enemy_walk(delta):
+func enemy_walk(_delta):
+	if number_of_points == 0:
+		current_state = State.Idle
+		velocity.x = 0
+		return
+
 	var distance = abs(position.x - current_point.x)
 	if distance > 0.5:
 		velocity.x = direction.x * speed
@@ -102,6 +109,9 @@ func enemy_animations():
 
 
 func _on_timer_timeout():
+	if number_of_points == 0:
+		current_state = State.Idle
+		return
 
 	can_walk = true
 	current_state = State.Walk

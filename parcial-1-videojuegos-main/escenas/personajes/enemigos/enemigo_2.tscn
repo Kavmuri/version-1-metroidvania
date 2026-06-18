@@ -1,0 +1,103 @@
+[gd_scene format=3 uid="uid://l57pk0qnf1fp"]
+
+[ext_resource type="Script" uid="uid://ptnvwb54g8lq" path="res://scripts/enemigo_1.gd" id="1_0vh7v"]
+[ext_resource type="Texture2D" uid="uid://cd3q8t75jp12n" path="res://sprites/enemigos/alien2/spritesheet.png" id="2_0vh7v"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ad80d"]
+size = Vector2(32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lcf2o"]
+atlas = ExtResource("2_0vh7v")
+region = Rect2(0, 0, 83, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iiftd"]
+atlas = ExtResource("2_0vh7v")
+region = Rect2(83, 0, 83, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rl6cv"]
+atlas = ExtResource("2_0vh7v")
+region = Rect2(166, 0, 83, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xepum"]
+atlas = ExtResource("2_0vh7v")
+region = Rect2(249, 0, 83, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gh503"]
+atlas = ExtResource("2_0vh7v")
+region = Rect2(332, 0, 83, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rxe0u"]
+atlas = ExtResource("2_0vh7v")
+region = Rect2(415, 0, 83, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1dh31"]
+atlas = ExtResource("2_0vh7v")
+region = Rect2(498, 0, 83, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ro5v6"]
+atlas = ExtResource("2_0vh7v")
+region = Rect2(581, 0, 83, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xu1wp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lcf2o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iiftd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rl6cv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xepum")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gh503")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rxe0u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1dh31")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ro5v6")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uwxyu"]
+size = Vector2(32.5, 32.5)
+
+[node name="enemigo2" type="CharacterBody2D" unique_id=1077313423]
+collision_mask = 2
+script = ExtResource("1_0vh7v")
+
+[node name="hitbox pj" type="CollisionShape2D" parent="." unique_id=517861878 groups=["hitbox_enemigo"]]
+position = Vector2(-1, 7)
+shape = SubResource("RectangleShape2D_ad80d")
+
+[node name="hitbox_contacto" type="Area2D" parent="." unique_id=1234567892 groups=["hitbox_enemigo"]]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox_contacto"]
+position = Vector2(-1, 7)
+shape = SubResource("RectangleShape2D_ad80d")
+
+[node name="cuerpo" type="Node2D" parent="." unique_id=1681720978]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="cuerpo" unique_id=1221346947]
+sprite_frames = SubResource("SpriteFrames_xu1wp")
+animation = &"walk"
+
+[node name="hurtbox" type="Area2D" parent="." unique_id=971392028 groups=["hurtbox_enemigo"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="hurtbox" unique_id=1370410375]
+position = Vector2(-0.75, 7.25)
+shape = SubResource("RectangleShape2D_uwxyu")
+debug_color = Color(0.6557094, 0.5167082, 0.053023048, 0.41960785)

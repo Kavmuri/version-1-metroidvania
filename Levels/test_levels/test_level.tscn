@@ -14,10 +14,6 @@ layer_0/tile_data = PackedInt32Array(-262144, 983040, 8, -262143, 983040, 8, -19
 [node name="Player" parent="." index="2" unique_id=1444006201]
 position = Vector2(37, -72)
 
-[node name="Camera2D" parent="Player" index="2" unique_id=1649780371]
-visible = false
-zoom = Vector2(1.5, 1.5)
-
 [node name="EnemyCrab" parent="." index="3" unique_id=1681054994 node_paths=PackedStringArray("patrol_points") instance=ExtResource("2_2waun")]
 position = Vector2(172, -79)
 patrol_points = NodePath("PatrolsPoints")

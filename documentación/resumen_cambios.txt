@@ -1,0 +1,37 @@
+Resumen de la Implementación - Sistema Procedural y Mapa
+
+Se ha integrado un sistema de generación de niveles procedurales y un mapa interactivo, basado en la documentación técnica (GDD) y el proyecto de referencia.
+
+Cambios realizados:
+
+1. Generación Procedural (Scripts/generacion_procedural.gd):
+   - Motor de generación que coloca habitaciones basadas en plantillas.
+   - Conecta puertas automáticamente y cierra caminos sin salida con "dead ends".
+   - Evita colisiones entre habitaciones durante la generación.
+
+2. Mapa Interactivo (Scripts/MapaUI.gd):
+   - Se activa con las teclas TAB o M (Toggle).
+   - Pausa el juego automáticamente al abrirse.
+   - Muestra la disposición de las salas generadas y la posición actual del jugador.
+   - Escala automáticamente para mostrar todo el mundo explorado.
+
+3. Gestión de Jugador y Cámara (Scripts/spawn_player.gd):
+   - Instancia al jugador en la sala de inicio (SpawnRoom).
+   - Configura dinámicamente los límites de la cámara para que no se vea fuera del mundo generado.
+   - Inicializa el Mapa UI con las referencias necesarias.
+
+4. Gestión de Enemigos (Scripts/gestor_enemigos.gd):
+   - Spawnea enemigos dinámicamente solo en las salas cercanas al jugador para optimizar el rendimiento.
+
+5. Escenas y Plantillas (Levels/world_procedural.tscn y Levels/ProceduralTemplates/):
+   - world_procedural.tscn: Escena principal definitiva que utiliza ParallaxBackground y el generador.
+   - Plantillas: Se crearon 4 bases (Spawn, Generic, Deadend, Corridor) con colisiones funcionales para asegurar que el jugador pueda caminar y explorar.
+
+Mejoras de Calidad:
+- Cámara: Se añadió una `Camera2D` al objeto `Player` para que siga al personaje automáticamente. Los límites de la cámara se ajustan dinámicamente al tamaño del laberinto generado.
+- Visuales: Las salas ahora usan el tileset definitivo (`GAME_TILESET1.png`) para el suelo, integrándose mejor con el arte del juego.
+
+Cómo probar:
+- Ejecutar el proyecto (F5). El juego iniciará en el mundo procedural.
+- Usar TAB o M para ver el mapa.
+- Explorar las salas generadas aleatoriamente. La cámara seguirá al jugador en todo momento.
