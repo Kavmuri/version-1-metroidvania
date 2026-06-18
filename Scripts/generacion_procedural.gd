@@ -218,7 +218,7 @@ func _registrar_adyacencia(a: Node2D, b: Node2D) -> void:
 
 # ─────────────────────────────────────────────────────
 func _preparar_habitacion_procedural(hab: Node2D) -> void:
-	for nombre in ["Player", "EnemyCrab", "PatrolsPoints", "ParallaxBackground"]:
+	for nombre in ["Player", "Player2", "EnemyCrab", "PatrolsPoints", "ParallaxBackground"]:
 		var nodo = hab.get_node_or_null(nombre)
 		if nodo != null:
 			nodo.free()

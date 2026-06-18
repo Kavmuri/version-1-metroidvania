@@ -2,6 +2,7 @@ extends Node
 
 @export var escena_jugador: PackedScene
 @export var escena_mapa_ui: PackedScene
+@export var escena_player2: PackedScene
 
 func iniciar(generador: Node2D):
 	if escena_jugador == null:
@@ -58,6 +59,7 @@ func iniciar(generador: Node2D):
 	generador.add_child(debug_ui)
 	debug_ui.jugador = jugador
 	debug_ui.camara = camara
+	debug_ui.escena_player2 = escena_player2
 
 	var gestor = generador.get_node_or_null("gestorEnemigos")
 	if gestor != null:

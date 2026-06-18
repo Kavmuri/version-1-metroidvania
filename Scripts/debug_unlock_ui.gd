@@ -7,6 +7,8 @@ const MAX_ZOOM = 2.2
 
 var jugador: Node = null
 var camara: Camera2D = null
+var escena_player2: PackedScene = null
+var player2: Node2D = null
 var hold_time := 0.0
 var abierto := false
 var control_camara_activo := false
@@ -16,6 +18,7 @@ var panel: ColorRect
 var salto_infinito_check: CheckBox
 var dash_check: CheckBox
 var control_camara_check: CheckBox
+var player2_derecha_check: CheckBox
 var zoom_label: Label
 
 func _ready() -> void:
@@ -28,7 +31,7 @@ func _construir_ui() -> void:
 	panel.visible = false
 	panel.color = Color(0.03, 0.04, 0.05, 0.9)
 	panel.position = Vector2(16, 16)
-	panel.size = Vector2(360, 200)
+	panel.size = Vector2(360, 232)
 	add_child(panel)
 
 	var titulo = Label.new()
@@ -56,15 +59,21 @@ func _construir_ui() -> void:
 	control_camara_check.toggled.connect(_on_control_camara_toggled)
 	panel.add_child(control_camara_check)
 
+	player2_derecha_check = CheckBox.new()
+	player2_derecha_check.text = "Player2"
+	player2_derecha_check.position = Vector2(12, 140)
+	player2_derecha_check.toggled.connect(_on_player2_derecha_toggled)
+	panel.add_child(player2_derecha_check)
+
 	zoom_label = Label.new()
-	zoom_label.position = Vector2(14, 148)
+	zoom_label.position = Vector2(14, 180)
 	zoom_label.add_theme_font_size_override("font_size", 13)
 	zoom_label.add_theme_color_override("font_color", Color(0.85, 0.9, 1.0))
 	panel.add_child(zoom_label)
 
 	var ayuda = Label.new()
 	ayuda.text = "Arriba/Abajo: zoom | M: cerrar"
-	ayuda.position = Vector2(14, 172)
+	ayuda.position = Vector2(14, 204)
 	ayuda.add_theme_font_size_override("font_size", 12)
 	ayuda.add_theme_color_override("font_color", Color(1, 1, 1, 0.55))
 	panel.add_child(ayuda)
@@ -110,6 +119,7 @@ func _sincronizar_estado() -> void:
 		salto_infinito_check.button_pressed = jugador.get("tiene_salto_infinito")
 		dash_check.button_pressed = jugador.get("tiene_dash")
 	control_camara_check.button_pressed = control_camara_activo
+	player2_derecha_check.button_pressed = player2 != null and is_instance_valid(player2)
 	_actualizar_zoom()
 
 func _on_salto_infinito_toggled(activo: bool) -> void:
@@ -123,6 +133,32 @@ func _on_dash_toggled(activo: bool) -> void:
 func _on_control_camara_toggled(activo: bool) -> void:
 	control_camara_activo = activo
 	_actualizar_zoom()
+
+func _on_player2_derecha_toggled(activo: bool) -> void:
+	if activo:
+		crear_player2()
+		return
+
+	if player2 != null and is_instance_valid(player2):
+		player2.queue_free()
+	player2 = null
+
+func crear_player2() -> void:
+	if jugador == null:
+		push_warning("DebugUnlockUI: jugador no asignado.")
+		player2_derecha_check.button_pressed = false
+		return
+	if escena_player2 == null:
+		push_warning("DebugUnlockUI: escena_player2 no asignada.")
+		player2_derecha_check.button_pressed = false
+		return
+
+	if player2 == null or not is_instance_valid(player2):
+		player2 = escena_player2.instantiate()
+		player2.name = "Player2"
+		jugador.get_parent().add_child(player2)
+
+	player2.global_position = jugador.global_position + Vector2(72, -24)
 
 func _cambiar_zoom(delta_zoom: float) -> void:
 	if camara == null:
