@@ -1,6 +1,6 @@
-[gd_scene format=4]
+[gd_scene format=4 uid="uid://dmnmyj7x7hlaw"]
 
-[ext_resource type="Texture2D" path="res://Tileset/ImportedMapa/0_Template_Tileset_16.png" id="1_u2sdq"]
+[ext_resource type="Texture2D" uid="uid://b5h4sog75te1" path="res://Tileset/ImportedMapa/0_Template_Tileset_16.png" id="1_u2sdq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q7gn1"]
 texture = ExtResource("1_u2sdq")
@@ -50,10 +50,10 @@ tile_map_data = PackedByteArray("AAAQAAAAAAAEAAAAAAAQAAEAAAAEAAEAAAARAAAAAAAFAAA
 tile_set = SubResource("TileSet_nc3ar")
 
 [node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=626184369]
-offset_left = -3776.0
-offset_top = -1664.0
-offset_right = 4352.0
-offset_bottom = 1440.0
+offset_left = -3708.0
+offset_top = -1656.0
+offset_right = 4420.0
+offset_bottom = 1448.0
 border_color = Color(0.94509804, 0.8745098, 0, 1)
 
 [node name="puertas" type="Node2D" parent="." unique_id=2084620660]
