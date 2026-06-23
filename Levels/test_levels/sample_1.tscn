@@ -2,12 +2,19 @@
 
 [ext_resource type="PackedScene" uid="uid://bal14ulqgpxy4" path="res://Levels/base_level.tscn" id="1_7c0rc"]
 [ext_resource type="PackedScene" uid="uid://dgqumuicedl0p" path="res://Background/parallax_background.tscn" id="2_7qju8"]
+<<<<<<< Updated upstream
 [ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/GAME_TILESET1.png" id="3_aqvrb"]
 [ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/GAME_TILESET_WALLS.png" id="4_7lu2j"]
 [ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/GAME_TILSET_PROPS.png" id="5_nws1p"]
+=======
+[ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="3_aqvrb"]
+[ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="4_7lu2j"]
+[ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="5_nws1p"]
+[ext_resource type="PackedScene" uid="uid://w7rj8nmbk7mu" path="res://Player2/player_2.tscn" id="6_7lu2j"]
+>>>>>>> Stashed changes
 [ext_resource type="PackedScene" uid="uid://cl7bil1d3h8ja" path="res://Enemies/enemy_crab.tscn" id="7_nws1p"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vonw3"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nws1p"]
 texture = ExtResource("3_aqvrb")
 2:1/0 = 0
 2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
@@ -222,7 +229,7 @@ texture = ExtResource("3_aqvrb")
 8:6/0 = 0
 13:1/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_j3xrb"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_joexc"]
 texture = ExtResource("4_7lu2j")
 4:1/0 = 0
 4:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
@@ -275,7 +282,7 @@ texture = ExtResource("4_7lu2j")
 8:6/0 = 0
 8:6/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, 8, 8, 8, 6.3060894, 4.5862465, 4.5043507, 3.6034794, 2.8664055, 3.7672749, 3.1939945, 1.6379452, 4.5043507, 1.3103561, 4.094864, -1.4741507, 3.030199, -3.030198, -1.5560474, -3.3577871, -3.2758904, -5.814706, -4.8319387, -5.814706, -5.814706, -8, -8, -8)
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5y487"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qv5uk"]
 texture = ExtResource("5_nws1p")
 2:1/0 = 0
 3:1/0 = 0
@@ -406,9 +413,9 @@ texture = ExtResource("5_nws1p")
 
 [sub_resource type="TileSet" id="TileSet_oi3di"]
 physics_layer_0/collision_layer = 1
-sources/0 = SubResource("TileSetAtlasSource_vonw3")
-sources/1 = SubResource("TileSetAtlasSource_j3xrb")
-sources/2 = SubResource("TileSetAtlasSource_5y487")
+sources/0 = SubResource("TileSetAtlasSource_nws1p")
+sources/1 = SubResource("TileSetAtlasSource_joexc")
+sources/2 = SubResource("TileSetAtlasSource_qv5uk")
 
 [node name="Sample1" unique_id=1382616638 instance=ExtResource("1_7c0rc")]
 

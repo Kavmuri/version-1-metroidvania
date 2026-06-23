@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://box57uxfv84bp"
-path="res://.godot/imported/GAME_TILSET_PROPS.png-6dfb397267e4056a51bf3af3b554d8cc.ctex"
+uid="uid://djdqwby3otkvt"
+path="res://.godot/imported/ground.png-e1616b4aa8868ee5fa2450d73d0252e0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Tileset/GAME_TILSET_PROPS.png"
-dest_files=["res://.godot/imported/GAME_TILSET_PROPS.png-6dfb397267e4056a51bf3af3b554d8cc.ctex"]
+source_file="res://Tileset/area2/ground.png"
+dest_files=["res://.godot/imported/ground.png-e1616b4aa8868ee5fa2450d73d0252e0.ctex"]
 
 [params]
 
