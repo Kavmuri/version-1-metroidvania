@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ci4w045j1m0y7"
-path="res://.godot/imported/GAME_TILESET_WALLS.png-e15b8242eb62956436bcb3d53a4a1537.ctex"
+uid="uid://dvut3woncyvnq"
+path="res://.godot/imported/back-gold.png-bfa056cad809eb64f644de427c583bbd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Tileset/GAME_TILESET_WALLS.png"
-dest_files=["res://.godot/imported/GAME_TILESET_WALLS.png-e15b8242eb62956436bcb3d53a4a1537.ctex"]
+source_file="res://Tileset/area2/back-gold.png"
+dest_files=["res://.godot/imported/back-gold.png-bfa056cad809eb64f644de427c583bbd.ctex"]
 
 [params]
 
