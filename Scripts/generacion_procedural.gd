@@ -16,6 +16,9 @@ var contenedor_bordes: Node2D = null
 var adyacencia: Dictionary = {}
 
 func _ready():
+	var seed_actual = GameManager.get_world_seed_for_generation()
+	seed(seed_actual)
+	GameManager.register_world(self, seed_actual)
 	var objetivo = randi_range(5, 10) # Reducido para pruebas iniciales
 	print("Objetivo: ", objetivo, " habitaciones")
 	generar_mazmorra(objetivo)

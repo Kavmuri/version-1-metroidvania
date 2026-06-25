@@ -3,6 +3,8 @@ extends Node
 @export var escena_jugador: PackedScene
 @export var escena_mapa_ui: PackedScene
 @export var escena_player2: PackedScene
+@export var escena_hud: PackedScene
+@export var escena_pausa: PackedScene
 
 func iniciar(generador: Node2D):
 	if escena_jugador == null:
@@ -34,6 +36,7 @@ func iniciar(generador: Node2D):
 	var jugador = escena_jugador.instantiate()
 	generador.add_child(jugador)
 	jugador.global_position = pos_spawn
+	GameManager.register_player1(jugador)
 
 	# Configurar límites de cámara
 	var camara = jugador.get_node_or_null("Camera2D")
@@ -52,6 +55,28 @@ func iniciar(generador: Node2D):
 		mapa_ui.generador = generador
 		mapa_ui.jugador = jugador
 
+	var player2_guardado: Node2D = null
+	if GameManager.should_restore_player2() and escena_player2 != null:
+		player2_guardado = escena_player2.instantiate()
+		player2_guardado.name = "Player2"
+		generador.add_child(player2_guardado)
+		player2_guardado.global_position = jugador.global_position + Vector2(72, -24)
+		GameManager.register_player2(player2_guardado)
+
+	GameManager.apply_pending_positions(jugador, player2_guardado)
+
+	if escena_hud != null:
+		var hud = escena_hud.instantiate()
+		generador.add_child(hud)
+		if hud.has_method("setup"):
+			hud.setup(jugador, player2_guardado)
+
+	if escena_pausa != null:
+		var pausa = escena_pausa.instantiate()
+		generador.add_child(pausa)
+		if pausa.has_method("setup"):
+			pausa.setup(jugador)
+
 	# NUEVO: Si no hay escena de mapa UI pero el script existe, podemos intentar añadirlo directamente
 	# si es que no se pasó como escena (para mayor flexibilidad)
 
@@ -60,6 +85,7 @@ func iniciar(generador: Node2D):
 	debug_ui.jugador = jugador
 	debug_ui.camara = camara
 	debug_ui.escena_player2 = escena_player2
+	debug_ui.player2 = player2_guardado
 
 	var gestor = generador.get_node_or_null("gestorEnemigos")
 	if gestor != null:

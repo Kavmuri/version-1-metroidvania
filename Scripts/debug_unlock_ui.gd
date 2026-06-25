@@ -142,6 +142,7 @@ func _on_player2_derecha_toggled(activo: bool) -> void:
 	if player2 != null and is_instance_valid(player2):
 		player2.queue_free()
 	player2 = null
+	GameManager.register_player2(null)
 
 func crear_player2() -> void:
 	if jugador == null:
@@ -157,6 +158,7 @@ func crear_player2() -> void:
 		player2 = escena_player2.instantiate()
 		player2.name = "Player2"
 		jugador.get_parent().add_child(player2)
+		GameManager.register_player2(player2)
 
 	player2.global_position = jugador.global_position + Vector2(72, -24)
 
