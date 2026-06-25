@@ -1,0 +1,244 @@
+[gd_scene format=3 uid="uid://da5bxanqmn2e8"]
+
+[ext_resource type="Script" uid="uid://bmbnxnblsrd8t" path="res://Enemies/scripts/enemy_boss.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ckc7y4tsgfv46" path="res://Enemies/assets/demon_boss/demon_idle_01.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://btkoftqsesvrf" path="res://Enemies/assets/demon_boss/demon_idle_02.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://o2a3x8r4dvvm" path="res://Enemies/assets/demon_boss/demon_idle_03.png" id="4_tex"]
+[ext_resource type="Texture2D" uid="uid://dybfauj64l2ye" path="res://Enemies/assets/demon_boss/demon_idle_04.png" id="5_tex"]
+[ext_resource type="Texture2D" uid="uid://ba8s85jwlyjku" path="res://Enemies/assets/demon_boss/demon_idle_05.png" id="6_tex"]
+[ext_resource type="Texture2D" uid="uid://bd36gcsd1pb80" path="res://Enemies/assets/demon_boss/demon_idle_06.png" id="7_tex"]
+[ext_resource type="Texture2D" uid="uid://c07iymuxbmxoo" path="res://Enemies/assets/demon_boss/demon_attack_01.png" id="8_tex"]
+[ext_resource type="Texture2D" uid="uid://cx2pp8q2be2ij" path="res://Enemies/assets/demon_boss/demon_attack_02.png" id="9_tex"]
+[ext_resource type="Texture2D" uid="uid://bjf7tybx3bj6t" path="res://Enemies/assets/demon_boss/demon_attack_03.png" id="10_tex"]
+[ext_resource type="Texture2D" uid="uid://cd0216wyuuwgo" path="res://Enemies/assets/demon_boss/demon_attack_04.png" id="11_tex"]
+[ext_resource type="Texture2D" uid="uid://dcrb8754v1kce" path="res://Enemies/assets/demon_boss/demon_attack_05.png" id="12_tex"]
+[ext_resource type="Texture2D" uid="uid://bdgkyhmo3wxmt" path="res://Enemies/assets/demon_boss/demon_attack_06.png" id="13_tex"]
+[ext_resource type="Texture2D" uid="uid://b6gjc8ih0yf15" path="res://Enemies/assets/demon_boss/demon_attack_07.png" id="14_tex"]
+[ext_resource type="Texture2D" uid="uid://c3ky0g4qc87a0" path="res://Enemies/assets/demon_boss/demon_attack_08.png" id="15_tex"]
+[ext_resource type="Texture2D" uid="uid://b8le1j4f3an1k" path="res://Enemies/assets/demon_boss/demon_attack_09.png" id="16_tex"]
+[ext_resource type="Texture2D" uid="uid://b1n62r8kmw8ca" path="res://Enemies/assets/demon_boss/demon_attack_10.png" id="17_tex"]
+[ext_resource type="Texture2D" uid="uid://cfpngllnuhxwj" path="res://Enemies/assets/demon_boss/demon_attack_11.png" id="18_tex"]
+[ext_resource type="Texture2D" uid="uid://ddjik3yr3mxta" path="res://Enemies/assets/demon_boss/demon_attack_12.png" id="19_tex"]
+[ext_resource type="Texture2D" uid="uid://ci38xepn26voi" path="res://Enemies/assets/demon_boss/demon_attack_13.png" id="20_tex"]
+[ext_resource type="Texture2D" uid="uid://dlk0kpnqyp0p4" path="res://Enemies/assets/demon_boss/demon_attack_14.png" id="21_tex"]
+[ext_resource type="Texture2D" uid="uid://cmvotssgggay8" path="res://Enemies/assets/demon_boss/demon_attack_15.png" id="22_tex"]
+[ext_resource type="Texture2D" uid="uid://7gaj3l7sxf1g" path="res://Enemies/assets/demon_boss/demon_attack_16.png" id="23_tex"]
+[ext_resource type="Texture2D" uid="uid://em3s1rx44fo3" path="res://Enemies/assets/demon_boss/demon_attack_17.png" id="24_tex"]
+[ext_resource type="Texture2D" uid="uid://cbwy37hjqn3wv" path="res://Enemies/assets/demon_boss/demon_attack_18.png" id="25_tex"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7"]
+atlas = ExtResource("8_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8"]
+atlas = ExtResource("9_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_9"]
+atlas = ExtResource("10_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_10"]
+atlas = ExtResource("11_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_11"]
+atlas = ExtResource("12_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_12"]
+atlas = ExtResource("13_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_13"]
+atlas = ExtResource("14_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_14"]
+atlas = ExtResource("15_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_15"]
+atlas = ExtResource("16_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_16"]
+atlas = ExtResource("17_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_17"]
+atlas = ExtResource("18_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_18"]
+atlas = ExtResource("19_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_19"]
+atlas = ExtResource("20_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_20"]
+atlas = ExtResource("21_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_21"]
+atlas = ExtResource("22_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_22"]
+atlas = ExtResource("23_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_23"]
+atlas = ExtResource("24_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_24"]
+atlas = ExtResource("25_tex")
+region = Rect2(0, 0, 312, 220)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1"]
+atlas = ExtResource("2_tex")
+region = Rect2(0, 0, 256, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 256, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3"]
+atlas = ExtResource("4_tex")
+region = Rect2(0, 0, 256, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4"]
+atlas = ExtResource("5_tex")
+region = Rect2(0, 0, 256, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5"]
+atlas = ExtResource("6_tex")
+region = Rect2(0, 0, 256, 176)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6"]
+atlas = ExtResource("7_tex")
+region = Rect2(0, 0, 256, 176)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_13")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_15")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_16")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_17")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_18")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_19")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_20")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_21")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_22")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_23")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_24")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 6.0
+}]
+
+[sub_resource type="RectangleShape2D" id="BodyShape"]
+size = Vector2(144, 111)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_emjvv"]
+radius = 72.0
+height = 144.0
+
+[node name="DemonBoss" type="CharacterBody2D" unique_id=406176283 groups=["enemy"]]
+collision_layer = 4
+script = ExtResource("1_script")
+max_health = 18
+contact_damage = 2
+move_speed = 42
+detection_range = 430
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=661801655]
+position = Vector2(0, -50)
+sprite_frames = SubResource("SpriteFrames_1")
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.70010066
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=358292088]
+position = Vector2(0, -52.5)
+shape = SubResource("BodyShape")
+
+[node name="ContactArea" type="Area2D" parent="." unique_id=1646752067]
+collision_layer = 4
+collision_mask = 2
+
+[node name="ContactShape" type="CollisionShape2D" parent="ContactArea" unique_id=933539979]
+position = Vector2(0, -51)
+shape = SubResource("CapsuleShape2D_emjvv")
+
+[connection signal="body_entered" from="ContactArea" to="." method="_on_contact_body_entered"]

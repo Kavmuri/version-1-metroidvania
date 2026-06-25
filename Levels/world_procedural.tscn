@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://worldprocedural123"]
+[gd_scene load_steps=26 format=3 uid="uid://worldprocedural123"]
 
 [ext_resource type="Script" path="res://Scripts/generacion_procedural.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://Levels/ProceduralTemplates/spawn_room.tscn" id="2_spawn"]
@@ -18,6 +18,13 @@
 [ext_resource type="PackedScene" path="res://Levels/ProceduralTemplates/ImportedMapa/Salas/sala_v_3.tscn" id="16_sala_v3"]
 [ext_resource type="PackedScene" path="res://Levels/ProceduralTemplates/ImportedMapa/Pasillos/pasillo_hor_v_1.tscn" id="17_pasillo_h1"]
 [ext_resource type="PackedScene" uid="uid://w7rj8nmbk7mu" path="res://Player2/player_2.tscn" id="18_player2"]
+[ext_resource type="PackedScene" path="res://Enemies/scenes/enemy_flying_eye_demon.tscn" id="19_flying_eye"]
+[ext_resource type="PackedScene" path="res://Enemies/scenes/enemy_ghost.tscn" id="20_ghost"]
+[ext_resource type="PackedScene" path="res://Enemies/scenes/enemy_wizard.tscn" id="21_wizard"]
+[ext_resource type="PackedScene" path="res://Enemies/scenes/enemy_hell_hound_fire.tscn" id="22_hell_hound"]
+[ext_resource type="PackedScene" path="res://Enemies/scenes/enemy_mutant_toad.tscn" id="23_mutant_toad"]
+[ext_resource type="PackedScene" path="res://Enemies/scenes/enemy_nightmare.tscn" id="24_nightmare"]
+[ext_resource type="PackedScene" path="res://Enemies/scenes/enemy_ogre.tscn" id="25_ogre"]
 
 [node name="WorldProcedural" type="Node2D"]
 script = ExtResource("1_script")
@@ -27,7 +34,7 @@ plantillas_deadends = Array[PackedScene]([])
 
 [node name="gestorEnemigos" type="Node" parent="."]
 script = ExtResource("9_gestor")
-escenas_enemigos = Array[PackedScene]([ExtResource("11_enemy_crab")])
+escenas_enemigos = Array[PackedScene]([ExtResource("11_enemy_crab"), ExtResource("19_flying_eye"), ExtResource("20_ghost"), ExtResource("21_wizard"), ExtResource("22_hell_hound"), ExtResource("23_mutant_toad"), ExtResource("24_nightmare"), ExtResource("25_ogre")])
 
 [node name="spawnPlayer" type="Node2D" parent="."]
 script = ExtResource("6_spawn_script")
