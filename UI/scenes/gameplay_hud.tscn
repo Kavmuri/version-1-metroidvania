@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://UI/scripts/gameplay_hud.gd" id="1_script"]
+
+[node name="GameplayHUD" type="CanvasLayer"]
+script = ExtResource("1_script")
+
+[node name="Row" type="HBoxContainer" parent="."]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 188.0
+offset_bottom = 34.0
+theme_override_constants/separation = 6
+
+[node name="Player1Label" type="Label" parent="Row"]
+custom_minimum_size = Vector2(86, 24)
+layout_mode = 2
+text = "Player 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Label" type="Label" parent="Row"]
+custom_minimum_size = Vector2(86, 24)
+layout_mode = 2
+text = "Player 2"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,57 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://UI/scripts/pause_menu.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://UI/scenes/controls_menu.tscn" id="2_controls"]
+
+[node name="PauseMenu" type="CanvasLayer"]
+script = ExtResource("1_script")
+
+[node name="Overlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.64)
+
+[node name="Panel" type="PanelContainer" parent="."]
+offset_left = 181.0
+offset_top = 62.0
+offset_right = 461.0
+offset_bottom = 298.0
+
+[node name="Content" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="Title" type="Label" parent="Panel/Content"]
+layout_mode = 2
+text = "Pausa"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="Panel/Content"]
+custom_minimum_size = Vector2(220, 32)
+layout_mode = 2
+text = "Continuar"
+
+[node name="SaveButton" type="Button" parent="Panel/Content"]
+custom_minimum_size = Vector2(220, 32)
+layout_mode = 2
+text = "Guardar"
+
+[node name="ConfigButton" type="Button" parent="Panel/Content"]
+custom_minimum_size = Vector2(220, 32)
+layout_mode = 2
+text = "Configuracion"
+
+[node name="MainMenuButton" type="Button" parent="Panel/Content"]
+custom_minimum_size = Vector2(220, 32)
+layout_mode = 2
+text = "Menu principal"
+
+[node name="Status" type="Label" parent="Panel/Content"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ControlsMenu" parent="." instance=ExtResource("2_controls")]
+visible = false

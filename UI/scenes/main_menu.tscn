@@ -1,0 +1,131 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://UI/scripts/main_menu.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://UI/scenes/controls_menu.tscn" id="2_controls"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025, 0.027, 0.035, 1)
+
+[node name="AccentTop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 58.0
+offset_bottom = 59.0
+grow_horizontal = 2
+color = Color(0.42, 0.78, 0.72, 0.35)
+
+[node name="Center" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(330, 0)
+layout_mode = 0
+offset_left = 156.0
+offset_top = 68.0
+offset_right = 486.0
+offset_bottom = 292.0
+theme_override_constants/separation = 9
+
+[node name="Title" type="Label" parent="Center"]
+layout_mode = 2
+text = "TITULO POR DEFINIR"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Center"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="Center"]
+custom_minimum_size = Vector2(330, 34)
+layout_mode = 2
+text = "Jugar"
+
+[node name="ContinueButton" type="Button" parent="Center"]
+custom_minimum_size = Vector2(330, 34)
+layout_mode = 2
+text = "Continuar"
+
+[node name="ConfigButton" type="Button" parent="Center"]
+custom_minimum_size = Vector2(330, 34)
+layout_mode = 2
+text = "Configuracion"
+
+[node name="SoonButton" type="Button" parent="Center"]
+custom_minimum_size = Vector2(330, 34)
+layout_mode = 2
+text = "Proximamente"
+
+[node name="ExitButton" type="Button" parent="Center"]
+custom_minimum_size = Vector2(330, 34)
+layout_mode = 2
+text = "Salir"
+
+[node name="MessagePanel" type="PanelContainer" parent="."]
+visible = false
+offset_left = 191.0
+offset_top = 120.0
+offset_right = 451.0
+offset_bottom = 240.0
+
+[node name="Content" type="VBoxContainer" parent="MessagePanel"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 14
+
+[node name="MessageLabel" type="Label" parent="MessagePanel/Content"]
+layout_mode = 2
+text = "Proximamente"
+horizontal_alignment = 1
+
+[node name="OkButton" type="Button" parent="MessagePanel/Content"]
+custom_minimum_size = Vector2(140, 30)
+layout_mode = 2
+text = "OK"
+
+[node name="ModePanel" type="PanelContainer" parent="."]
+visible = false
+offset_left = 181.0
+offset_top = 102.0
+offset_right = 461.0
+offset_bottom = 258.0
+
+[node name="Content" type="VBoxContainer" parent="ModePanel"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ModePanel/Content"]
+layout_mode = 2
+text = "Selecciona modo"
+horizontal_alignment = 1
+
+[node name="SingleButton" type="Button" parent="ModePanel/Content"]
+custom_minimum_size = Vector2(220, 32)
+layout_mode = 2
+text = "Singleplayer"
+
+[node name="CoopButton" type="Button" parent="ModePanel/Content"]
+custom_minimum_size = Vector2(220, 32)
+layout_mode = 2
+text = "Coop local"
+
+[node name="BackButton" type="Button" parent="ModePanel/Content"]
+custom_minimum_size = Vector2(220, 32)
+layout_mode = 2
+text = "Volver"
+
+[node name="ControlsMenu" parent="." instance=ExtResource("2_controls")]
+visible = false
