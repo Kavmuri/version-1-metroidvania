@@ -21,13 +21,13 @@
 
 [node name="WorldProcedural" type="Node2D"]
 script = ExtResource("1_script")
-plantillas_spawn = Array[PackedScene]([ExtResource("12_sample_room")])
-plantillas_habitaciones = Array[PackedScene]([ExtResource("14_sala_v1"), ExtResource("15_sala_v2"), ExtResource("16_sala_v3"), ExtResource("17_pasillo_h1")])
-plantillas_deadends = Array[PackedScene]([])
+plantillas_spawn = [ExtResource("12_sample_room")]
+plantillas_habitaciones = [ExtResource("14_sala_v1"), ExtResource("15_sala_v2"), ExtResource("16_sala_v3"), ExtResource("17_pasillo_h1")]
+plantillas_deadends = []
 
 [node name="gestorEnemigos" type="Node" parent="."]
 script = ExtResource("9_gestor")
-escenas_enemigos = Array[PackedScene]([ExtResource("11_enemy_crab")])
+escenas_enemigos = [ExtResource("11_enemy_crab")]
 
 [node name="spawnPlayer" type="Node2D" parent="."]
 script = ExtResource("6_spawn_script")
