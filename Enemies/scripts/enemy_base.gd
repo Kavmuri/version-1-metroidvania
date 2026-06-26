@@ -62,10 +62,10 @@ func update_facing_from_velocity() -> void:
 		facing = 1 if velocity.x > 0 else -1
 		sprite.flip_h = facing > 0
 
-func play_anim(name: StringName) -> void:
-	if sprite.sprite_frames != null and sprite.sprite_frames.has_animation(name):
-		if sprite.animation != name:
-			sprite.play(name)
+func play_anim(anim_name: StringName) -> void:
+	if sprite.sprite_frames != null and sprite.sprite_frames.has_animation(anim_name):
+		if sprite.animation != anim_name:
+			sprite.play(anim_name)
 
 func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> void:
 	health -= amount

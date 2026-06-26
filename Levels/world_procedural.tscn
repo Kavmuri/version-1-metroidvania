@@ -41,7 +41,5 @@ script = ExtResource("6_spawn_script")
 escena_jugador = ExtResource("7_player")
 escena_mapa_ui = ExtResource("8_mapa")
 escena_player2 = ExtResource("18_player2")
-escena_hud = ExtResource("19_hud")
-escena_pausa = ExtResource("20_pause")
 
 [node name="ParallaxBackground" parent="." instance=ExtResource("10_parallax")]

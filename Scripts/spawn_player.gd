@@ -1,5 +1,8 @@
 extends Node
 
+const DEFAULT_HUD_SCENE := preload("res://UI/scenes/gameplay_hud.tscn")
+const DEFAULT_PAUSE_SCENE := preload("res://UI/scenes/pause_menu.tscn")
+
 @export var escena_jugador: PackedScene
 @export var escena_mapa_ui: PackedScene
 @export var escena_player2: PackedScene
@@ -65,14 +68,16 @@ func iniciar(generador: Node2D):
 
 	GameManager.apply_pending_positions(jugador, player2_guardado)
 
-	if escena_hud != null:
-		var hud = escena_hud.instantiate()
+	var hud_scene: PackedScene = escena_hud if escena_hud != null else DEFAULT_HUD_SCENE
+	if hud_scene != null:
+		var hud = hud_scene.instantiate()
 		generador.add_child(hud)
 		if hud.has_method("setup"):
 			hud.setup(jugador, player2_guardado)
 
-	if escena_pausa != null:
-		var pausa = escena_pausa.instantiate()
+	var pause_scene: PackedScene = escena_pausa if escena_pausa != null else DEFAULT_PAUSE_SCENE
+	if pause_scene != null:
+		var pausa = pause_scene.instantiate()
 		generador.add_child(pausa)
 		if pausa.has_method("setup"):
 			pausa.setup(jugador)
