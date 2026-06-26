@@ -13,6 +13,7 @@ config_version=5
 config/name="Version1Metroidvania"
 run/main_scene="res://UI/scenes/main_menu.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
+boot_splash/bg_color=Color(0.44705883, 0.12941177, 0.53333336, 1)
 config/icon="res://icon.svg"
 
 [autoload]
