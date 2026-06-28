@@ -36,6 +36,7 @@ func _toggle() -> void:
 		_open_menu()
 
 func _open_menu() -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	_open = true
 	visible = true
 	get_tree().paused = true
@@ -44,20 +45,24 @@ func _open_menu() -> void:
 	_resume_button.grab_focus()
 
 func _resume() -> void:
+	AudioManager.play_sfx(&"ui_back")
 	_open = false
 	visible = false
 	get_tree().paused = false
 
 func _save_game() -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	if GameManager.save_game():
 		_status.text = "Partida guardada."
 	else:
 		_status.text = "No se pudo guardar."
 
 func _open_controls() -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	_controls_menu.open_menu()
 
 func _go_main_menu() -> void:
+	AudioManager.play_sfx(&"ui_back")
 	get_tree().paused = false
 	GameManager.go_to_main_menu()
 
