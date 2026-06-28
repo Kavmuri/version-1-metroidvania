@@ -1,5 +1,6 @@
-[gd_scene format=4 uid="uid://ds65ghiwiuixo"]
+[gd_scene load_steps=10 format=4 uid="uid://ds65ghiwiuixo"]
 
+[ext_resource type="Script" uid="uid://dq7l5p4l1o8u2" path="res://Levels/test_levels/Area1.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="1_f7hv5"]
 [ext_resource type="PackedScene" uid="uid://dgqumuicedl0p" path="res://Background/parallax_background.tscn" id="1_hky4e"]
 [ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="2_hky4e"]
@@ -814,7 +815,32 @@ sources/0 = SubResource("TileSetAtlasSource_vp7bn")
 sources/1 = SubResource("TileSetAtlasSource_a0qy4")
 sources/2 = SubResource("TileSetAtlasSource_afuuw")
 
+[sub_resource type="Animation" id="Animation_fade_to_black"]
+resource_name = "fade_to_black"
+length = 1.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_transition"]
+_data = {
+"fade_to_black": SubResource("Animation_fade_to_black")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_transition"]
+size = Vector2(64, 400)
+
 [node name="Area1" type="Node2D" unique_id=735856489]
+script = ExtResource("1_script")
 
 [node name="ParallaxBackground2" parent="." unique_id=1688677264 instance=ExtResource("1_hky4e")]
 offset = Vector2(0, -12)
@@ -847,3 +873,37 @@ tile_set = SubResource("TileSet_0tjov")
 position = Vector2(469, -86)
 
 [node name="Camera2D2" type="Camera2D" parent="Player1" unique_id=1397476047]
+limit_left = 0
+limit_right = 1632
+position_smoothing_enabled = true
+position_smoothing_speed = 7.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_left_margin = 0.1
+drag_right_margin = 0.1
+drag_top_margin = 0.1
+drag_bottom_margin = 0.1
+
+[node name="TransitionLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="TransitionLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0)
+mouse_filter = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="TransitionLayer"]
+libraries = {
+"": SubResource("AnimationLibrary_transition")
+}
+
+[node name="TransitionTrigger" type="Area2D" parent="."]
+position = Vector2(1600, -100)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TransitionTrigger"]
+shape = SubResource("RectangleShape2D_transition")
