@@ -43,6 +43,7 @@ func open_menu() -> void:
 		first_button.grab_focus()
 
 func close_menu() -> void:
+	AudioManager.play_sfx(&"ui_back")
 	_waiting_action = ""
 	visible = false
 	closed.emit()
@@ -86,11 +87,13 @@ func _connect_buttons() -> void:
 	_back_button.pressed.connect(close_menu)
 
 func _begin_rebind(action: String) -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	_waiting_action = action
 	_status.text = "Presiona una tecla para " + ACTION_LABELS[action] + "."
 	_refresh()
 
 func _on_reset_pressed() -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	GameManager.reset_controls()
 	_waiting_action = ""
 	_refresh()

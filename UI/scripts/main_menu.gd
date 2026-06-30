@@ -18,8 +18,10 @@ extends Control
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = false
+	AudioManager.play_menu_music()
 	GameManager.load_controls()
 	_apply_styles()
+	_configure_mode_focus()
 	_connect_buttons()
 	_refresh_continue()
 	_message_panel.visible = false
@@ -70,25 +72,32 @@ func _refresh_continue() -> void:
 	_continue_button.disabled = not GameManager.has_save_game()
 
 func _on_play_pressed() -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	_open_mode_panel()
 
 func _on_single_pressed() -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	GameManager.start_new_game("single")
 
 func _on_coop_pressed() -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	GameManager.start_new_game("coop")
 
 func _on_continue_pressed() -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	if not GameManager.continue_game():
 		_show_message("No hay partida guardada.")
 
 func _on_config_pressed() -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	_controls_menu.open_menu()
 
 func _on_soon_pressed() -> void:
+	AudioManager.play_sfx(&"ui_confirm")
 	_show_message("Proximamente")
 
 func _on_exit_pressed() -> void:
+	AudioManager.play_sfx(&"ui_back")
 	get_tree().quit()
 
 func _show_message(text: String) -> void:
@@ -98,16 +107,21 @@ func _show_message(text: String) -> void:
 	_message_ok_button.grab_focus()
 
 func _close_message() -> void:
+	AudioManager.play_sfx(&"ui_back")
 	_message_panel.visible = false
 	_play_button.grab_focus()
 
 func _open_mode_panel() -> void:
+	_set_main_buttons_focus(false)
 	_mode_panel.visible = true
 	_center_mode_panel()
+	get_viewport().gui_release_focus()
 	_single_button.grab_focus()
 
 func _close_mode_panel() -> void:
+	AudioManager.play_sfx(&"ui_back")
 	_mode_panel.visible = false
+	_set_main_buttons_focus(true)
 	_play_button.grab_focus()
 
 func _center_content() -> void:
@@ -159,3 +173,16 @@ func _panel_style() -> StyleBoxFlat:
 	style.content_margin_top = 14
 	style.content_margin_bottom = 14
 	return style
+
+func _configure_mode_focus() -> void:
+	_single_button.focus_neighbor_top = _mode_back_button.get_path()
+	_single_button.focus_neighbor_bottom = _coop_button.get_path()
+	_coop_button.focus_neighbor_top = _single_button.get_path()
+	_coop_button.focus_neighbor_bottom = _mode_back_button.get_path()
+	_mode_back_button.focus_neighbor_top = _coop_button.get_path()
+	_mode_back_button.focus_neighbor_bottom = _single_button.get_path()
+
+func _set_main_buttons_focus(enabled: bool) -> void:
+	var target_focus_mode = Control.FOCUS_ALL if enabled else Control.FOCUS_NONE
+	for button in [_play_button, _continue_button, _config_button, _soon_button, _exit_button]:
+		button.focus_mode = target_focus_mode
