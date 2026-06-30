@@ -70,7 +70,10 @@ func play_anim(anim_name: StringName) -> void:
 func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> void:
 	health -= amount
 	if health <= 0:
+		AudioManager.play_sfx(&"enemy_death")
 		die()
+	else:
+		AudioManager.play_sfx(&"enemy_hit")
 
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
 	receive_damage(cantidad, fuente_pos)

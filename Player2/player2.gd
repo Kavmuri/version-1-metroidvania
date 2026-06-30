@@ -30,6 +30,7 @@ func apply_gravity(delta: float):
 
 func handle_jump():
 	if Input.is_action_just_pressed("jump_JOY") and is_on_floor():
+		AudioManager.play_sfx(&"player_jump")
 		velocity.y = JUMP_VELOCITY
 
 func handle_movement(delta: float):
