@@ -3,8 +3,7 @@ extends Control
 @onready var _center: VBoxContainer = $Center
 @onready var _play_button: Button = $Center/PlayButton
 @onready var _continue_button: Button = $Center/ContinueButton
-@onready var _config_button: Button = $Center/ConfigButton
-@onready var _soon_button: Button = $Center/SoonButton
+@onready var _controls_button: Button = $Center/ControlsButton
 @onready var _exit_button: Button = $Center/ExitButton
 @onready var _message_panel: PanelContainer = $MessagePanel
 @onready var _message_label: Label = $MessagePanel/Content/MessageLabel
@@ -37,21 +36,20 @@ func _notification(what: int) -> void:
 func _connect_buttons() -> void:
 	_play_button.pressed.connect(_on_play_pressed)
 	_continue_button.pressed.connect(_on_continue_pressed)
-	_config_button.pressed.connect(_on_config_pressed)
-	_soon_button.pressed.connect(_on_soon_pressed)
+	_controls_button.pressed.connect(_on_controls_pressed)
 	_exit_button.pressed.connect(_on_exit_pressed)
 	_message_ok_button.pressed.connect(_close_message)
 	_single_button.pressed.connect(_on_single_pressed)
 	_coop_button.pressed.connect(_on_coop_pressed)
 	_mode_back_button.pressed.connect(_close_mode_panel)
-	_controls_menu.closed.connect(func(): _config_button.grab_focus())
+	_controls_menu.closed.connect(func(): _controls_button.grab_focus())
 
 func _apply_styles() -> void:
-	for button in [_play_button, _continue_button, _config_button, _soon_button, _exit_button, _message_ok_button, _single_button, _coop_button, _mode_back_button]:
-		button.add_theme_stylebox_override("normal", _button_style(Color(0.07, 0.08, 0.105)))
-		button.add_theme_stylebox_override("hover", _button_style(Color(0.12, 0.16, 0.19)))
-		button.add_theme_stylebox_override("pressed", _button_style(Color(0.04, 0.08, 0.09)))
-		button.add_theme_stylebox_override("disabled", _button_style(Color(0.035, 0.038, 0.045)))
+	for button in [_play_button, _continue_button, _controls_button, _exit_button, _message_ok_button, _single_button, _coop_button, _mode_back_button]:
+		button.add_theme_stylebox_override("normal", _button_style(Color(0, 0, 0)))
+		button.add_theme_stylebox_override("hover", _button_style(Color(0.2, 0, 0)))
+		button.add_theme_stylebox_override("pressed", _button_style(Color(0.4, 0, 0)))
+		button.add_theme_stylebox_override("disabled", _button_style(Color(0.05, 0.05, 0.05)))
 	_message_panel.add_theme_stylebox_override("panel", _panel_style())
 	_mode_panel.add_theme_stylebox_override("panel", _panel_style())
 
@@ -88,13 +86,9 @@ func _on_continue_pressed() -> void:
 	if not GameManager.continue_game():
 		_show_message("No hay partida guardada.")
 
-func _on_config_pressed() -> void:
+func _on_controls_pressed() -> void:
 	AudioManager.play_sfx(&"ui_confirm")
 	_controls_menu.open_menu()
-
-func _on_soon_pressed() -> void:
-	AudioManager.play_sfx(&"ui_confirm")
-	_show_message("Proximamente")
 
 func _on_exit_pressed() -> void:
 	AudioManager.play_sfx(&"ui_back")
@@ -125,8 +119,7 @@ func _close_mode_panel() -> void:
 	_play_button.grab_focus()
 
 func _center_content() -> void:
-	var viewport_size = get_viewport_rect().size
-	_center.position = (viewport_size - _center.size) * 0.5 + Vector2(0, -8)
+	# No auto-centering for _center because we want the new side-by-side layout
 	_center_message()
 	_center_mode_panel()
 
@@ -145,21 +138,17 @@ func _center_mode_panel() -> void:
 func _button_style(color: Color) -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
 	style.bg_color = color
-	style.border_color = Color(0.35, 0.67, 0.63, 0.82)
+	style.border_color = Color(0.79, 0.04, 0.04)
 	style.border_width_left = 1
 	style.border_width_top = 1
 	style.border_width_right = 1
 	style.border_width_bottom = 1
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_left = 4
-	style.corner_radius_bottom_right = 4
 	return style
 
 func _panel_style() -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.035, 0.04, 0.055, 0.97)
-	style.border_color = Color(0.42, 0.78, 0.72, 0.9)
+	style.bg_color = Color(0, 0, 0, 0.95)
+	style.border_color = Color(0.79, 0.04, 0.04)
 	style.border_width_left = 1
 	style.border_width_top = 1
 	style.border_width_right = 1
@@ -184,5 +173,5 @@ func _configure_mode_focus() -> void:
 
 func _set_main_buttons_focus(enabled: bool) -> void:
 	var target_focus_mode = Control.FOCUS_ALL if enabled else Control.FOCUS_NONE
-	for button in [_play_button, _continue_button, _config_button, _soon_button, _exit_button]:
+	for button in [_play_button, _continue_button, _controls_button, _exit_button]:
 		button.focus_mode = target_focus_mode

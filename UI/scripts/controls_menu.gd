@@ -112,22 +112,18 @@ func _refresh() -> void:
 func _apply_styles() -> void:
 	_panel.add_theme_stylebox_override("panel", _panel_style())
 	for button in _buttons.values() + [_reset_button, _back_button]:
-		button.add_theme_stylebox_override("normal", _button_style(Color(0.08, 0.1, 0.13)))
-		button.add_theme_stylebox_override("hover", _button_style(Color(0.13, 0.17, 0.21)))
-		button.add_theme_stylebox_override("pressed", _button_style(Color(0.04, 0.08, 0.10)))
+		button.add_theme_stylebox_override("normal", _button_style(Color(0, 0, 0)))
+		button.add_theme_stylebox_override("hover", _button_style(Color(0.2, 0, 0)))
+		button.add_theme_stylebox_override("pressed", _button_style(Color(0.4, 0, 0)))
 
 func _panel_style() -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.035, 0.04, 0.055, 0.96)
-	style.border_color = Color(0.42, 0.78, 0.72, 0.88)
+	style.bg_color = Color(0, 0, 0, 0.96)
+	style.border_color = Color(0.79, 0.04, 0.04)
 	style.border_width_left = 1
 	style.border_width_top = 1
 	style.border_width_right = 1
 	style.border_width_bottom = 1
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_left = 6
-	style.corner_radius_bottom_right = 6
 	style.content_margin_left = 18
 	style.content_margin_right = 18
 	style.content_margin_top = 14
@@ -137,15 +133,11 @@ func _panel_style() -> StyleBoxFlat:
 func _button_style(color: Color) -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
 	style.bg_color = color
-	style.border_color = Color(0.36, 0.68, 0.64, 0.8)
+	style.border_color = Color(0.79, 0.04, 0.04)
 	style.border_width_left = 1
 	style.border_width_top = 1
 	style.border_width_right = 1
 	style.border_width_bottom = 1
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_left = 4
-	style.corner_radius_bottom_right = 4
 	return style
 
 func _center_panel() -> void:
