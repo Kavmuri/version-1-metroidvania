@@ -19,16 +19,82 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.025, 0.027, 0.035, 1)
+color = Color(0, 0, 0, 1)
 
-[node name="AccentTop" type="ColorRect" parent="."]
+[node name="LightGlow" type="ColorRect" parent="."]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 15
 anchor_right = 1.0
-offset_top = 58.0
-offset_bottom = 59.0
+anchor_bottom = 1.0
 grow_horizontal = 2
-color = Color(0.42, 0.78, 0.72, 0.35)
+grow_vertical = 2
+color = Color(0.15, 0.1, 0.25, 0.2)
+
+[node name="Particles" type="CPUParticles2D" parent="."]
+position = Vector2(321, 380)
+amount = 30
+lifetime = 5.0
+preprocess = 5.0
+speed_scale = 0.6
+emission_shape = 3
+emission_rect_extents = Vector2(320, 1)
+direction = Vector2(0, -1)
+spread = 15.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 30.0
+initial_velocity_max = 60.0
+scale_amount_min = 1.0
+scale_amount_max = 2.5
+color = Color(0.7, 0.4, 0.9, 0.4)
+
+[node name="DecorUpper" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 40.0
+offset_right = 200.0
+offset_bottom = 80.0
+grow_horizontal = 2
+
+[node name="Line" type="ColorRect" parent="DecorUpper"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -0.5
+offset_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.4)
+
+[node name="DecorLower" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -60.0
+offset_right = 150.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Line" type="ColorRect" parent="DecorLower"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -0.5
+offset_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.3)
 
 [node name="Center" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(330, 0)
@@ -41,7 +107,8 @@ theme_override_constants/separation = 9
 
 [node name="Title" type="Label" parent="Center"]
 layout_mode = 2
-text = "TITULO POR DEFINIR"
+theme_override_font_sizes/font_size = 42
+text = "ASHENBOUND"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="Center"]
@@ -61,7 +128,7 @@ text = "Continuar"
 [node name="ConfigButton" type="Button" parent="Center"]
 custom_minimum_size = Vector2(330, 34)
 layout_mode = 2
-text = "Configuracion"
+text = "Controles"
 
 [node name="SoonButton" type="Button" parent="Center"]
 custom_minimum_size = Vector2(330, 34)

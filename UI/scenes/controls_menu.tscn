@@ -11,136 +11,52 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.68)
+color = Color(0, 0, 0, 0.75)
 
 [node name="Panel" type="PanelContainer" parent="."]
-custom_minimum_size = Vector2(392, 286)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -196.0
-offset_top = -143.0
-offset_right = 196.0
-offset_bottom = 143.0
+offset_left = -250.0
+offset_top = -150.0
+offset_right = 250.0
+offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Content" type="VBoxContainer" parent="Panel"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 12
 
 [node name="Title" type="Label" parent="Panel/Content"]
 layout_mode = 2
-text = "Configuracion de controles"
+theme_override_font_sizes/font_size = 24
+text = "Controles"
 horizontal_alignment = 1
 
-[node name="Scroll" type="ScrollContainer" parent="Panel/Content"]
-custom_minimum_size = Vector2(0, 138)
+[node name="ActionSelector" type="OptionButton" parent="Panel/Content"]
+custom_minimum_size = Vector2(200, 32)
 layout_mode = 2
-horizontal_scroll_mode = 0
+size_flags_horizontal = 4
 
-[node name="Rows" type="VBoxContainer" parent="Panel/Content/Scroll"]
+[node name="Keyboard" type="VBoxContainer" parent="Panel/Content"]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="MoveLeftRow" type="HBoxContainer" parent="Panel/Content/Scroll/Rows"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Label" type="Label" parent="Panel/Content/Scroll/Rows/MoveLeftRow"]
-custom_minimum_size = Vector2(138, 24)
-layout_mode = 2
-text = "Mover izquierda"
-vertical_alignment = 1
-
-[node name="ActionButton" type="Button" parent="Panel/Content/Scroll/Rows/MoveLeftRow"]
-custom_minimum_size = Vector2(164, 24)
-layout_mode = 2
-text = "A"
-
-[node name="MoveRightRow" type="HBoxContainer" parent="Panel/Content/Scroll/Rows"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Label" type="Label" parent="Panel/Content/Scroll/Rows/MoveRightRow"]
-custom_minimum_size = Vector2(138, 24)
-layout_mode = 2
-text = "Mover derecha"
-vertical_alignment = 1
-
-[node name="ActionButton" type="Button" parent="Panel/Content/Scroll/Rows/MoveRightRow"]
-custom_minimum_size = Vector2(164, 24)
-layout_mode = 2
-text = "D"
-
-[node name="JumpRow" type="HBoxContainer" parent="Panel/Content/Scroll/Rows"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Label" type="Label" parent="Panel/Content/Scroll/Rows/JumpRow"]
-custom_minimum_size = Vector2(138, 24)
-layout_mode = 2
-text = "Saltar"
-vertical_alignment = 1
-
-[node name="ActionButton" type="Button" parent="Panel/Content/Scroll/Rows/JumpRow"]
-custom_minimum_size = Vector2(164, 24)
-layout_mode = 2
-text = "Space"
-
-[node name="DashRow" type="HBoxContainer" parent="Panel/Content/Scroll/Rows"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Label" type="Label" parent="Panel/Content/Scroll/Rows/DashRow"]
-custom_minimum_size = Vector2(138, 24)
-layout_mode = 2
-text = "Dash"
-vertical_alignment = 1
-
-[node name="ActionButton" type="Button" parent="Panel/Content/Scroll/Rows/DashRow"]
-custom_minimum_size = Vector2(164, 24)
-layout_mode = 2
-text = "F"
-
-[node name="PauseRow" type="HBoxContainer" parent="Panel/Content/Scroll/Rows"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Label" type="Label" parent="Panel/Content/Scroll/Rows/PauseRow"]
-custom_minimum_size = Vector2(138, 24)
-layout_mode = 2
-text = "Pausa"
-vertical_alignment = 1
-
-[node name="ActionButton" type="Button" parent="Panel/Content/Scroll/Rows/PauseRow"]
-custom_minimum_size = Vector2(164, 24)
-layout_mode = 2
-text = "Escape"
-
-[node name="JoyInfo" type="Label" parent="Panel/Content"]
-layout_mode = 2
-text = "Player 2: mando/Joy-Con usa stick o D-Pad y boton B para saltar."
-autowrap_mode = 2
-
 [node name="Status" type="Label" parent="Panel/Content"]
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
+text = "Presiona una tecla para asignar"
+horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="Actions" type="HBoxContainer" parent="Panel/Content"]
 layout_mode = 2
 alignment = 1
-theme_override_constants/separation = 8
-
-[node name="ResetButton" type="Button" parent="Panel/Content/Actions"]
-custom_minimum_size = Vector2(112, 28)
-layout_mode = 2
-text = "Restablecer"
 
 [node name="BackButton" type="Button" parent="Panel/Content/Actions"]
-custom_minimum_size = Vector2(112, 28)
+custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
 text = "Volver"
