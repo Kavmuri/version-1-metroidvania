@@ -144,30 +144,20 @@ func _center_mode_panel() -> void:
 
 func _button_style(color: Color) -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
-	style.bg_color = color
-	style.border_color = Color(0.35, 0.67, 0.63, 0.82)
-	style.border_width_left = 1
-	style.border_width_top = 1
-	style.border_width_right = 1
+	style.bg_color = Color(0, 0, 0, 0)
+	style.border_color = Color(0.8, 0.8, 0.8, 0.5)
 	style.border_width_bottom = 1
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_left = 4
-	style.corner_radius_bottom_right = 4
+	style.draw_center = false
 	return style
 
 func _panel_style() -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.035, 0.04, 0.055, 0.97)
-	style.border_color = Color(0.42, 0.78, 0.72, 0.9)
+	style.bg_color = Color(0, 0, 0, 0.9)
+	style.border_color = Color(1, 1, 1, 0.6)
 	style.border_width_left = 1
 	style.border_width_top = 1
 	style.border_width_right = 1
 	style.border_width_bottom = 1
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_left = 6
-	style.corner_radius_bottom_right = 6
 	style.content_margin_left = 16
 	style.content_margin_right = 16
 	style.content_margin_top = 14

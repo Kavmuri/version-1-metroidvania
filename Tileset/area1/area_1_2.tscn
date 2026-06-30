@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="3_6hnu3"]
 [ext_resource type="Texture2D" uid="uid://bleys7bgpee68" path="res://Background/blue-stars.png" id="4_dbhdx"]
 [ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player1/player.tscn" id="5_6hnu3"]
+[ext_resource type="Script" path="res://Tileset/area1/area_1_2.gd" id="6_script"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tkpsf"]
 texture = ExtResource("1_c7as5")
@@ -890,6 +891,29 @@ texture = ExtResource("4_dbhdx")
 15:9/0 = 0
 16:9/0 = 0
 
+[sub_resource type="Animation" id="Animation_fade_to_black"]
+resource_name = "fade_to_black"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_transition"]
+_data = {
+&"fade_to_black": SubResource("Animation_fade_to_black")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_transition"]
+size = Vector2(64, 400)
+
 [sub_resource type="TileSet" id="TileSet_nlise"]
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_qod7m")
@@ -898,6 +922,7 @@ sources/2 = SubResource("TileSetAtlasSource_jstn8")
 sources/4 = SubResource("TileSetAtlasSource_6hnu3")
 
 [node name="Area1_2" type="Node2D" unique_id=126677261]
+script = ExtResource("6_script")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1140765438]
 
@@ -929,6 +954,30 @@ collision_enabled = false
 
 [node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("5_6hnu3")]
 position = Vector2(2612, -31)
+
+[node name="TransitionLayer" type="CanvasLayer" parent="." unique_id=1917748371]
+
+[node name="ColorRect" type="ColorRect" parent="TransitionLayer" unique_id=143482808]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="TransitionLayer" unique_id=390343677]
+libraries = {
+"": SubResource("AnimationLibrary_transition")
+}
+
+[node name="TransitionTrigger" type="Area2D" parent="." unique_id=2044554083]
+position = Vector2(2941, -31)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TransitionTrigger" unique_id=1272036801]
+shape = SubResource("RectangleShape2D_transition")
 
 [node name="Camera2D2" type="Camera2D" parent="Player1" unique_id=1004154836]
 limit_left = 1309
