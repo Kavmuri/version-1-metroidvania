@@ -16,6 +16,8 @@ var contenedor_bordes: Node2D = null
 var adyacencia: Dictionary = {}
 
 func _ready():
+	AudioManager.play_gameplay_music()
+	AudioManager.play_world_ambience()
 	var seed_actual = GameManager.get_world_seed_for_generation()
 	seed(seed_actual)
 	GameManager.register_world(self, seed_actual)

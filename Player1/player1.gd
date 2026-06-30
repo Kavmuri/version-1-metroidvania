@@ -41,8 +41,10 @@ func handle_jump():
 		return
 
 	if is_on_floor():
+		AudioManager.play_sfx(&"player_jump")
 		velocity.y = JUMP_VELOCITY
 	elif tiene_salto_infinito:
+		AudioManager.play_sfx(&"player_jump")
 		velocity.y = JUMP_VELOCITY
 
 func handle_dash(delta: float):
@@ -56,6 +58,7 @@ func handle_dash(delta: float):
 		var direction = Input.get_axis("move_left", "move_right")
 		if direction == 0:
 			direction = -1.0 if animated_sprite_2d.flip_h else 1.0
+		AudioManager.play_sfx(&"player_dash")
 		dash_direction = direction
 		dash_timer = DASH_TIME
 		velocity.x = dash_direction * DASH_SPEED
