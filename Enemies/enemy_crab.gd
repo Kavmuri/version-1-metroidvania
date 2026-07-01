@@ -3,11 +3,12 @@ extends "res://Enemies/scripts/enemy_base.gd"
 @export var patrol_points: Node
 @export var speed: float = 25.0
 @export var wait_time: float = 3.0
+@export var patrol_distance: float = 96.0
 @export var blocked_wait_time: float = 0.8
 
 @onready var timer: Timer = $Timer
 
-enum State { IDLE, WALK, CHASE }
+enum State { IDLE, WALK }
 
 var current_state: State = State.IDLE
 var direction: Vector2 = Vector2.LEFT
@@ -29,13 +30,10 @@ func _physics_process(delta: float) -> void:
 		_blocked_wait_remaining -= delta
 		current_state = State.IDLE
 		velocity.x = move_toward(velocity.x, 0.0, speed * delta)
-		if _blocked_wait_remaining <= 0.0 and distance_to_player() > detection_range:
+		if _blocked_wait_remaining <= 0.0:
+			_turn_around()
 			_enter_idle_wait()
-	elif distance_to_player() <= detection_range:
-		_chase_player()
 	else:
-		if current_state == State.CHASE:
-			_enter_idle_wait()
 		_update_patrol(delta)
 
 	var tried_to_move: bool = abs(velocity.x) > 0.1
@@ -47,26 +45,21 @@ func _physics_process(delta: float) -> void:
 
 func _load_patrol_points() -> void:
 	point_positions.clear()
-	if patrol_points == null:
-		return
-	for point in patrol_points.get_children():
-		if point is Node2D:
-			point_positions.append((point as Node2D).global_position)
+	if patrol_points != null:
+		for point in patrol_points.get_children():
+			if point is Node2D:
+				point_positions.append((point as Node2D).global_position)
 
-func _chase_player() -> void:
-	if not timer.is_stopped():
-		timer.stop()
-	current_state = State.CHASE
-	var chase_direction := direction_to_player()
-	velocity.x = sign(chase_direction.x) * move_speed
+	if point_positions.is_empty():
+		var patrol_extent: float = max(patrol_distance, 8.0)
+		point_positions = [
+			global_position + Vector2.LEFT * patrol_extent,
+			global_position + Vector2.RIGHT * patrol_extent
+		]
 
 func _update_patrol(delta: float) -> void:
 	if current_state == State.IDLE:
 		velocity.x = move_toward(velocity.x, 0.0, speed * delta)
-		return
-
-	if point_positions.is_empty():
-		_enter_idle_wait()
 		return
 
 	var target := point_positions[current_point_index]
@@ -81,8 +74,6 @@ func _update_patrol(delta: float) -> void:
 
 func _enter_idle_wait() -> void:
 	current_state = State.IDLE
-	if point_positions.is_empty():
-		return
 	if timer.is_stopped():
 		timer.start(wait_time)
 
@@ -92,6 +83,11 @@ func _enter_blocked_wait() -> void:
 	velocity.x = 0.0
 	if not timer.is_stopped():
 		timer.stop()
+
+func _turn_around() -> void:
+	if point_positions.is_empty():
+		return
+	current_point_index = (current_point_index + 1) % point_positions.size()
 
 func _is_blocked_horizontally() -> bool:
 	if not is_on_wall():
@@ -109,6 +105,4 @@ func _play_state_animation() -> void:
 		play_first_available_anim([&"walk", &"idle"])
 
 func _on_timer_timeout() -> void:
-	if distance_to_player() <= detection_range or point_positions.is_empty():
-		return
 	current_state = State.WALK

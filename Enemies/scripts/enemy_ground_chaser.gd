@@ -3,12 +3,19 @@ extends "res://Enemies/scripts/enemy_base.gd"
 @export var patrol_points: Node
 @export var idle_patrol_speed: float = 28.0
 @export var patrol_wait_time: float = 1.0
+@export var melee_attack_range: float = 58.0
+@export var melee_attack_cooldown: float = 1.2
+@export var melee_attack_hit_delay: float = 0.35
 
 var _patrol_timer: Timer
 var _patrol_positions: Array[Vector2] = []
 var _patrol_target_index: int = 0
 var _waiting_for_patrol: bool = false
 var _is_chasing_player: bool = false
+var _attack_cooldown_timer: float = 0.0
+var _attack_hit_timer: float = 0.0
+var _is_attacking: bool = false
+var _attack_damage_applied: bool = false
 
 func _ready() -> void:
 	super._ready()
@@ -21,8 +28,13 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
+	_attack_cooldown_timer = max(_attack_cooldown_timer - delta, 0.0)
 
-	if distance_to_player() <= detection_range:
+	if _is_attacking:
+		_update_attack(delta)
+	elif distance_to_player() <= melee_attack_range and _attack_cooldown_timer <= 0.0:
+		_start_attack()
+	elif distance_to_player() <= detection_range:
 		_chase_player()
 	else:
 		if _is_chasing_player:
@@ -31,7 +43,9 @@ func _physics_process(delta: float) -> void:
 		_update_patrol(delta)
 
 	update_facing_from_velocity()
-	if _waiting_for_patrol:
+	if _is_attacking:
+		play_first_available_anim([&"attack", &"idle"])
+	elif _waiting_for_patrol:
 		play_first_available_anim([&"idle", &"walk"])
 	elif abs(velocity.x) > idle_patrol_speed:
 		play_first_available_anim([&"run", &"walk", &"idle"])
@@ -84,3 +98,35 @@ func _stop_patrol_wait() -> void:
 
 func _on_patrol_timer_timeout() -> void:
 	_waiting_for_patrol = false
+
+func _start_attack() -> void:
+	_is_attacking = true
+	_attack_damage_applied = false
+	_attack_hit_timer = max(melee_attack_hit_delay, 0.0)
+	_attack_cooldown_timer = max(melee_attack_cooldown, 0.01)
+	velocity.x = 0.0
+	_is_chasing_player = false
+	_stop_patrol_wait()
+	if player != null:
+		var direction_x := player.global_position.x - global_position.x
+		if abs(direction_x) > 0.1:
+			facing = 1 if direction_x > 0.0 else -1
+			sprite.flip_h = facing > 0
+	play_first_available_anim([&"attack", &"idle"])
+
+func _update_attack(delta: float) -> void:
+	velocity.x = 0.0
+	_attack_hit_timer = max(_attack_hit_timer - delta, 0.0)
+	if not _attack_damage_applied and _attack_hit_timer <= 0.0:
+		_attack_damage_applied = true
+		if distance_to_player() <= melee_attack_range + 10.0 and player is Node2D:
+			_deal_contact_damage(player)
+
+	if sprite.sprite_frames != null and sprite.sprite_frames.has_animation(&"attack"):
+		var attack_frame_count: float = float(sprite.sprite_frames.get_frame_count(&"attack"))
+		var attack_speed: float = maxf(sprite.sprite_frames.get_animation_speed(&"attack"), 0.01)
+		var attack_length: float = attack_frame_count / attack_speed
+		if _attack_cooldown_timer <= max(melee_attack_cooldown - attack_length, 0.0):
+			_is_attacking = false
+	elif _attack_damage_applied:
+		_is_attacking = false

@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://bgtshs8y1tng7" path="res://Levels/test_levels/enemy_arena.gd" id="2_script"]
 [ext_resource type="PackedScene" uid="uid://dgqumuicedl0p" path="res://Background/parallax_background.tscn" id="3_parallax"]
 [ext_resource type="TileSet" uid="uid://dwoae3wqtlmvi" path="res://Tileset/area1/tileset.tres" id="4_6ggqj"]
+[ext_resource type="PackedScene" path="res://UI/scenes/gameplay_hud.tscn" id="5_hud"]
 
 [node name="EnemyArena" type="Node2D" unique_id=474683767]
 script = ExtResource("2_script")
@@ -52,3 +53,5 @@ horizontal_alignment = 1
 [node name="EnemySelector" type="OptionButton" parent="UI/Panel/Content" unique_id=536445130]
 custom_minimum_size = Vector2(280, 32)
 layout_mode = 2
+
+[node name="GameplayHUD" parent="." instance=ExtResource("5_hud")]

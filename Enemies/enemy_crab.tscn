@@ -76,9 +76,6 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_0xvsd"]
 radius = 13.0
 
-[sub_resource type="CircleShape2D" id="ContactShape"]
-radius = 14.0
-
 [node name="EnemyCrab" type="CharacterBody2D" unique_id=1681054994 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_bihbv")
@@ -100,13 +97,4 @@ debug_color = Color(0.86217195, 0.54204893, 1, 0.41960785)
 wait_time = 3.0
 one_shot = true
 
-[node name="ContactArea" type="Area2D" parent="."]
-collision_layer = 4
-collision_mask = 2
-
-[node name="ContactShape" type="CollisionShape2D" parent="ContactArea"]
-position = Vector2(0, -13)
-shape = SubResource("ContactShape")
-
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
-[connection signal="body_entered" from="ContactArea" to="." method="_on_contact_body_entered"]

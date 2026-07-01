@@ -6,8 +6,10 @@ extends CharacterBody2D
 @export var gravity: float = 1000.0
 @export var detection_range: float = 360.0
 @export var uses_gravity: bool = true
+@export var contact_damage_enabled: bool = true
 @export var contact_damage_interval: float = 0.6
 @export var contact_groups: Array[StringName] = [&"Player", &"player"]
+@export var flip_h_when_facing_right: bool = true
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var contact_area: Area2D = get_node_or_null("ContactArea") as Area2D
@@ -64,7 +66,7 @@ func direction_to_player() -> Vector2:
 func update_facing_from_velocity() -> void:
 	if abs(velocity.x) > 0.1:
 		facing = 1 if velocity.x > 0 else -1
-		sprite.flip_h = facing > 0
+		sprite.flip_h = facing > 0 if flip_h_when_facing_right else facing < 0
 
 func play_anim(anim_name: StringName) -> void:
 	if sprite.sprite_frames != null and sprite.sprite_frames.has_animation(anim_name):
@@ -113,7 +115,7 @@ func _on_contact_body_entered(body: Node2D) -> void:
 	_try_damage_contact_body(body)
 
 func _try_damage_contact_body(body: Node2D) -> void:
-	if body == null or not _is_contact_damage_target(body):
+	if not contact_damage_enabled or body == null or not _is_contact_damage_target(body):
 		return
 
 	var body_id := body.get_instance_id()

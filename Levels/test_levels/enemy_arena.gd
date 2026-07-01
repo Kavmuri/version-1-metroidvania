@@ -19,6 +19,7 @@ const ENEMY_CATALOG := [
 @onready var _enemy_spawn: Marker2D = $EnemySpawn
 @onready var _ui: CanvasLayer = $UI
 @onready var _enemy_selector: OptionButton = $UI/Panel/Content/EnemySelector
+@onready var _gameplay_hud: CanvasLayer = $GameplayHUD
 
 var _selected_enemy_index := 0
 var _spawned_enemy: Node2D
@@ -26,6 +27,8 @@ var _spawned_enemy: Node2D
 func _ready() -> void:
 	get_tree().paused = false
 	GameManager.register_player1(_player)
+	if _gameplay_hud.has_method("setup"):
+		_gameplay_hud.setup(_player)
 	_populate_enemy_selector()
 	_enemy_selector.item_selected.connect(_on_enemy_selected)
 	_ui.visible = false

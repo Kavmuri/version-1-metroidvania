@@ -67,6 +67,7 @@ func iniciar(generador: Node2D):
 		GameManager.register_player2(player2_guardado)
 
 	GameManager.apply_pending_positions(jugador, player2_guardado)
+	GameManager.save_initial_spawn_if_needed()
 
 	var hud_scene: PackedScene = escena_hud if escena_hud != null else DEFAULT_HUD_SCENE
 	if hud_scene != null:

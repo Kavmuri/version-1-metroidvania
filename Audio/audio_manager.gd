@@ -1,6 +1,6 @@
 extends Node
 
-const MENU_MUSIC := preload("res://Audio/music/menu_lobby.ogg")
+const MENU_MUSIC := preload("res://Audio/music/menu_main.ogg")
 const GAMEPLAY_MUSIC := preload("res://Audio/music/gameplay_loop.ogg")
 const WORLD_AMBIENCE := preload("res://Audio/ambience/cave_ambience.ogg")
 
@@ -9,6 +9,9 @@ const SFX_STREAMS := {
 	&"ui_back": preload("res://Audio/sfx/ui_back.ogg"),
 	&"player_jump": preload("res://Audio/sfx/player_jump.ogg"),
 	&"player_dash": preload("res://Audio/sfx/player_dash.ogg"),
+	&"player_shoot": preload("res://Audio/sfx/player_shoot.ogg"),
+	&"player_hurt": preload("res://Audio/sfx/player_hurt.ogg"),
+	&"death_retry": preload("res://Audio/sfx/death_retry.ogg"),
 	&"enemy_hit": preload("res://Audio/sfx/enemy_hit.ogg"),
 	&"enemy_death": preload("res://Audio/sfx/enemy_death.ogg")
 }

@@ -213,9 +213,13 @@ size = Vector2(46, 60)
 collision_layer = 4
 script = ExtResource("1_script")
 max_health = 8
-contact_damage = 2
+contact_damage = 1
+contact_damage_enabled = false
 move_speed = 42
 detection_range = 350
+melee_attack_range = 62.0
+melee_attack_cooldown = 1.25
+melee_attack_hit_delay = 0.35
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=969859232]
 position = Vector2(0, -38)
