@@ -10,13 +10,13 @@ func _physics_process(delta: float) -> void:
 	jump_timer -= delta
 	if is_on_floor():
 		velocity.x = move_toward(velocity.x, 0.0, move_speed * delta)
-		play_anim("idle")
+		play_first_available_anim([&"idle", &"walk"])
 		if jump_timer <= 0.0 and distance_to_player() <= detection_range:
 			var dir := direction_to_player()
 			velocity.x = sign(dir.x) * horizontal_jump_speed
 			velocity.y = jump_velocity
 			jump_timer = jump_cooldown
 	else:
-		play_anim("jump")
+		play_first_available_anim([&"jump", &"walk", &"idle"])
 	update_facing_from_velocity()
 	move_and_slide()

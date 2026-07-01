@@ -19,5 +19,8 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity = Vector2(facing * move_speed * 0.35, sin(time_alive * float_speed) * float_amplitude)
 	update_facing_from_velocity()
-	play_anim("chase" if distance_to_player() <= detection_range else "idle")
+	if distance_to_player() <= detection_range:
+		play_first_available_anim([&"chase", &"walk", &"idle"])
+	else:
+		play_first_available_anim([&"idle", &"chase"])
 	move_and_slide()

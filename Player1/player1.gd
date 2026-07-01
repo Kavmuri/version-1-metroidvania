@@ -13,15 +13,30 @@ const JUMP_VELOCITY = -400.0
 const GRAVITY = 1200.0
 const DASH_SPEED = 700.0
 const DASH_TIME = 0.16
+const HURT_ANIMATION_TIME = 0.25
+
+@export var max_health: int = 5
+@export var invulnerability_time: float = 0.7
 
 enum State {Idle, Run, Jump}
 var current_state : State = State.Idle
+var health: int
 var tiene_salto_infinito: bool = false
 var tiene_dash: bool = false
 var dash_timer: float = 0.0
 var dash_direction: float = 1.0
+var invulnerability_timer: float = 0.0
+var hurt_timer: float = 0.0
+
+func _ready() -> void:
+	health = max_health
+	add_to_group(&"Player")
+	add_to_group(&"player")
 
 func _physics_process(delta: float):
+	invulnerability_timer = max(invulnerability_timer - delta, 0.0)
+	hurt_timer = max(hurt_timer - delta, 0.0)
+
 	apply_gravity(delta)
 	handle_jump()
 	handle_dash(delta)
@@ -93,6 +108,21 @@ func set_dash_activo(activo: bool) -> void:
 	if not activo:
 		dash_timer = 0.0
 
+func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
+	if invulnerability_timer > 0.0 or health <= 0:
+		return
+
+	health = max(health - cantidad, 0)
+	invulnerability_timer = invulnerability_time
+	hurt_timer = HURT_ANIMATION_TIME
+	if fuente_pos != Vector2.ZERO:
+		var knockback_direction := sign(global_position.x - fuente_pos.x)
+		if knockback_direction != 0.0:
+			velocity.x = knockback_direction * 180.0
+
+func receive_damage(amount: int = 1, source_pos: Vector2 = Vector2.ZERO) -> void:
+	recibir_daño(amount, source_pos)
+
 func update_state():
 	if not is_on_floor():
 		current_state = State.Jump
@@ -102,6 +132,10 @@ func update_state():
 		current_state = State.Idle
 
 func update_animations():
+	if hurt_timer > 0.0:
+		animated_sprite_2d.play("hurt")
+		return
+
 	match current_state:
 		State.Idle:
 			animated_sprite_2d.play("idle")

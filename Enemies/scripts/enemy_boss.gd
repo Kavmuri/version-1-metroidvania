@@ -16,11 +16,11 @@ func _physics_process(delta: float) -> void:
 		velocity.x = sign(dir.x) * boss_walk_speed
 		update_facing_from_velocity()
 		if attack_timer <= 0.0:
-			play_anim("attack")
+			play_first_available_anim([&"attack", &"idle"])
 			attack_timer = attack_interval
 		else:
-			play_anim("walk")
+			play_first_available_anim([&"walk", &"idle"])
 	else:
 		velocity.x = 0
-		play_anim("idle")
+		play_first_available_anim([&"idle", &"walk"])
 	move_and_slide()

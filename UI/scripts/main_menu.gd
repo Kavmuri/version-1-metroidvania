@@ -1,5 +1,7 @@
 extends Control
 
+const ENEMY_ARENA_HOLD_SECONDS := 1.0
+
 @onready var _center: VBoxContainer = $Center
 @onready var _play_button: Button = $Center/PlayButton
 @onready var _continue_button: Button = $Center/ContinueButton
@@ -14,6 +16,9 @@ extends Control
 @onready var _coop_button: Button = $ModePanel/Content/CoopButton
 @onready var _mode_back_button: Button = $ModePanel/Content/BackButton
 @onready var _controls_menu: CanvasLayer = $ControlsMenu
+
+var _enemy_arena_hold_time := 0.0
+var _enemy_arena_opened := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -33,6 +38,20 @@ func _ready() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_VISIBILITY_CHANGED and visible:
 		_refresh_continue()
+
+func _process(delta: float) -> void:
+	if _enemy_arena_opened:
+		return
+	if _message_panel.visible or _mode_panel.visible or _controls_menu.visible:
+		_enemy_arena_hold_time = 0.0
+		return
+	if Input.is_key_pressed(KEY_M):
+		_enemy_arena_hold_time += delta
+		if _enemy_arena_hold_time >= ENEMY_ARENA_HOLD_SECONDS:
+			_enemy_arena_opened = true
+			GameManager.open_enemy_arena()
+	else:
+		_enemy_arena_hold_time = 0.0
 
 func _connect_buttons() -> void:
 	_play_button.pressed.connect(_on_play_pressed)

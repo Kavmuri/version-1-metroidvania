@@ -2,6 +2,7 @@ extends Node
 
 const MAIN_MENU_SCENE := "res://UI/scenes/main_menu.tscn"
 const WORLD_SCENE := "res://Levels/world_procedural.tscn"
+const ENEMY_ARENA_SCENE := "res://Levels/test_levels/enemy_arena.tscn"
 const SAVE_PATH := "user://save_game.cfg"
 const CONTROLS_PATH := "user://controls.cfg"
 
@@ -74,6 +75,14 @@ func go_to_main_menu() -> void:
 	current_player1 = null
 	current_player2 = null
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
+
+func open_enemy_arena() -> void:
+	get_tree().paused = false
+	pending_load_data.clear()
+	current_world = null
+	current_player1 = null
+	current_player2 = null
+	get_tree().change_scene_to_file(ENEMY_ARENA_SCENE)
 
 func has_save_game() -> bool:
 	return not _read_save_data().is_empty()
