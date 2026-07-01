@@ -52,6 +52,7 @@ func _apply_styles() -> void:
 		button.add_theme_stylebox_override("hover", _button_style(Color(0.12, 0.16, 0.19)))
 		button.add_theme_stylebox_override("pressed", _button_style(Color(0.04, 0.08, 0.09)))
 		button.add_theme_stylebox_override("disabled", _button_style(Color(0.035, 0.038, 0.045)))
+		button.add_theme_stylebox_override("focus", _button_style(Color(0, 0, 0, 0)))
 	_message_panel.add_theme_stylebox_override("panel", _panel_style())
 	_mode_panel.add_theme_stylebox_override("panel", _panel_style())
 
@@ -142,11 +143,10 @@ func _center_mode_panel() -> void:
 	var viewport_size = get_viewport_rect().size
 	_mode_panel.position = (viewport_size - _mode_panel.size) * 0.5
 
-func _button_style(color: Color) -> StyleBoxFlat:
+func _button_style(_color: Color) -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
 	style.bg_color = Color(0, 0, 0, 0)
 	style.border_color = Color(0.8, 0.8, 0.8, 0.5)
-	style.border_width_bottom = 1
 	style.draw_center = false
 	return style
 
