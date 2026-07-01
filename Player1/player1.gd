@@ -116,7 +116,7 @@ func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> voi
 	invulnerability_timer = invulnerability_time
 	hurt_timer = HURT_ANIMATION_TIME
 	if fuente_pos != Vector2.ZERO:
-		var knockback_direction := sign(global_position.x - fuente_pos.x)
+		var knockback_direction: float = sign(global_position.x - fuente_pos.x)
 		if knockback_direction != 0.0:
 			velocity.x = knockback_direction * 180.0
 

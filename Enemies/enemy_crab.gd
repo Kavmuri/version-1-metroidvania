@@ -38,7 +38,7 @@ func _physics_process(delta: float) -> void:
 			_enter_idle_wait()
 		_update_patrol(delta)
 
-	var tried_to_move := abs(velocity.x) > 0.1
+	var tried_to_move: bool = abs(velocity.x) > 0.1
 	update_facing_from_velocity()
 	_play_state_animation()
 	move_and_slide()
