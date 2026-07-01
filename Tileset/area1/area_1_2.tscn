@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="3_6hnu3"]
 [ext_resource type="Texture2D" uid="uid://bleys7bgpee68" path="res://Background/blue-stars.png" id="4_dbhdx"]
 [ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player1/player.tscn" id="5_6hnu3"]
-[ext_resource type="Script" path="res://Tileset/area1/area_1_2.gd" id="6_script"]
+[ext_resource type="Script" uid="uid://cm5oillprst8u" path="res://Tileset/area1/area_1_2.gd" id="6_script"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tkpsf"]
 texture = ExtResource("1_c7as5")
@@ -412,7 +412,7 @@ sources/0 = SubResource("TileSetAtlasSource_tkpsf")
 sources/1 = SubResource("TileSetAtlasSource_v2f38")
 sources/2 = SubResource("TileSetAtlasSource_mkj8g")
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qod7m"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gvit1"]
 texture = ExtResource("1_c7as5")
 2:1/0 = 0
 2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
@@ -627,7 +627,7 @@ texture = ExtResource("1_c7as5")
 8:6/0 = 0
 13:1/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_04rff"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qod7m"]
 texture = ExtResource("2_dbhdx")
 4:1/0 = 0
 4:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
@@ -684,7 +684,7 @@ texture = ExtResource("2_dbhdx")
 8:7/0 = 0
 9:7/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jstn8"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_04rff"]
 texture = ExtResource("3_6hnu3")
 2:1/0 = 0
 3:1/0 = 0
@@ -813,7 +813,7 @@ texture = ExtResource("3_6hnu3")
 10:9/0 = 0
 10:9/0/physics_layer_0/polygon_0/points = PackedVector2Array(1.6379452, -3.8491716, 3.9310694, -5.978501, 4.1767607, -8, -4.340555, -8, -2.047432, -3.6034803, -1.7198429, -2.70261, 1.3103561, -2.70261)
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6hnu3"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jstn8"]
 texture = ExtResource("4_dbhdx")
 3:0/0 = 0
 6:0/0 = 0
@@ -891,6 +891,13 @@ texture = ExtResource("4_dbhdx")
 15:9/0 = 0
 16:9/0 = 0
 
+[sub_resource type="TileSet" id="TileSet_nlise"]
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_gvit1")
+sources/1 = SubResource("TileSetAtlasSource_qod7m")
+sources/2 = SubResource("TileSetAtlasSource_04rff")
+sources/4 = SubResource("TileSetAtlasSource_jstn8")
+
 [sub_resource type="Animation" id="Animation_fade_to_black"]
 resource_name = "fade_to_black"
 tracks/0/type = "value"
@@ -913,13 +920,6 @@ _data = {
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_transition"]
 size = Vector2(64, 400)
-
-[sub_resource type="TileSet" id="TileSet_nlise"]
-physics_layer_0/collision_layer = 1
-sources/0 = SubResource("TileSetAtlasSource_qod7m")
-sources/1 = SubResource("TileSetAtlasSource_04rff")
-sources/2 = SubResource("TileSetAtlasSource_jstn8")
-sources/4 = SubResource("TileSetAtlasSource_6hnu3")
 
 [node name="Area1_2" type="Node2D" unique_id=126677261]
 script = ExtResource("6_script")
@@ -955,30 +955,6 @@ collision_enabled = false
 [node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("5_6hnu3")]
 position = Vector2(2612, -31)
 
-[node name="TransitionLayer" type="CanvasLayer" parent="." unique_id=1917748371]
-
-[node name="ColorRect" type="ColorRect" parent="TransitionLayer" unique_id=143482808]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-color = Color(0, 0, 0, 0)
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="TransitionLayer" unique_id=390343677]
-libraries = {
-"": SubResource("AnimationLibrary_transition")
-}
-
-[node name="TransitionTrigger" type="Area2D" parent="." unique_id=2044554083]
-position = Vector2(2941, -31)
-collision_layer = 0
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TransitionTrigger" unique_id=1272036801]
-shape = SubResource("RectangleShape2D_transition")
-
 [node name="Camera2D2" type="Camera2D" parent="Player1" unique_id=1004154836]
 limit_left = 1309
 limit_top = -10000054
@@ -992,3 +968,30 @@ drag_left_margin = 0.1
 drag_top_margin = 0.1
 drag_right_margin = 0.1
 drag_bottom_margin = 0.1
+
+[node name="TransitionLayer" type="CanvasLayer" parent="." unique_id=1917748371]
+
+[node name="ColorRect" type="ColorRect" parent="TransitionLayer" unique_id=143482808]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 882.0
+offset_top = -86.0
+offset_right = 882.0
+offset_bottom = -86.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+metadata/_edit_use_anchors_ = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="TransitionLayer" unique_id=390343677]
+libraries/ = SubResource("AnimationLibrary_transition")
+
+[node name="TransitionTrigger" type="Area2D" parent="." unique_id=2044554083]
+position = Vector2(3823, -117)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TransitionTrigger" unique_id=1272036801]
+shape = SubResource("RectangleShape2D_transition")
