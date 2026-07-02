@@ -2,6 +2,8 @@ extends Node
 
 const MAIN_MENU_SCENE := "res://UI/scenes/main_menu.tscn"
 const WORLD_SCENE := "res://Levels/world_procedural.tscn"
+const ENEMY_ARENA_SCENE := "res://Levels/test_levels/enemy_arena.tscn"
+const DEATH_SCREEN_SCENE := preload("res://UI/scenes/death_screen.tscn")
 const SAVE_PATH := "user://save_game.cfg"
 const CONTROLS_PATH := "user://controls.cfg"
 
@@ -10,6 +12,7 @@ const DEFAULT_KEYS := {
 	"move_right": KEY_D,
 	"jump": KEY_SPACE,
 	"dash": KEY_F,
+	"attack": MOUSE_BUTTON_LEFT,
 	"pause_game": KEY_ESCAPE
 }
 
@@ -34,6 +37,8 @@ var current_player2: Node2D = null
 var current_world_seed: int = 0
 var current_game_mode: String = "single"
 var pending_load_data: Dictionary = {}
+var _death_screen: CanvasLayer = null
+var _is_restoring_save := false
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color(0.44, 0.12, 0.53, 1.00))
@@ -43,6 +48,7 @@ func _ready() -> void:
 func start_new_game(mode: String = "single") -> void:
 	get_tree().paused = false
 	pending_load_data.clear()
+	_is_restoring_save = false
 	current_game_mode = mode
 	current_world_seed = _make_seed()
 	current_world = null
@@ -56,7 +62,9 @@ func continue_game() -> bool:
 		return false
 
 	get_tree().paused = false
+	_clear_death_screen()
 	pending_load_data = data
+	_is_restoring_save = true
 	current_game_mode = str(data.get("game_mode", "coop" if bool(data.get("player2_exists", false)) else "single"))
 	current_world_seed = int(data.get("world_seed", _make_seed()))
 	current_world = null
@@ -69,11 +77,21 @@ func continue_game() -> bool:
 
 func go_to_main_menu() -> void:
 	get_tree().paused = false
+	_clear_death_screen()
 	pending_load_data.clear()
 	current_world = null
 	current_player1 = null
 	current_player2 = null
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
+
+func open_enemy_arena() -> void:
+	get_tree().paused = false
+	_clear_death_screen()
+	pending_load_data.clear()
+	current_world = null
+	current_player1 = null
+	current_player2 = null
+	get_tree().change_scene_to_file(ENEMY_ARENA_SCENE)
 
 func has_save_game() -> bool:
 	return not _read_save_data().is_empty()
@@ -93,6 +111,23 @@ func save_game() -> bool:
 	if player2 != null:
 		cfg.set_value("game", "player2_position", player2.global_position)
 	return cfg.save(SAVE_PATH) == OK
+
+func save_initial_spawn_if_needed() -> void:
+	if _is_restoring_save:
+		_is_restoring_save = false
+		return
+	if not pending_load_data.is_empty():
+		return
+	save_game()
+
+func show_death_screen() -> void:
+	if _death_screen != null and is_instance_valid(_death_screen):
+		return
+	get_tree().paused = true
+	_death_screen = DEATH_SCREEN_SCENE.instantiate()
+	get_tree().root.add_child(_death_screen)
+	_death_screen.continue_requested.connect(_on_death_continue_requested)
+	_death_screen.exit_requested.connect(_on_death_exit_requested)
 
 func get_world_seed_for_generation() -> int:
 	if pending_load_data.has("world_seed"):
@@ -126,14 +161,30 @@ func apply_pending_positions(player1: Node2D, player2: Node2D = null) -> void:
 		player2.global_position = pending_load_data["player2_position"]
 	pending_load_data.clear()
 
+func _on_death_continue_requested() -> void:
+	continue_game()
+
+func _on_death_exit_requested() -> void:
+	go_to_main_menu()
+
+func _clear_death_screen() -> void:
+	if _death_screen != null and is_instance_valid(_death_screen):
+		_death_screen.queue_free()
+	_death_screen = null
+
 func set_keyboard_action(action_name: String, physical_keycode: int) -> void:
 	if not is_keyboard_action_allowed(action_name, physical_keycode):
 		physical_keycode = DEFAULT_KEYS.get(action_name, physical_keycode)
 	_ensure_action(action_name)
-	var event = InputEventKey.new()
-	event.physical_keycode = physical_keycode
 	InputMap.action_erase_events(action_name)
-	InputMap.action_add_event(action_name, event)
+	if action_name == "attack":
+		var mouse_event = InputEventMouseButton.new()
+		mouse_event.button_index = MOUSE_BUTTON_LEFT
+		InputMap.action_add_event(action_name, mouse_event)
+	else:
+		var event = InputEventKey.new()
+		event.physical_keycode = physical_keycode
+		InputMap.action_add_event(action_name, event)
 	if action_name == "pause_game":
 		var joy_event = InputEventJoypadButton.new()
 		joy_event.button_index = 6
@@ -224,6 +275,8 @@ func _make_seed() -> int:
 func _ensure_control_actions() -> void:
 	for action_name in DEFAULT_KEYS.keys():
 		_ensure_action(action_name)
+		if InputMap.action_get_events(action_name).is_empty():
+			set_keyboard_action(action_name, DEFAULT_KEYS[action_name])
 	if InputMap.action_get_events("pause_game").is_empty():
 		set_keyboard_action("pause_game", KEY_ESCAPE)
 	_apply_ui_navigation_actions()

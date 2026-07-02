@@ -1,117 +1,108 @@
-extends CharacterBody2D
+extends "res://Enemies/scripts/enemy_base.gd"
 
+@export var patrol_points: Node
+@export var speed: float = 25.0
+@export var wait_time: float = 3.0
+@export var patrol_distance: float = 96.0
+@export var blocked_wait_time: float = 0.8
 
-@export var patrol_points : Node
-@export var speed : int = 25
-@export var wait_time : int = 3
-
-@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var timer: Timer = $Timer
 
+enum State { IDLE, WALK }
 
-const GRAVITY = 1000
+var current_state: State = State.IDLE
+var direction: Vector2 = Vector2.LEFT
+var point_positions: Array[Vector2] = []
+var current_point_index: int = 0
+var _blocked_wait_remaining: float = 0.0
 
-
-
-enum State {Idle, Walk}
-
-var current_state : State
-var direction : Vector2 = Vector2.LEFT
-var number_of_points : int
-var point_positions : Array[Vector2]
-var current_point : Vector2
-var current_point_positions : int = 0
-var can_walk : bool = false
-
-
-func _ready():
-	if patrol_points != null:
-		number_of_points = patrol_points.get_children().size()
-		for point in patrol_points.get_children():
-			point_positions.append(point.global_position)
-		if number_of_points > 0:
-			current_point = point_positions[current_point_positions]
-	else:
-		print("No patrol points")
+func _ready() -> void:
+	_load_patrol_points()
+	timer.one_shot = true
 	timer.wait_time = wait_time
+	super._ready()
+	_enter_idle_wait()
 
-	current_state = State.Idle
+func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
 
-	if number_of_points > 0:
-		timer.start()
+	if _blocked_wait_remaining > 0.0:
+		_blocked_wait_remaining -= delta
+		current_state = State.IDLE
+		velocity.x = move_toward(velocity.x, 0.0, speed * delta)
+		if _blocked_wait_remaining <= 0.0:
+			_turn_around()
+			_enter_idle_wait()
+	else:
+		_update_patrol(delta)
 
-func _physics_process(delta):
-	enemy_gravity(delta)
-
-
-	match current_state:
-		State.Idle:
-			enemy_idle(delta)
-
-		State.Walk:
-			enemy_walk(delta)
-
+	var tried_to_move: bool = abs(velocity.x) > 0.1
+	update_facing_from_velocity()
+	_play_state_animation()
 	move_and_slide()
-	enemy_animations()
+	if tried_to_move and _is_blocked_horizontally():
+		_enter_blocked_wait()
 
+func _load_patrol_points() -> void:
+	point_positions.clear()
+	if patrol_points != null:
+		for point in patrol_points.get_children():
+			if point is Node2D:
+				point_positions.append((point as Node2D).global_position)
 
-func enemy_gravity(delta):
-	if not is_on_floor():
-		velocity.y += GRAVITY * delta
+	if point_positions.is_empty():
+		var patrol_extent: float = max(patrol_distance, 8.0)
+		point_positions = [
+			global_position + Vector2.LEFT * patrol_extent,
+			global_position + Vector2.RIGHT * patrol_extent
+		]
 
-
-func enemy_idle(delta):
-	velocity.x = move_toward(velocity.x,0, speed * delta)
-
-
-func enemy_walk(_delta):
-	if number_of_points == 0:
-		current_state = State.Idle
-		velocity.x = 0
+func _update_patrol(delta: float) -> void:
+	if current_state == State.IDLE:
+		velocity.x = move_toward(velocity.x, 0.0, speed * delta)
 		return
 
-	var distance = abs(position.x - current_point.x)
-	if distance > 0.5:
-		velocity.x = direction.x * speed
-
-
-
-	else:
-		current_point_positions += 1
-
-		if current_point_positions >= number_of_points:
-			current_point_positions = 0
-
-		current_point = point_positions[current_point_positions]
-
-
-
-		current_state = State.Idle
-		can_walk = false
-		timer.start()
-
-
-	if current_point.x > position.x:
-		direction = Vector2.RIGHT
-
-	else:
-		direction = Vector2.LEFT
-	animated_sprite_2d.flip_h = direction.x > 0
-
-
-
-func enemy_animations():
-	if current_state == State.Idle:
-		animated_sprite_2d.play("idle")
-
-	elif current_state == State.Walk:
-		animated_sprite_2d.play("walk")
-
-
-func _on_timer_timeout():
-	if number_of_points == 0:
-		current_state = State.Idle
+	var target := point_positions[current_point_index]
+	var distance_x := target.x - global_position.x
+	if abs(distance_x) <= 2.0:
+		current_point_index = (current_point_index + 1) % point_positions.size()
+		_enter_idle_wait()
 		return
 
-	can_walk = true
-	current_state = State.Walk
+	direction = Vector2.RIGHT if distance_x > 0.0 else Vector2.LEFT
+	velocity.x = direction.x * speed
+
+func _enter_idle_wait() -> void:
+	current_state = State.IDLE
+	if timer.is_stopped():
+		timer.start(wait_time)
+
+func _enter_blocked_wait() -> void:
+	current_state = State.IDLE
+	_blocked_wait_remaining = blocked_wait_time
+	velocity.x = 0.0
+	if not timer.is_stopped():
+		timer.stop()
+
+func _turn_around() -> void:
+	if point_positions.is_empty():
+		return
+	current_point_index = (current_point_index + 1) % point_positions.size()
+
+func _is_blocked_horizontally() -> bool:
+	if not is_on_wall():
+		return false
+	for collision_index in get_slide_collision_count():
+		var collision := get_slide_collision(collision_index)
+		if abs(collision.get_normal().x) > 0.6:
+			return true
+	return false
+
+func _play_state_animation() -> void:
+	if current_state == State.IDLE:
+		play_first_available_anim([&"idle", &"walk"])
+	else:
+		play_first_available_anim([&"walk", &"idle"])
+
+func _on_timer_timeout() -> void:
+	current_state = State.WALK

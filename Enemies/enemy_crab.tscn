@@ -76,7 +76,8 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_0xvsd"]
 radius = 13.0
 
-[node name="EnemyCrab" type="CharacterBody2D" unique_id=1681054994]
+[node name="EnemyCrab" type="CharacterBody2D" unique_id=1681054994 groups=["enemy"]]
+collision_layer = 4
 script = ExtResource("1_bihbv")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1985894946]
@@ -94,5 +95,6 @@ debug_color = Color(0.86217195, 0.54204893, 1, 0.41960785)
 
 [node name="Timer" type="Timer" parent="." unique_id=869344980]
 wait_time = 3.0
+one_shot = true
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

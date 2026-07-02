@@ -14,15 +14,15 @@ func _physics_process(delta: float) -> void:
 		sprite.flip_h = facing > 0
 		if dist < keep_distance:
 			velocity.x = -sign(dir.x) * move_speed
-			play_anim("walk")
+			play_first_available_anim([&"walk", &"idle"])
 		else:
 			velocity.x = 0
 			if cast_timer <= 0.0:
-				play_anim("attack")
+				play_first_available_anim([&"attack", &"idle"])
 				cast_timer = cast_interval
 			else:
-				play_anim("idle")
+				play_first_available_anim([&"idle", &"walk"])
 	else:
 		velocity.x = 0
-		play_anim("idle")
+		play_first_available_anim([&"idle", &"walk"])
 	move_and_slide()

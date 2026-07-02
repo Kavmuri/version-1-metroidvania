@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bmy7kg6ynmcv5" path="res://Player1/player-run-shoot.png" id="8_vipk3"]
 [ext_resource type="Texture2D" uid="uid://do2dpil7w43ff" path="res://Player1/player-shoot-up.png" id="9_yxuh3"]
 [ext_resource type="Texture2D" uid="uid://bx3nmv3c4clgj" path="res://Player1/player-stand.png" id="10_l2bat"]
+[ext_resource type="PackedScene" path="res://Player1/player_projectile.tscn" id="11_projectile"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_spprn"]
 atlas = ExtResource("2_sg1ih")
@@ -331,6 +332,7 @@ height = 42.0
 [node name="Player1" type="CharacterBody2D" unique_id=1444006201]
 collision_layer = 2
 script = ExtResource("1_btcbx")
+projectile_scene = ExtResource("11_projectile")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1201985409]
 position = Vector2(0, -24)

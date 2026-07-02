@@ -112,6 +112,7 @@ script = ExtResource("1_script")
 max_health = 4
 move_speed = 58
 detection_range = 340
+flip_h_when_facing_right = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=344535587]
 position = Vector2(0, -22)
