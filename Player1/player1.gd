@@ -15,6 +15,7 @@ const DASH_SPEED = 700.0
 const DASH_TIME = 0.16
 const HURT_ANIMATION_TIME = 0.25
 const SHOOT_ANIMATION_TIME = 1.0
+const WALL_CLING_FALL_SPEED = 32.0
 
 @export var max_health: int = 3
 @export var invulnerability_time: float = 1.2
@@ -24,7 +25,7 @@ const SHOOT_ANIMATION_TIME = 1.0
 @export var projectile_spawn_offset: Vector2 = Vector2(32, -24)
 @export_enum("keyboard", "gamepad", "both") var input_mode: String = "both"
 
-enum State {Idle, Run, Jump}
+enum State {Idle, Run, Jump, Duck, Cling}
 var current_state : State = State.Idle
 var health: int
 var tiene_salto_infinito: bool = false
@@ -36,6 +37,8 @@ var hurt_timer: float = 0.0
 var attack_timer: float = 0.0
 var shoot_animation_timer: float = 0.0
 var is_dead := false
+var is_crouching := false
+var is_clinging := false
 
 func _ready() -> void:
 	health = max_health
@@ -53,6 +56,8 @@ func _physics_process(delta: float):
 	attack_timer = max(attack_timer - delta, 0.0)
 	shoot_animation_timer = max(shoot_animation_timer - delta, 0.0)
 	_update_invulnerability_blink()
+	is_crouching = false
+	is_clinging = false
 
 	apply_gravity(delta)
 	handle_jump()
@@ -68,6 +73,10 @@ func _physics_process(delta: float):
 func apply_gravity(delta: float):
 	if not is_on_floor() and dash_timer <= 0.0:
 		velocity.y += GRAVITY * delta
+		if _should_wall_cling():
+			is_clinging = true
+			velocity.y = WALL_CLING_FALL_SPEED
+			_update_cling_facing()
 
 func handle_jump():
 	if not _is_action_just_pressed_for_mode("jump", "jump_JOY"):
@@ -102,11 +111,14 @@ func handle_movement(delta: float):
 		return
 
 	var direction = _input_axis()
+	is_crouching = is_on_floor() and _is_action_pressed_for_mode("crouch", "crouch_JOY")
 
 	var accel = ACCELERATION if is_on_floor() else AIR_ACCELERATION
 	var friction = FRICTION if is_on_floor() else AIR_FRICTION
 
-	if direction != 0:
+	if is_crouching:
+		velocity.x = move_toward(velocity.x, 0, friction * delta)
+	elif direction != 0:
 		# Smoothly accelerate to speed
 		velocity.x = move_toward(velocity.x, direction * SPEED, accel * delta)
 		animated_sprite_2d.flip_h = direction < 0
@@ -115,7 +127,7 @@ func handle_movement(delta: float):
 		velocity.x = move_toward(velocity.x, 0, friction * delta)
 
 func handle_attack() -> void:
-	if not _is_action_just_pressed_for_mode("attack", "") or attack_timer > 0.0:
+	if not _is_action_just_pressed_for_mode("attack", "attack_JOY") or attack_timer > 0.0:
 		return
 	if projectile_scene == null:
 		push_warning("Player1: projectile_scene no asignado.")
@@ -125,9 +137,9 @@ func handle_attack() -> void:
 	if projectile == null:
 		return
 
-	var shot_direction: float = -1.0 if animated_sprite_2d.flip_h else 1.0
+	var shot_direction := _shot_direction()
 	get_tree().current_scene.add_child(projectile)
-	projectile.global_position = global_position + Vector2(projectile_spawn_offset.x * shot_direction, projectile_spawn_offset.y)
+	projectile.global_position = global_position + _projectile_spawn_for_direction(shot_direction)
 	if projectile.has_method("setup"):
 		projectile.setup(shot_direction, attack_damage)
 
@@ -161,7 +173,8 @@ func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> voi
 	if fuente_pos != Vector2.ZERO:
 		var knockback_direction: float = sign(global_position.x - fuente_pos.x)
 		if knockback_direction != 0.0:
-			velocity.x = knockback_direction * 180.0
+			velocity.x = knockback_direction * 340.0
+			velocity.y = min(velocity.y, -120.0)
 
 func receive_damage(amount: int = 1, source_pos: Vector2 = Vector2.ZERO) -> void:
 	recibir_daño(amount, source_pos)
@@ -190,7 +203,11 @@ func _update_invulnerability_blink() -> void:
 		animated_sprite_2d.modulate = Color.WHITE
 
 func update_state():
-	if not is_on_floor():
+	if is_clinging:
+		current_state = State.Cling
+	elif is_crouching:
+		current_state = State.Duck
+	elif not is_on_floor():
 		current_state = State.Jump
 	elif abs(velocity.x) > 5.0:
 		current_state = State.Run
@@ -200,6 +217,10 @@ func update_state():
 func _shoot_animation_for_current_motion() -> StringName:
 	if not is_on_floor():
 		return &"jump"
+	if _is_action_pressed_for_mode("aim_up", "aim_up_JOY"):
+		return &"runshootingUP"
+	if is_crouching:
+		return &"duck"
 	if abs(_input_axis()) > 0.0 or abs(velocity.x) > 5.0:
 		return &"runshooting"
 	return &"stand"
@@ -212,10 +233,55 @@ func _input_axis() -> float:
 		axis += Input.get_axis("move_left_JOY", "move_right_JOY")
 	return clampf(axis, -1.0, 1.0)
 
+func _shot_direction() -> Vector2:
+	if _is_action_pressed_for_mode("aim_up", "aim_up_JOY"):
+		return Vector2.UP
+	return Vector2.LEFT if animated_sprite_2d.flip_h else Vector2.RIGHT
+
+func _projectile_spawn_for_direction(shot_direction: Vector2) -> Vector2:
+	if shot_direction == Vector2.UP:
+		return Vector2(6, -49)
+	if is_crouching:
+		return Vector2(projectile_spawn_offset.x * (-1.0 if animated_sprite_2d.flip_h else 1.0), -12)
+	return Vector2(projectile_spawn_offset.x * (-1.0 if animated_sprite_2d.flip_h else 1.0), projectile_spawn_offset.y)
+
+func _should_wall_cling() -> bool:
+	if is_on_floor() or not is_on_wall():
+		return false
+	var direction := _input_axis()
+	if abs(direction) <= 0.0:
+		return false
+	var wall_normal_x := _wall_normal_x()
+	if wall_normal_x > 0.0:
+		return direction < 0.0
+	if wall_normal_x < 0.0:
+		return direction > 0.0
+	return false
+
+func _update_cling_facing() -> void:
+	var wall_normal_x := _wall_normal_x()
+	if wall_normal_x == 0.0:
+		return
+	animated_sprite_2d.flip_h = wall_normal_x < 0.0
+
+func _wall_normal_x() -> float:
+	for collision_index in get_slide_collision_count():
+		var collision := get_slide_collision(collision_index)
+		if abs(collision.get_normal().x) > 0.6:
+			return collision.get_normal().x
+	return 0.0
+
 func _is_action_just_pressed_for_mode(keyboard_action: StringName, gamepad_action: StringName) -> bool:
 	if (input_mode == "keyboard" or input_mode == "both") and keyboard_action != &"" and Input.is_action_just_pressed(keyboard_action):
 		return true
 	if (input_mode == "gamepad" or input_mode == "both") and gamepad_action != &"" and Input.is_action_just_pressed(gamepad_action):
+		return true
+	return false
+
+func _is_action_pressed_for_mode(keyboard_action: StringName, gamepad_action: StringName) -> bool:
+	if (input_mode == "keyboard" or input_mode == "both") and keyboard_action != &"" and Input.is_action_pressed(keyboard_action):
+		return true
+	if (input_mode == "gamepad" or input_mode == "both") and gamepad_action != &"" and Input.is_action_pressed(gamepad_action):
 		return true
 	return false
 
@@ -234,3 +300,7 @@ func update_animations():
 			animated_sprite_2d.play("run")
 		State.Jump:
 			animated_sprite_2d.play("jump")
+		State.Duck:
+			animated_sprite_2d.play("duck")
+		State.Cling:
+			animated_sprite_2d.play("cling")

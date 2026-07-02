@@ -11,9 +11,23 @@ const DEFAULT_KEYS := {
 	"move_left": KEY_A,
 	"move_right": KEY_D,
 	"jump": KEY_SPACE,
+	"crouch": KEY_S,
+	"aim_up": KEY_W,
 	"dash": KEY_F,
 	"attack": MOUSE_BUTTON_LEFT,
 	"pause_game": KEY_ESCAPE
+}
+
+const DEFAULT_JOYPAD_BUTTONS := {
+	"jump_JOY": 1,
+	"attack_JOY": 2,
+	"crouch_JOY": 12,
+	"aim_up_JOY": 11
+}
+
+const DEFAULT_JOYPAD_MOTIONS := {
+	"move_left_JOY": {"axis": 0, "value": -1.0},
+	"move_right_JOY": {"axis": 0, "value": 1.0}
 }
 
 const UI_KEYS := {
@@ -28,7 +42,9 @@ const UI_KEYS := {
 const BLOCKED_GAMEPLAY_KEYS := {
 	"move_left": [KEY_LEFT],
 	"move_right": [KEY_RIGHT],
-	"jump": [KEY_UP]
+	"jump": [KEY_UP],
+	"aim_up": [KEY_UP],
+	"crouch": [KEY_DOWN]
 }
 
 var current_world: Node2D = null
@@ -282,6 +298,20 @@ func _ensure_control_actions() -> void:
 		_ensure_action(action_name)
 		if InputMap.action_get_events(action_name).is_empty():
 			set_keyboard_action(action_name, DEFAULT_KEYS[action_name])
+	for action_name in DEFAULT_JOYPAD_BUTTONS.keys():
+		_ensure_action(action_name)
+		if InputMap.action_get_events(action_name).is_empty():
+			var joy_event = InputEventJoypadButton.new()
+			joy_event.button_index = DEFAULT_JOYPAD_BUTTONS[action_name]
+			InputMap.action_add_event(action_name, joy_event)
+	for action_name in DEFAULT_JOYPAD_MOTIONS.keys():
+		_ensure_action(action_name)
+		if InputMap.action_get_events(action_name).is_empty():
+			var motion_data: Dictionary = DEFAULT_JOYPAD_MOTIONS[action_name]
+			var motion_event = InputEventJoypadMotion.new()
+			motion_event.axis = int(motion_data["axis"])
+			motion_event.axis_value = float(motion_data["value"])
+			InputMap.action_add_event(action_name, motion_event)
 	if InputMap.action_get_events("pause_game").is_empty():
 		set_keyboard_action("pause_game", KEY_ESCAPE)
 	_apply_ui_navigation_actions()
