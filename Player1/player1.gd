@@ -14,7 +14,7 @@ const GRAVITY = 1200.0
 const DASH_SPEED = 700.0
 const DASH_TIME = 0.16
 const HURT_ANIMATION_TIME = 0.25
-const SHOOT_ANIMATION_TIME = 0.18
+const SHOOT_ANIMATION_TIME = 1.0
 
 @export var max_health: int = 3
 @export var invulnerability_time: float = 1.2
@@ -168,6 +168,10 @@ func receive_damage(amount: int = 1, source_pos: Vector2 = Vector2.ZERO) -> void
 func _die() -> void:
 	if is_dead:
 		return
+	var current_scene := get_tree().current_scene
+	if current_scene != null and current_scene.has_method("handle_player_death"):
+		if current_scene.handle_player_death(self):
+			return
 	is_dead = true
 	velocity = Vector2.ZERO
 	animated_sprite_2d.modulate = Color.WHITE
@@ -192,18 +196,19 @@ func update_state():
 	else:
 		current_state = State.Idle
 
+func _shoot_animation_for_current_motion() -> StringName:
+	if not is_on_floor():
+		return &"jump"
+	if abs(Input.get_axis("move_left", "move_right")) > 0.0 or abs(velocity.x) > 5.0:
+		return &"runshooting"
+	return &"stand"
+
 func update_animations():
 	if hurt_timer > 0.0:
 		animated_sprite_2d.play("hurt")
 		return
 	if shoot_animation_timer > 0.0:
-		match current_state:
-			State.Run:
-				animated_sprite_2d.play("runshooting")
-			State.Jump:
-				animated_sprite_2d.play("jump")
-			_:
-				animated_sprite_2d.play("stand")
+		animated_sprite_2d.play(_shoot_animation_for_current_motion())
 		return
 
 	match current_state:

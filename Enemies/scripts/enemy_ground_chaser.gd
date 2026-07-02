@@ -6,6 +6,7 @@ extends "res://Enemies/scripts/enemy_base.gd"
 @export var melee_attack_range: float = 58.0
 @export var melee_attack_cooldown: float = 1.2
 @export var melee_attack_hit_delay: float = 0.35
+@export var initial_think_time: float = 1.0
 
 var _patrol_timer: Timer
 var _patrol_positions: Array[Vector2] = []
@@ -16,9 +17,11 @@ var _attack_cooldown_timer: float = 0.0
 var _attack_hit_timer: float = 0.0
 var _is_attacking: bool = false
 var _attack_damage_applied: bool = false
+var _think_remaining: float = 0.0
 
 func _ready() -> void:
 	super._ready()
+	_think_remaining = initial_think_time
 	_load_patrol_points()
 	_patrol_timer = Timer.new()
 	_patrol_timer.one_shot = true
@@ -30,7 +33,10 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	_attack_cooldown_timer = max(_attack_cooldown_timer - delta, 0.0)
 
-	if _is_attacking:
+	if _think_remaining > 0.0:
+		_think_remaining = max(_think_remaining - delta, 0.0)
+		velocity.x = 0.0
+	elif _is_attacking:
 		_update_attack(delta)
 	elif distance_to_player() <= melee_attack_range and _attack_cooldown_timer <= 0.0:
 		_start_attack()

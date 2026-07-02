@@ -239,6 +239,10 @@ max_health = 5
 contact_damage = 2
 move_speed = 80
 detection_range = 390
+always_run_on_ground = true
+jump_trigger_horizontal_range = 115.0
+max_consecutive_jumps = 2
+post_jump_walk_time = 2.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1227114172]
 position = Vector2(0, -20)
