@@ -36,6 +36,7 @@ var current_player1: Node2D = null
 var current_player2: Node2D = null
 var current_world_seed: int = 0
 var current_game_mode: String = "single"
+var selected_single_player: String = "player1"
 var pending_load_data: Dictionary = {}
 var _death_screen: CanvasLayer = null
 var _is_restoring_save := false
@@ -45,11 +46,12 @@ func _ready() -> void:
 	_ensure_control_actions()
 	load_controls()
 
-func start_new_game(mode: String = "single") -> void:
+func start_new_game(mode: String = "single", selected_player: String = "player1") -> void:
 	get_tree().paused = false
 	pending_load_data.clear()
 	_is_restoring_save = false
 	current_game_mode = mode
+	selected_single_player = selected_player if selected_player in ["player1", "player2"] else "player1"
 	current_world_seed = _make_seed()
 	current_world = null
 	current_player1 = null
@@ -66,6 +68,7 @@ func continue_game() -> bool:
 	pending_load_data = data
 	_is_restoring_save = true
 	current_game_mode = str(data.get("game_mode", "coop" if bool(data.get("player2_exists", false)) else "single"))
+	selected_single_player = str(data.get("selected_single_player", "player1"))
 	current_world_seed = int(data.get("world_seed", _make_seed()))
 	current_world = null
 	current_player1 = null
@@ -105,6 +108,7 @@ func save_game() -> bool:
 	var cfg = ConfigFile.new()
 	cfg.set_value("game", "scene", WORLD_SCENE)
 	cfg.set_value("game", "game_mode", "coop" if player2 != null else current_game_mode)
+	cfg.set_value("game", "selected_single_player", selected_single_player)
 	cfg.set_value("game", "world_seed", current_world_seed)
 	cfg.set_value("game", "player1_position", player1.global_position)
 	cfg.set_value("game", "player2_exists", player2 != null)
@@ -240,6 +244,7 @@ func _read_save_data() -> Dictionary:
 	return {
 		"scene": cfg.get_value("game", "scene", WORLD_SCENE),
 		"game_mode": cfg.get_value("game", "game_mode", "single"),
+		"selected_single_player": cfg.get_value("game", "selected_single_player", "player1"),
 		"world_seed": cfg.get_value("game", "world_seed", 0),
 		"player1_position": cfg.get_value("game", "player1_position", Vector2.ZERO),
 		"player2_exists": cfg.get_value("game", "player2_exists", false),

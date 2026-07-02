@@ -312,12 +312,18 @@ vertical_alignment = 1
 
 [node name="BackRow" type="HBoxContainer" parent="CharacterPanel/Content"]
 layout_mode = 2
-alignment = 1
+theme_override_constants/separation = 12
 
 [node name="BackButton" type="Button" parent="CharacterPanel/Content/BackRow"]
 custom_minimum_size = Vector2(160, 30)
 layout_mode = 2
 text = "Volver"
+
+[node name="StartButton" type="Button" parent="CharacterPanel/Content/BackRow"]
+visible = false
+custom_minimum_size = Vector2(160, 30)
+layout_mode = 2
+text = "Empezar"
 
 [node name="ControlsMenu" parent="." unique_id=220282466 instance=ExtResource("2_controls")]
 visible = false

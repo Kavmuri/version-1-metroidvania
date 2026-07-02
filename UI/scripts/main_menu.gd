@@ -19,11 +19,13 @@ const ENEMY_ARENA_HOLD_SECONDS := 1.0
 @onready var _player1_button: Button = $CharacterPanel/Content/Options/Player1Button
 @onready var _player2_button: Button = $CharacterPanel/Content/Options/Player2Button
 @onready var _character_back_button: Button = $CharacterPanel/Content/BackRow/BackButton
+@onready var _character_start_button: Button = $CharacterPanel/Content/BackRow/StartButton
 @onready var _controls_menu: CanvasLayer = $ControlsMenu
 
 var _enemy_arena_hold_time := 0.0
 var _enemy_arena_opened := false
 var _online_hold_active := false
+var _selected_character := ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -37,6 +39,7 @@ func _ready() -> void:
 	_message_panel.visible = false
 	_mode_panel.visible = false
 	_character_panel.visible = false
+	_character_start_button.visible = false
 	await get_tree().process_frame
 	_center_content()
 	_play_button.grab_focus()
@@ -74,10 +77,11 @@ func _connect_buttons() -> void:
 	_player1_button.pressed.connect(_on_player1_pressed)
 	_player2_button.pressed.connect(_on_player2_pressed)
 	_character_back_button.pressed.connect(_close_character_panel)
+	_character_start_button.pressed.connect(_on_character_start_pressed)
 	_controls_menu.closed.connect(func(): _config_button.grab_focus())
 
 func _apply_styles() -> void:
-	for button in [_play_button, _continue_button, _config_button, _exit_button, _message_ok_button, _mode_back_button, _character_back_button]:
+	for button in [_play_button, _continue_button, _config_button, _exit_button, _message_ok_button, _mode_back_button, _character_back_button, _character_start_button]:
 		button.add_theme_stylebox_override("normal", _button_style(Color(0.07, 0.08, 0.105)))
 		button.add_theme_stylebox_override("hover", _button_style(Color(0.12, 0.16, 0.19)))
 		button.add_theme_stylebox_override("pressed", _button_style(Color(0.04, 0.08, 0.09)))
@@ -119,11 +123,17 @@ func _on_single_pressed() -> void:
 
 func _on_player1_pressed() -> void:
 	AudioManager.play_sfx(&"ui_confirm")
-	GameManager.start_new_game("single")
+	_select_character("player1")
 
 func _on_player2_pressed() -> void:
 	AudioManager.play_sfx(&"ui_confirm")
-	GameManager.start_new_game("single")
+	_select_character("player2")
+
+func _on_character_start_pressed() -> void:
+	if _selected_character.is_empty():
+		return
+	AudioManager.play_sfx(&"ui_confirm")
+	GameManager.start_new_game("single", _selected_character)
 
 func _on_coop_pressed() -> void:
 	AudioManager.play_sfx(&"ui_confirm")
@@ -185,16 +195,29 @@ func _close_mode_panel() -> void:
 func _open_character_panel() -> void:
 	_online_hold_active = false
 	_enemy_arena_hold_time = 0.0
+	_selected_character = ""
+	_character_start_button.visible = false
 	_mode_panel.visible = false
 	_character_panel.visible = true
 	_center_character_panel()
 	get_viewport().gui_release_focus()
 
 func _close_character_panel() -> void:
+	_selected_character = ""
+	_character_start_button.visible = false
 	_character_panel.visible = false
 	_mode_panel.visible = true
 	_center_mode_panel()
 	get_viewport().gui_release_focus()
+
+func _select_character(character_id: String) -> void:
+	_selected_character = character_id
+	_character_start_button.visible = true
+	_apply_mode_button_styles(_player1_button, Color(0.10, 0.11, 0.16, 0.94), false)
+	_apply_mode_button_styles(_player2_button, Color(0.10, 0.14, 0.13, 0.94), false)
+	var selected_button := _player1_button if character_id == "player1" else _player2_button
+	selected_button.add_theme_stylebox_override("normal", _mode_button_style(Color(0.14, 0.13, 0.10, 0.96), Color(0.95, 0.79, 0.34, 1.0), 3))
+	_character_start_button.grab_focus()
 
 func _center_content() -> void:
 	var viewport_size = get_viewport_rect().size
@@ -283,6 +306,9 @@ func _configure_mode_focus() -> void:
 	_player2_button.focus_neighbor_left = _player1_button.get_path()
 	_player2_button.focus_neighbor_bottom = _character_back_button.get_path()
 	_character_back_button.focus_neighbor_top = _player2_button.get_path()
+	_character_back_button.focus_neighbor_right = _character_start_button.get_path()
+	_character_start_button.focus_neighbor_left = _character_back_button.get_path()
+	_character_start_button.focus_neighbor_top = _player2_button.get_path()
 
 func _set_main_buttons_focus(enabled: bool) -> void:
 	var target_focus_mode = Control.FOCUS_ALL if enabled else Control.FOCUS_NONE

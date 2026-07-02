@@ -22,6 +22,7 @@ const SHOOT_ANIMATION_TIME = 1.0
 @export var attack_cooldown: float = 0.28
 @export var attack_damage: int = 1
 @export var projectile_spawn_offset: Vector2 = Vector2(32, -24)
+@export_enum("keyboard", "gamepad", "both") var input_mode: String = "both"
 
 enum State {Idle, Run, Jump}
 var current_state : State = State.Idle
@@ -69,7 +70,7 @@ func apply_gravity(delta: float):
 		velocity.y += GRAVITY * delta
 
 func handle_jump():
-	if not Input.is_action_just_pressed("jump"):
+	if not _is_action_just_pressed_for_mode("jump", "jump_JOY"):
 		return
 
 	if is_on_floor():
@@ -87,7 +88,7 @@ func handle_dash(delta: float):
 		return
 
 	if tiene_dash and Input.is_action_just_pressed("dash"):
-		var direction = Input.get_axis("move_left", "move_right")
+		var direction = _input_axis()
 		if direction == 0:
 			direction = -1.0 if animated_sprite_2d.flip_h else 1.0
 		AudioManager.play_sfx(&"player_dash")
@@ -100,7 +101,7 @@ func handle_movement(delta: float):
 	if dash_timer > 0.0:
 		return
 
-	var direction = Input.get_axis("move_left", "move_right")
+	var direction = _input_axis()
 
 	var accel = ACCELERATION if is_on_floor() else AIR_ACCELERATION
 	var friction = FRICTION if is_on_floor() else AIR_FRICTION
@@ -114,7 +115,7 @@ func handle_movement(delta: float):
 		velocity.x = move_toward(velocity.x, 0, friction * delta)
 
 func handle_attack() -> void:
-	if not Input.is_action_just_pressed("attack") or attack_timer > 0.0:
+	if not _is_action_just_pressed_for_mode("attack", "") or attack_timer > 0.0:
 		return
 	if projectile_scene == null:
 		push_warning("Player1: projectile_scene no asignado.")
@@ -199,9 +200,24 @@ func update_state():
 func _shoot_animation_for_current_motion() -> StringName:
 	if not is_on_floor():
 		return &"jump"
-	if abs(Input.get_axis("move_left", "move_right")) > 0.0 or abs(velocity.x) > 5.0:
+	if abs(_input_axis()) > 0.0 or abs(velocity.x) > 5.0:
 		return &"runshooting"
 	return &"stand"
+
+func _input_axis() -> float:
+	var axis := 0.0
+	if input_mode == "keyboard" or input_mode == "both":
+		axis += Input.get_axis("move_left", "move_right")
+	if input_mode == "gamepad" or input_mode == "both":
+		axis += Input.get_axis("move_left_JOY", "move_right_JOY")
+	return clampf(axis, -1.0, 1.0)
+
+func _is_action_just_pressed_for_mode(keyboard_action: StringName, gamepad_action: StringName) -> bool:
+	if (input_mode == "keyboard" or input_mode == "both") and keyboard_action != &"" and Input.is_action_just_pressed(keyboard_action):
+		return true
+	if (input_mode == "gamepad" or input_mode == "both") and gamepad_action != &"" and Input.is_action_just_pressed(gamepad_action):
+		return true
+	return false
 
 func update_animations():
 	if hurt_timer > 0.0:
