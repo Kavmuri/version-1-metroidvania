@@ -11,9 +11,23 @@ const DEFAULT_KEYS := {
 	"move_left": KEY_A,
 	"move_right": KEY_D,
 	"jump": KEY_SPACE,
+	"crouch": KEY_S,
+	"aim_up": KEY_W,
 	"dash": KEY_F,
 	"attack": MOUSE_BUTTON_LEFT,
 	"pause_game": KEY_ESCAPE
+}
+
+const DEFAULT_JOYPAD_BUTTONS := {
+	"jump_JOY": 1,
+	"attack_JOY": 2,
+	"crouch_JOY": 12,
+	"aim_up_JOY": 11
+}
+
+const DEFAULT_JOYPAD_MOTIONS := {
+	"move_left_JOY": {"axis": 0, "value": -1.0},
+	"move_right_JOY": {"axis": 0, "value": 1.0}
 }
 
 const UI_KEYS := {
@@ -28,7 +42,9 @@ const UI_KEYS := {
 const BLOCKED_GAMEPLAY_KEYS := {
 	"move_left": [KEY_LEFT],
 	"move_right": [KEY_RIGHT],
-	"jump": [KEY_UP]
+	"jump": [KEY_UP],
+	"aim_up": [KEY_UP],
+	"crouch": [KEY_DOWN]
 }
 
 var current_world: Node2D = null
@@ -36,6 +52,7 @@ var current_player1: Node2D = null
 var current_player2: Node2D = null
 var current_world_seed: int = 0
 var current_game_mode: String = "single"
+var selected_single_player: String = "player1"
 var pending_load_data: Dictionary = {}
 var _death_screen: CanvasLayer = null
 var _is_restoring_save := false
@@ -45,11 +62,12 @@ func _ready() -> void:
 	_ensure_control_actions()
 	load_controls()
 
-func start_new_game(mode: String = "single") -> void:
+func start_new_game(mode: String = "single", selected_player: String = "player1") -> void:
 	get_tree().paused = false
 	pending_load_data.clear()
 	_is_restoring_save = false
 	current_game_mode = mode
+	selected_single_player = selected_player if selected_player in ["player1", "player2"] else "player1"
 	current_world_seed = _make_seed()
 	current_world = null
 	current_player1 = null
@@ -66,6 +84,7 @@ func continue_game() -> bool:
 	pending_load_data = data
 	_is_restoring_save = true
 	current_game_mode = str(data.get("game_mode", "coop" if bool(data.get("player2_exists", false)) else "single"))
+	selected_single_player = str(data.get("selected_single_player", "player1"))
 	current_world_seed = int(data.get("world_seed", _make_seed()))
 	current_world = null
 	current_player1 = null
@@ -105,6 +124,7 @@ func save_game() -> bool:
 	var cfg = ConfigFile.new()
 	cfg.set_value("game", "scene", WORLD_SCENE)
 	cfg.set_value("game", "game_mode", "coop" if player2 != null else current_game_mode)
+	cfg.set_value("game", "selected_single_player", selected_single_player)
 	cfg.set_value("game", "world_seed", current_world_seed)
 	cfg.set_value("game", "player1_position", player1.global_position)
 	cfg.set_value("game", "player2_exists", player2 != null)
@@ -240,6 +260,7 @@ func _read_save_data() -> Dictionary:
 	return {
 		"scene": cfg.get_value("game", "scene", WORLD_SCENE),
 		"game_mode": cfg.get_value("game", "game_mode", "single"),
+		"selected_single_player": cfg.get_value("game", "selected_single_player", "player1"),
 		"world_seed": cfg.get_value("game", "world_seed", 0),
 		"player1_position": cfg.get_value("game", "player1_position", Vector2.ZERO),
 		"player2_exists": cfg.get_value("game", "player2_exists", false),
@@ -277,6 +298,20 @@ func _ensure_control_actions() -> void:
 		_ensure_action(action_name)
 		if InputMap.action_get_events(action_name).is_empty():
 			set_keyboard_action(action_name, DEFAULT_KEYS[action_name])
+	for action_name in DEFAULT_JOYPAD_BUTTONS.keys():
+		_ensure_action(action_name)
+		if InputMap.action_get_events(action_name).is_empty():
+			var joy_event = InputEventJoypadButton.new()
+			joy_event.button_index = DEFAULT_JOYPAD_BUTTONS[action_name]
+			InputMap.action_add_event(action_name, joy_event)
+	for action_name in DEFAULT_JOYPAD_MOTIONS.keys():
+		_ensure_action(action_name)
+		if InputMap.action_get_events(action_name).is_empty():
+			var motion_data: Dictionary = DEFAULT_JOYPAD_MOTIONS[action_name]
+			var motion_event = InputEventJoypadMotion.new()
+			motion_event.axis = int(motion_data["axis"])
+			motion_event.axis_value = float(motion_data["value"])
+			InputMap.action_add_event(action_name, motion_event)
 	if InputMap.action_get_events("pause_game").is_empty():
 		set_keyboard_action("pause_game", KEY_ESCAPE)
 	_apply_ui_navigation_actions()

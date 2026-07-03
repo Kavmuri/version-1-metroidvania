@@ -2,11 +2,23 @@ extends "res://Enemies/scripts/enemy_base.gd"
 
 @export var cast_interval: float = 2.0
 @export var keep_distance: float = 190.0
+@export var initial_think_time: float = 1.0
 var cast_timer: float = 0.0
+var _think_remaining: float = 0.0
+
+func _ready() -> void:
+	super._ready()
+	_think_remaining = initial_think_time
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	cast_timer -= delta
+	if _think_remaining > 0.0:
+		_think_remaining = max(_think_remaining - delta, 0.0)
+		velocity.x = 0
+		play_first_available_anim([&"idle", &"walk"])
+		move_and_slide()
+		return
 	var dist := distance_to_player()
 	if dist <= detection_range:
 		var dir := direction_to_player()

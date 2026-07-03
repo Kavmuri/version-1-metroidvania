@@ -93,6 +93,22 @@ func _reset_player() -> void:
 	var player_body := _player as CharacterBody2D
 	if player_body != null:
 		player_body.velocity = Vector2.ZERO
+	if "max_health" in _player and "health" in _player:
+		_player.health = _player.max_health
+	if "is_dead" in _player:
+		_player.is_dead = false
+	for timer_name in [&"invulnerability_timer", &"hurt_timer", &"attack_timer", &"shoot_animation_timer", &"dash_timer"]:
+		if timer_name in _player:
+			_player.set(timer_name, 0.0)
+	var sprite := _player.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	if sprite != null:
+		sprite.modulate = Color.WHITE
+
+func handle_player_death(player: Node2D) -> bool:
+	if player != _player:
+		return false
+	_reset_player()
+	return true
 
 func _configure_enemy_for_arena(enemy: Node2D) -> void:
 	if _has_property(enemy, "patrol_points"):

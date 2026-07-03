@@ -138,6 +138,7 @@ size = Vector2(30, 28)
 collision_layer = 4
 script = ExtResource("1_script")
 move_speed = 75
+flip_h_when_facing_right = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=640671338]
 sprite_frames = SubResource("SpriteFrames_1")

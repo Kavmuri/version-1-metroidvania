@@ -36,13 +36,20 @@ func iniciar(generador: Node2D):
 			push_warning("Sin punto de spawn, usando (0,0).")
 
 	# Instanciar jugador
-	var jugador = escena_jugador.instantiate()
+	var jugador = _escena_jugador_principal().instantiate()
+	jugador.name = "Player1"
 	generador.add_child(jugador)
 	jugador.global_position = pos_spawn
+	_configurar_modo_input(jugador, "both" if GameManager.current_game_mode == "single" else "keyboard")
 	GameManager.register_player1(jugador)
 
 	# Configurar límites de cámara
 	var camara = jugador.get_node_or_null("Camera2D")
+	if camara == null:
+		camara = Camera2D.new()
+		camara.name = "Camera2D"
+		camara.position = Vector2(0, -21)
+		jugador.add_child(camara)
 	if camara != null:
 		var limites = _calcular_limites(generador.habitaciones_colocadas)
 		_aplicar_limites_camara(camara, limites)
@@ -64,6 +71,7 @@ func iniciar(generador: Node2D):
 		player2_guardado.name = "Player2"
 		generador.add_child(player2_guardado)
 		player2_guardado.global_position = jugador.global_position + Vector2(72, -24)
+		_configurar_modo_input(player2_guardado, "gamepad")
 		GameManager.register_player2(player2_guardado)
 
 	GameManager.apply_pending_positions(jugador, player2_guardado)
@@ -132,6 +140,15 @@ func _aplicar_limites_camara(camara: Camera2D, limites: Rect2) -> void:
 	camara.limit_top = floori(ajustado.position.y)
 	camara.limit_right = ceili(ajustado.position.x + ajustado.size.x)
 	camara.limit_bottom = ceili(ajustado.position.y + ajustado.size.y)
+
+func _escena_jugador_principal() -> PackedScene:
+	if GameManager.current_game_mode == "single" and GameManager.selected_single_player == "player2" and escena_player2 != null:
+		return escena_player2
+	return escena_jugador
+
+func _configurar_modo_input(jugador: Node, modo: String) -> void:
+	if "input_mode" in jugador:
+		jugador.set("input_mode", modo)
 
 func _obtener_area(hab: Node2D) -> Rect2:
 	var r = hab.get_node_or_null("ReferenceRect")

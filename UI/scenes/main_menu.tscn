@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://cokw7vnao1n6s"]
 
-[ext_resource type="Script" path="res://UI/scripts/main_menu.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://bsxhvlry8c23u" path="res://UI/scripts/main_menu.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://UI/scenes/controls_menu.tscn" id="2_controls"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=267560106]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1316758071]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,7 +21,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="LightGlow" type="ColorRect" parent="."]
+[node name="LightGlow" type="ColorRect" parent="." unique_id=1050383693]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,7 +30,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.15, 0.1, 0.25, 0.2)
 
-[node name="Particles" type="CPUParticles2D" parent="."]
+[node name="Particles" type="CPUParticles2D" parent="." unique_id=1844410829]
 position = Vector2(321, 380)
 amount = 30
 lifetime = 5.0
@@ -43,11 +43,10 @@ spread = 15.0
 gravity = Vector2(0, 0)
 initial_velocity_min = 30.0
 initial_velocity_max = 60.0
-scale_amount_min = 1.0
 scale_amount_max = 2.5
 color = Color(0.7, 0.4, 0.9, 0.4)
 
-[node name="Center" type="VBoxContainer" parent="."]
+[node name="Center" type="VBoxContainer" parent="." unique_id=1118983896]
 custom_minimum_size = Vector2(330, 0)
 layout_mode = 0
 offset_left = 156.0
@@ -56,94 +55,275 @@ offset_right = 486.0
 offset_bottom = 292.0
 theme_override_constants/separation = 9
 
-[node name="Title" type="Label" parent="Center"]
+[node name="Title" type="Label" parent="Center" unique_id=1069172020]
 layout_mode = 2
 theme_override_font_sizes/font_size = 42
 text = "ASHENBOUND"
 horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="Center"]
+[node name="Spacer" type="Control" parent="Center" unique_id=672592213]
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
-[node name="PlayButton" type="Button" parent="Center"]
+[node name="PlayButton" type="Button" parent="Center" unique_id=1186063378]
 custom_minimum_size = Vector2(330, 34)
 layout_mode = 2
 text = "Jugar"
 
-[node name="ContinueButton" type="Button" parent="Center"]
+[node name="ContinueButton" type="Button" parent="Center" unique_id=1434991445]
 custom_minimum_size = Vector2(330, 34)
 layout_mode = 2
 text = "Continuar"
 
-[node name="ConfigButton" type="Button" parent="Center"]
+[node name="ConfigButton" type="Button" parent="Center" unique_id=929631326]
 custom_minimum_size = Vector2(330, 34)
 layout_mode = 2
 text = "Controles"
 
-[node name="SoonButton" type="Button" parent="Center"]
-custom_minimum_size = Vector2(330, 34)
-layout_mode = 2
-text = "Proximamente"
-
-[node name="ExitButton" type="Button" parent="Center"]
+[node name="ExitButton" type="Button" parent="Center" unique_id=1557934040]
 custom_minimum_size = Vector2(330, 34)
 layout_mode = 2
 text = "Salir"
 
-[node name="MessagePanel" type="PanelContainer" parent="."]
+[node name="MessagePanel" type="PanelContainer" parent="." unique_id=1109191203]
 visible = false
+layout_mode = 0
 offset_left = 191.0
 offset_top = 120.0
 offset_right = 451.0
 offset_bottom = 240.0
 
-[node name="Content" type="VBoxContainer" parent="MessagePanel"]
+[node name="Content" type="VBoxContainer" parent="MessagePanel" unique_id=1265377600]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 14
+alignment = 1
 
-[node name="MessageLabel" type="Label" parent="MessagePanel/Content"]
+[node name="MessageLabel" type="Label" parent="MessagePanel/Content" unique_id=2020088637]
 layout_mode = 2
-text = "Proximamente"
 horizontal_alignment = 1
 
-[node name="OkButton" type="Button" parent="MessagePanel/Content"]
+[node name="OkButton" type="Button" parent="MessagePanel/Content" unique_id=667657377]
 custom_minimum_size = Vector2(140, 30)
 layout_mode = 2
 text = "OK"
 
-[node name="ModePanel" type="PanelContainer" parent="."]
+[node name="ModePanel" type="Control" parent="." unique_id=227894274]
 visible = false
-offset_left = 181.0
-offset_top = 102.0
-offset_right = 461.0
-offset_bottom = 258.0
+anchors_preset = 0
+offset_left = 58.0
+offset_top = 70.0
+offset_right = 584.0
+offset_bottom = 310.0
 
-[node name="Content" type="VBoxContainer" parent="ModePanel"]
-layout_mode = 2
+[node name="Content" type="VBoxContainer" parent="ModePanel" unique_id=73432340]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 18
 alignment = 1
+
+[node name="Options" type="HBoxContainer" parent="ModePanel/Content" unique_id=1727194725]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="SingleButton" type="Button" parent="ModePanel/Content/Options" unique_id=1991635846]
+custom_minimum_size = Vector2(166, 164)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="ModePanel/Content/Options/SingleButton" unique_id=1206303872]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 10.0
+offset_right = -12.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/separation = 10
 
-[node name="Title" type="Label" parent="ModePanel/Content"]
+[node name="Title" type="Label" parent="ModePanel/Content/Options/SingleButton/Content" unique_id=319764093]
 layout_mode = 2
-text = "Selecciona modo"
+theme_override_font_sizes/font_size = 18
+text = "Solitario"
 horizontal_alignment = 1
 
-[node name="SingleButton" type="Button" parent="ModePanel/Content"]
-custom_minimum_size = Vector2(220, 32)
+[node name="Icon" type="Label" parent="ModePanel/Content/Options/SingleButton/Content" unique_id=1812060864]
 layout_mode = 2
-text = "Singleplayer"
+theme_override_font_sizes/font_size = 34
+text = "1P"
+horizontal_alignment = 1
 
-[node name="CoopButton" type="Button" parent="ModePanel/Content"]
-custom_minimum_size = Vector2(220, 32)
+[node name="Description" type="Label" parent="ModePanel/Content/Options/SingleButton/Content" unique_id=1622751063]
 layout_mode = 2
+text = "Aventura para un jugador."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="CoopButton" type="Button" parent="ModePanel/Content/Options" unique_id=685663927]
+custom_minimum_size = Vector2(166, 164)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="ModePanel/Content/Options/CoopButton" unique_id=908084784]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 10.0
+offset_right = -12.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ModePanel/Content/Options/CoopButton/Content" unique_id=2123095532]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "Coop local"
+horizontal_alignment = 1
 
-[node name="BackButton" type="Button" parent="ModePanel/Content"]
-custom_minimum_size = Vector2(220, 32)
+[node name="Icon" type="Label" parent="ModePanel/Content/Options/CoopButton/Content" unique_id=751017514]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "2P"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="ModePanel/Content/Options/CoopButton/Content" unique_id=884486452]
+layout_mode = 2
+text = "Dos jugadores en la misma pantalla."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="OnlineButton" type="Button" parent="ModePanel/Content/Options" unique_id=709167884]
+custom_minimum_size = Vector2(166, 164)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="ModePanel/Content/Options/OnlineButton" unique_id=1943347927]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 10.0
+offset_right = -12.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ModePanel/Content/Options/OnlineButton/Content" unique_id=325144673]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Coop online"
+horizontal_alignment = 1
+
+[node name="Icon" type="Label" parent="ModePanel/Content/Options/OnlineButton/Content" unique_id=1528122999]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "🔒"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="ModePanel/Content/Options/OnlineButton/Content" unique_id=504217523]
+layout_mode = 2
+text = "Bloqueado por ahora."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="BackRow" type="HBoxContainer" parent="ModePanel/Content" unique_id=172710688]
+layout_mode = 2
+alignment = 1
+
+[node name="BackButton" type="Button" parent="ModePanel/Content/BackRow" unique_id=571990034]
+custom_minimum_size = Vector2(160, 30)
 layout_mode = 2
 text = "Volver"
 
-[node name="ControlsMenu" parent="." instance=ExtResource("2_controls")]
+[node name="CharacterPanel" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+offset_left = 176.0
+offset_top = 86.0
+offset_right = 466.0
+offset_bottom = 298.0
+
+[node name="Content" type="VBoxContainer" parent="CharacterPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Title" type="Label" parent="CharacterPanel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Selecciona tu personaje"
+horizontal_alignment = 1
+
+[node name="Options" type="HBoxContainer" parent="CharacterPanel/Content"]
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="Player1Button" type="Button" parent="CharacterPanel/Content/Options"]
+custom_minimum_size = Vector2(118, 112)
+layout_mode = 2
+
+[node name="Icon" type="Label" parent="CharacterPanel/Content/Options/Player1Button"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 56
+text = "♋"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2Button" type="Button" parent="CharacterPanel/Content/Options"]
+custom_minimum_size = Vector2(118, 112)
+layout_mode = 2
+
+[node name="Icon" type="Label" parent="CharacterPanel/Content/Options/Player2Button"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 56
+text = "♏"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackRow" type="HBoxContainer" parent="CharacterPanel/Content"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BackButton" type="Button" parent="CharacterPanel/Content/BackRow"]
+custom_minimum_size = Vector2(160, 30)
+layout_mode = 2
+text = "Volver"
+
+[node name="StartButton" type="Button" parent="CharacterPanel/Content/BackRow"]
+visible = false
+custom_minimum_size = Vector2(160, 30)
+layout_mode = 2
+text = "Empezar"
+
+[node name="ControlsMenu" parent="." unique_id=220282466 instance=ExtResource("2_controls")]
 visible = false
