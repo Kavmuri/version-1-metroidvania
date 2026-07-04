@@ -1,82 +1,11 @@
-[gd_scene load_steps=67 format=3]
+[gd_scene format=3 uid="uid://cnfif2mkiowkm"]
 
-[ext_resource type="Script" path="res://Enemies/scripts/enemy_boss.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://Enemies/assets/boss_cinder_demon/boss_cinder_demon.png" id="2_texture"]
-[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
-[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
-[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]
-[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_passthrough_state.gd" id="93_passthrough_state"]
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_1"]
-atlas = ExtResource("2_texture")
-region = Rect2(0, 0, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_2"]
-atlas = ExtResource("2_texture")
-region = Rect2(288, 0, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_3"]
-atlas = ExtResource("2_texture")
-region = Rect2(576, 0, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_4"]
-atlas = ExtResource("2_texture")
-region = Rect2(864, 0, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_5"]
-atlas = ExtResource("2_texture")
-region = Rect2(1152, 0, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_6"]
-atlas = ExtResource("2_texture")
-region = Rect2(1440, 0, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_1"]
-atlas = ExtResource("2_texture")
-region = Rect2(0, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_2"]
-atlas = ExtResource("2_texture")
-region = Rect2(288, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_3"]
-atlas = ExtResource("2_texture")
-region = Rect2(576, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_4"]
-atlas = ExtResource("2_texture")
-region = Rect2(864, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_5"]
-atlas = ExtResource("2_texture")
-region = Rect2(1152, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_6"]
-atlas = ExtResource("2_texture")
-region = Rect2(1440, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_7"]
-atlas = ExtResource("2_texture")
-region = Rect2(1728, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_8"]
-atlas = ExtResource("2_texture")
-region = Rect2(2016, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_9"]
-atlas = ExtResource("2_texture")
-region = Rect2(2304, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_10"]
-atlas = ExtResource("2_texture")
-region = Rect2(2592, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_11"]
-atlas = ExtResource("2_texture")
-region = Rect2(2880, 160, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_12"]
-atlas = ExtResource("2_texture")
-region = Rect2(3168, 160, 288, 160)
+[ext_resource type="Script" uid="uid://bmbnxnblsrd8t" path="res://Enemies/scripts/enemy_boss.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://3gumnrguk4r5" path="res://Enemies/assets/boss_cinder_demon/boss_cinder_demon.png" id="2_texture"]
+[ext_resource type="Script" uid="uid://xaa8hkrevw0r" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
+[ext_resource type="Script" uid="uid://c1k1n3k3fhgum" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
+[ext_resource type="Script" uid="uid://bararf4q2412t" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]
+[ext_resource type="Script" uid="uid://28smt4plcyet" path="res://Enemies/scripts/state_machine/enemy_passthrough_state.gd" id="93_passthrough_state"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_1"]
 atlas = ExtResource("2_texture")
@@ -137,26 +66,6 @@ region = Rect2(3744, 320, 288, 160)
 [sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_15"]
 atlas = ExtResource("2_texture")
 region = Rect2(4032, 320, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_1"]
-atlas = ExtResource("2_texture")
-region = Rect2(0, 480, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_2"]
-atlas = ExtResource("2_texture")
-region = Rect2(288, 480, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_3"]
-atlas = ExtResource("2_texture")
-region = Rect2(576, 480, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_4"]
-atlas = ExtResource("2_texture")
-region = Rect2(864, 480, 288, 160)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_5"]
-atlas = ExtResource("2_texture")
-region = Rect2(1152, 480, 288, 160)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_1"]
 atlas = ExtResource("2_texture")
@@ -246,72 +155,100 @@ region = Rect2(5760, 640, 288, 160)
 atlas = ExtResource("2_texture")
 region = Rect2(6048, 640, 288, 160)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 480, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(288, 480, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(576, 480, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(864, 480, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(1152, 480, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(288, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(576, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(864, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(1152, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_6"]
+atlas = ExtResource("2_texture")
+region = Rect2(1440, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(288, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(576, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(864, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(1152, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_6"]
+atlas = ExtResource("2_texture")
+region = Rect2(1440, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_7"]
+atlas = ExtResource("2_texture")
+region = Rect2(1728, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_8"]
+atlas = ExtResource("2_texture")
+region = Rect2(2016, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_9"]
+atlas = ExtResource("2_texture")
+region = Rect2(2304, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_10"]
+atlas = ExtResource("2_texture")
+region = Rect2(2592, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_11"]
+atlas = ExtResource("2_texture")
+region = Rect2(2880, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_12"]
+atlas = ExtResource("2_texture")
+region = Rect2(3168, 160, 288, 160)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_cinder"]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_idle_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_idle_2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_idle_3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_idle_4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_idle_5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_idle_6")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 7.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_9")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_10")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_11")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_walk_12")
-}],
-"loop": true,
-"name": &"walk",
-"speed": 10.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_cinder_attack_1")
@@ -361,26 +298,6 @@ animations = [{
 "loop": false,
 "name": &"attack",
 "speed": 12.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_hit_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_hit_2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_hit_3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_hit_4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cinder_hit_5")
-}],
-"loop": false,
-"name": &"hit",
-"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -452,71 +369,156 @@ animations = [{
 "loop": false,
 "name": &"death",
 "speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_hit_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_hit_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_hit_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_hit_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_hit_5")
+}],
+"loop": false,
+"name": &"hit",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_6")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_12")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 10.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
-radius = 32.0
+radius = 41.0
 height = 96.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_contact"]
-radius = 38.0
+radius = 46.0
 height = 108.0
 
 [sub_resource type="CircleShape2D" id="StateMachineAttackArea2DShape"]
 radius = 150.0
 
-[node name="BossCinderDemon" type="CharacterBody2D" groups=["enemy"]]
+[node name="BossCinderDemon" type="CharacterBody2D" unique_id=689784736 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_script")
+attack_interval = 1.8
+boss_walk_speed = 34.0
 max_health = 16
 contact_damage = 2
 move_speed = 44.0
-boss_walk_speed = 34.0
-attack_interval = 1.8
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -58)
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=368651642]
+position = Vector2(0, -81)
 sprite_frames = SubResource("SpriteFrames_cinder")
-animation = &"idle"
+animation = &"attack"
 autoplay = "idle"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -50)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1248771473]
+position = Vector2(0, -49)
 shape = SubResource("CapsuleShape2D_body")
 
-[node name="ContactArea" type="Area2D" parent="."]
+[node name="ContactArea" type="Area2D" parent="." unique_id=1946925164]
 collision_layer = 4
 collision_mask = 2
 
-[node name="ContactShape" type="CollisionShape2D" parent="ContactArea"]
+[node name="ContactShape" type="CollisionShape2D" parent="ContactArea" unique_id=1386862364]
 position = Vector2(0, -50)
 shape = SubResource("CapsuleShape2D_contact")
+debug_color = Color(1, 0.4509804, 0.65882355, 0.41960785)
 
-[node name="StateMachineController" type="Node" parent="."]
+[node name="StateMachineController" type="Node" parent="." unique_id=581335425]
 script = ExtResource("91_state_controller")
 entered_state = &"BossChase"
-exited_state = &"Idle"
 
-[node name="StateMachine" type="Node" parent="."]
+[node name="StateMachine" type="Node" parent="." unique_id=815386627]
 script = ExtResource("90_state_machine")
 initial_state_path = NodePath("Idle")
 
-[node name="Idle" type="Node" parent="StateMachine"]
+[node name="Idle" type="Node" parent="StateMachine" unique_id=839672280]
 script = ExtResource("92_idle_state")
 
-[node name="BossChase" type="Node" parent="StateMachine"]
+[node name="BossChase" type="Node" parent="StateMachine" unique_id=45384981]
 script = ExtResource("93_passthrough_state")
 
-[node name="BossAttack" type="Node" parent="StateMachine"]
+[node name="BossAttack" type="Node" parent="StateMachine" unique_id=1510181835]
 script = ExtResource("93_passthrough_state")
 
-[node name="AttackArea2D" type="Area2D" parent="."]
+[node name="AttackArea2D" type="Area2D" parent="." unique_id=1703840280]
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea2D"]
-position = Vector2(0, -46)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea2D" unique_id=1734274246]
+position = Vector2(0, -50)
 shape = SubResource("StateMachineAttackArea2DShape")
+debug_color = Color(0.9490196, 0.8509804, 0.2, 0.2784314)
 
 [connection signal="body_entered" from="ContactArea" to="." method="_on_contact_body_entered"]
 [connection signal="body_entered" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_entered"]

@@ -93,7 +93,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk",
-"speed": 8.0
+"speed": 7.0
 }]
 
 [sub_resource type="RectangleShape2D" id="BodyShape"]
@@ -114,8 +114,9 @@ contact_damage = 2
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2080658009]
 position = Vector2(6, -48)
 sprite_frames = SubResource("SpriteFrames_1")
-animation = &"run"
+animation = &"idle"
 autoplay = "idle"
+frame_progress = 0.78797835
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2104132092]
 position = Vector2(13.75, -37.5)

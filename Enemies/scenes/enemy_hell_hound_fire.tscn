@@ -250,9 +250,9 @@ contact_damage = 2
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1227114172]
 position = Vector2(0, -24)
 sprite_frames = SubResource("SpriteFrames_1")
-animation = &"idle"
+animation = &"walk"
 autoplay = "idle"
-frame_progress = 0.35016748
+frame_progress = 0.61638653
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1042287682]
 position = Vector2(-1, -12)
