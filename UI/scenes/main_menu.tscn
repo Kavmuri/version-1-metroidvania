@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bsxhvlry8c23u" path="res://UI/scripts/main_menu.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://UI/scenes/controls_menu.tscn" id="2_controls"]
+[ext_resource type="FontFile" uid="uid://c6e435u5sdah0" path="res://UI/DungeonFont.ttf" id="2_xnki4"]
 
 [node name="MainMenu" type="Control" unique_id=267560106]
 layout_mode = 3
@@ -57,6 +58,7 @@ theme_override_constants/separation = 9
 
 [node name="Title" type="Label" parent="Center" unique_id=1069172020]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_xnki4")
 theme_override_font_sizes/font_size = 42
 text = "ASHENBOUND"
 horizontal_alignment = 1
@@ -68,6 +70,7 @@ layout_mode = 2
 [node name="PlayButton" type="Button" parent="Center" unique_id=1186063378]
 custom_minimum_size = Vector2(330, 34)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_xnki4")
 text = "Jugar"
 
 [node name="ContinueButton" type="Button" parent="Center" unique_id=1434991445]
@@ -247,7 +250,7 @@ custom_minimum_size = Vector2(160, 30)
 layout_mode = 2
 text = "Volver"
 
-[node name="CharacterPanel" type="Control" parent="."]
+[node name="CharacterPanel" type="Control" parent="." unique_id=670759916]
 visible = false
 anchors_preset = 0
 offset_left = 176.0
@@ -255,7 +258,7 @@ offset_top = 86.0
 offset_right = 466.0
 offset_bottom = 298.0
 
-[node name="Content" type="VBoxContainer" parent="CharacterPanel"]
+[node name="Content" type="VBoxContainer" parent="CharacterPanel" unique_id=625543996]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -265,61 +268,59 @@ grow_vertical = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="Title" type="Label" parent="CharacterPanel/Content"]
+[node name="Title" type="Label" parent="CharacterPanel/Content" unique_id=1873210337]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Selecciona tu personaje"
 horizontal_alignment = 1
 
-[node name="Options" type="HBoxContainer" parent="CharacterPanel/Content"]
+[node name="Options" type="HBoxContainer" parent="CharacterPanel/Content" unique_id=930973058]
 layout_mode = 2
 theme_override_constants/separation = 18
 alignment = 1
 
-[node name="Player1Button" type="Button" parent="CharacterPanel/Content/Options"]
+[node name="Player1Button" type="Button" parent="CharacterPanel/Content/Options" unique_id=1753371130]
 custom_minimum_size = Vector2(118, 112)
 layout_mode = 2
 
-[node name="Icon" type="Label" parent="CharacterPanel/Content/Options/Player1Button"]
+[node name="Icon" type="Label" parent="CharacterPanel/Content/Options/Player1Button" unique_id=1979040735]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 theme_override_font_sizes/font_size = 56
 text = "♋"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Player2Button" type="Button" parent="CharacterPanel/Content/Options"]
+[node name="Player2Button" type="Button" parent="CharacterPanel/Content/Options" unique_id=1720214752]
 custom_minimum_size = Vector2(118, 112)
 layout_mode = 2
 
-[node name="Icon" type="Label" parent="CharacterPanel/Content/Options/Player2Button"]
+[node name="Icon" type="Label" parent="CharacterPanel/Content/Options/Player2Button" unique_id=908737182]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 theme_override_font_sizes/font_size = 56
 text = "♏"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BackRow" type="HBoxContainer" parent="CharacterPanel/Content"]
+[node name="BackRow" type="HBoxContainer" parent="CharacterPanel/Content" unique_id=217071881]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="BackButton" type="Button" parent="CharacterPanel/Content/BackRow"]
+[node name="BackButton" type="Button" parent="CharacterPanel/Content/BackRow" unique_id=1382720754]
 custom_minimum_size = Vector2(160, 30)
 layout_mode = 2
 text = "Volver"
 
-[node name="StartButton" type="Button" parent="CharacterPanel/Content/BackRow"]
+[node name="StartButton" type="Button" parent="CharacterPanel/Content/BackRow" unique_id=1194160613]
 visible = false
 custom_minimum_size = Vector2(160, 30)
 layout_mode = 2

@@ -16,6 +16,8 @@ const ENEMY_CATALOG := [
 	{"name": "Dragon", "scene": preload("res://Enemies/scenes/enemy_dragon.tscn")},
 	{"name": "Hell Beast Fire", "scene": preload("res://Enemies/scenes/enemy_hell_beast_fire.tscn")},
 	{"name": "Demon Boss", "scene": preload("res://Enemies/scenes/enemy_demon_boss.tscn")},
+	{"name": "Agis", "scene": preload("res://Enemies/scenes/enemy_agis.tscn")},
+	{"name": "BossCinderDemon", "scene": preload("res://Enemies/scenes/enemy_boss_cinder_demon.tscn")},
 ]
 
 @onready var _player_spawn: Marker2D = $PlayerSpawn

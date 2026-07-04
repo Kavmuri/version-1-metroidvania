@@ -1,0 +1,323 @@
+[gd_scene load_steps=26 format=3]
+
+[ext_resource type="Script" path="res://Enemies/scripts/enemy_boss.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://Enemies/assets/agis/agis.png" id="2_texture"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_passthrough_state.gd" id="93_passthrough_state"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(240, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(480, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(720, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(960, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_6"]
+atlas = ExtResource("2_texture")
+region = Rect2(1200, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_7"]
+atlas = ExtResource("2_texture")
+region = Rect2(1440, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_8"]
+atlas = ExtResource("2_texture")
+region = Rect2(1680, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_9"]
+atlas = ExtResource("2_texture")
+region = Rect2(1920, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_10"]
+atlas = ExtResource("2_texture")
+region = Rect2(2160, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_11"]
+atlas = ExtResource("2_texture")
+region = Rect2(2400, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_12"]
+atlas = ExtResource("2_texture")
+region = Rect2(2640, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_13"]
+atlas = ExtResource("2_texture")
+region = Rect2(2880, 0, 240, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agis_14"]
+atlas = ExtResource("2_texture")
+region = Rect2(3120, 0, 240, 240)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_agis"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_13")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_14")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_13")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_14")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_13")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_14")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_13")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agis_14")
+}],
+"loop": false,
+"name": &"death",
+"speed": 10.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
+radius = 34.0
+height = 104.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_contact"]
+radius = 38.0
+height = 112.0
+
+[sub_resource type="CircleShape2D" id="StateMachineAttackArea2DShape"]
+radius = 160.0
+
+[node name="Agis" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 4
+script = ExtResource("1_script")
+max_health = 18
+contact_damage = 2
+move_speed = 42.0
+boss_walk_speed = 30.0
+attack_interval = 2.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -58)
+scale = Vector2(1.35, 1.35)
+sprite_frames = SubResource("SpriteFrames_agis")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -54)
+shape = SubResource("CapsuleShape2D_body")
+
+[node name="ContactArea" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+
+[node name="ContactShape" type="CollisionShape2D" parent="ContactArea"]
+position = Vector2(0, -54)
+shape = SubResource("CapsuleShape2D_contact")
+
+[node name="StateMachineController" type="Node" parent="."]
+script = ExtResource("91_state_controller")
+entered_state = &"BossChase"
+exited_state = &"Idle"
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("90_state_machine")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("92_idle_state")
+
+[node name="BossChase" type="Node" parent="StateMachine"]
+script = ExtResource("93_passthrough_state")
+
+[node name="BossAttack" type="Node" parent="StateMachine"]
+script = ExtResource("93_passthrough_state")
+
+[node name="AttackArea2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea2D"]
+position = Vector2(0, -48)
+shape = SubResource("StateMachineAttackArea2DShape")
+
+[connection signal="body_entered" from="ContactArea" to="." method="_on_contact_body_entered"]
+[connection signal="body_entered" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_entered"]
+[connection signal="body_exited" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_exited"]

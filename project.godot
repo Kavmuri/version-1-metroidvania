@@ -31,6 +31,10 @@ window/size/window_width_override=960
 window/size/window_height_override=540
 window/stretch/mode="viewport"
 
+[gui]
+
+theme/custom="uid://d1g58v8v8v8v8"
+
 [input]
 
 ui_accept={
