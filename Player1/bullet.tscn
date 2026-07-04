@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://bomrqpaxh5kkb"]
+
+[ext_resource type="Script" uid="uid://cf3p1dwbpill8" path="res://Player1/bullet.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dqd4j5s7dphhu" path="res://Assets/Fx/shot.png" id="2_shot"]
+[ext_resource type="PackedScene" path="res://Player1/projectile_impact.tscn" id="3_impact_scene"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shot_1"]
+atlas = ExtResource("2_shot")
+region = Rect2(0, 0, 6, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shot_2"]
+atlas = ExtResource("2_shot")
+region = Rect2(6, 0, 6, 4)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_shot"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_shot_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_shot_2")
+}],
+"loop": true,
+"name": &"shot",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_projectile"]
+radius = 4.0
+
+[node name="Bullet" type="AnimatedSprite2D" unique_id=1917782843]
+scale = Vector2(3, 3)
+sprite_frames = SubResource("SpriteFrames_shot")
+animation = &"shot"
+autoplay = "shot"
+script = ExtResource("1_script")
+impact_scene = ExtResource("3_impact_scene")
+
+[node name="Timer" type="Timer" parent="." unique_id=503192562]
+one_shot = true
+autostart = true
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=1601196488]
+collision_layer = 8
+collision_mask = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1044684687]
+shape = SubResource("CircleShape2D_projectile")
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="area_entered" from="Hitbox" to="." method="_on_hitbox_area_entered"]
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]

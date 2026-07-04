@@ -2,6 +2,9 @@ extends CharacterBody2D
 class_name Player
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var muzzle: Marker2D = $Muzzle
+@onready var muzzle_up: Marker2D = $MuzzleUp
+@onready var muzzle_duck: Marker2D = $MuzzleDuck
 
 # Movement constants
 const SPEED = 300.0
@@ -20,7 +23,7 @@ const WALL_CLING_FALL_SPEED = 32.0
 @export var max_health: int = 3
 @export var invulnerability_time: float = 1.2
 @export var projectile_scene: PackedScene
-@export var attack_cooldown: float = 0.28
+@export var attack_cooldown: float = 0.45
 @export var attack_damage: int = 1
 @export var projectile_spawn_offset: Vector2 = Vector2(32, -24)
 @export_enum("keyboard", "gamepad", "both") var input_mode: String = "both"
@@ -56,8 +59,8 @@ func _physics_process(delta: float):
 	attack_timer = max(attack_timer - delta, 0.0)
 	shoot_animation_timer = max(shoot_animation_timer - delta, 0.0)
 	_update_invulnerability_blink()
-	is_crouching = false
 	is_clinging = false
+	_update_crouch_state()
 
 	apply_gravity(delta)
 	handle_jump()
@@ -111,12 +114,12 @@ func handle_movement(delta: float):
 		return
 
 	var direction = _input_axis()
-	is_crouching = is_on_floor() and _is_action_pressed_for_mode("crouch", "crouch_JOY")
+	var is_aiming_up := is_on_floor() and _is_action_pressed_for_mode("aim_up", "aim_up_JOY")
 
 	var accel = ACCELERATION if is_on_floor() else AIR_ACCELERATION
 	var friction = FRICTION if is_on_floor() else AIR_FRICTION
 
-	if is_crouching:
+	if is_crouching or is_aiming_up:
 		velocity.x = move_toward(velocity.x, 0, friction * delta)
 	elif direction != 0:
 		# Smoothly accelerate to speed
@@ -139,7 +142,7 @@ func handle_attack() -> void:
 
 	var shot_direction := _shot_direction()
 	get_tree().current_scene.add_child(projectile)
-	projectile.global_position = global_position + _projectile_spawn_for_direction(shot_direction)
+	projectile.global_position = _projectile_spawn_position(shot_direction)
 	if projectile.has_method("setup"):
 		projectile.setup(shot_direction, attack_damage)
 
@@ -215,10 +218,12 @@ func update_state():
 		current_state = State.Idle
 
 func _shoot_animation_for_current_motion() -> StringName:
+	if is_clinging:
+		return &"cling"
 	if not is_on_floor():
 		return &"jump"
-	if _is_action_pressed_for_mode("aim_up", "aim_up_JOY"):
-		return &"runshootingUP"
+	if _is_aiming_up_on_floor():
+		return &"shootingUpP"
 	if is_crouching:
 		return &"duck"
 	if abs(_input_axis()) > 0.0 or abs(velocity.x) > 5.0:
@@ -234,16 +239,38 @@ func _input_axis() -> float:
 	return clampf(axis, -1.0, 1.0)
 
 func _shot_direction() -> Vector2:
-	if _is_action_pressed_for_mode("aim_up", "aim_up_JOY"):
+	if _is_aiming_up_on_floor():
 		return Vector2.UP
 	return Vector2.LEFT if animated_sprite_2d.flip_h else Vector2.RIGHT
 
-func _projectile_spawn_for_direction(shot_direction: Vector2) -> Vector2:
+func _projectile_spawn_position(shot_direction: Vector2) -> Vector2:
+	var marker := _muzzle_marker_for_direction(shot_direction)
+	if marker != null:
+		var local_position := marker.position
+		if animated_sprite_2d.flip_h:
+			local_position.x = -abs(local_position.x)
+		else:
+			local_position.x = abs(local_position.x)
+		return global_position + local_position
+	return global_position + _projectile_spawn_offset_for_direction(shot_direction)
+
+func _muzzle_marker_for_direction(shot_direction: Vector2) -> Marker2D:
 	if shot_direction == Vector2.UP:
-		return Vector2(6, -49)
+		return muzzle_up
 	if is_crouching:
-		return Vector2(projectile_spawn_offset.x * (-1.0 if animated_sprite_2d.flip_h else 1.0), -12)
-	return Vector2(projectile_spawn_offset.x * (-1.0 if animated_sprite_2d.flip_h else 1.0), projectile_spawn_offset.y)
+		return muzzle_duck
+	return muzzle
+
+func _projectile_spawn_offset_for_direction(shot_direction: Vector2) -> Vector2:
+	var facing_offset := -1.0 if animated_sprite_2d.flip_h else 1.0
+	if shot_direction == Vector2.UP:
+		return Vector2(6 * facing_offset, -49)
+	if is_crouching:
+		return Vector2(projectile_spawn_offset.x * facing_offset, -13)
+	return Vector2(projectile_spawn_offset.x * facing_offset, projectile_spawn_offset.y)
+
+func _update_crouch_state() -> void:
+	is_crouching = is_on_floor() and _is_action_pressed_for_mode("crouch", "crouch_JOY")
 
 func _should_wall_cling() -> bool:
 	if is_on_floor() or not is_on_wall():
@@ -285,12 +312,18 @@ func _is_action_pressed_for_mode(keyboard_action: StringName, gamepad_action: St
 		return true
 	return false
 
+func _is_aiming_up_on_floor() -> bool:
+	return is_on_floor() and not is_clinging and _is_action_pressed_for_mode("aim_up", "aim_up_JOY")
+
 func update_animations():
 	if hurt_timer > 0.0:
 		animated_sprite_2d.play("hurt")
 		return
 	if shoot_animation_timer > 0.0:
 		animated_sprite_2d.play(_shoot_animation_for_current_motion())
+		return
+	if _is_aiming_up_on_floor():
+		animated_sprite_2d.play("shootingUpP")
 		return
 
 	match current_state:

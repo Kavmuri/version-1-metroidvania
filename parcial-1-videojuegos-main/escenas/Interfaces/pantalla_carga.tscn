@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://bhxflpb74ryd7"]
-
-[ext_resource type="Script" uid="uid://fhe86q6y0mwu" path="res://escenas/Interfaces/pantalla_carga.gd" id="1_7r3ql"]
-
-[node name="pantallaCarga" type="Node" unique_id=270809873]
-script = ExtResource("1_7r3ql")

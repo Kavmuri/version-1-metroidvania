@@ -74,6 +74,7 @@ func _update_patrol(delta: float) -> void:
 
 func _enter_idle_wait() -> void:
 	current_state = State.IDLE
+	transition_state(&"Idle")
 	if timer.is_stopped():
 		timer.start(wait_time)
 
@@ -106,3 +107,4 @@ func _play_state_animation() -> void:
 
 func _on_timer_timeout() -> void:
 	current_state = State.WALK
+	transition_state(&"Walk")

@@ -4,6 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://c1xrj8nt2lcy4" path="res://Enemies/assets/hell_hound_fire/hell-hound-idle.png" id="2_tex"]
 [ext_resource type="Texture2D" uid="uid://co0br8rxvkmpu" path="res://Enemies/assets/hell_hound_fire/hell-hound-walk.png" id="3_tex"]
 [ext_resource type="Texture2D" uid="uid://dphuvh7mv31il" path="res://Enemies/assets/hell_hound_fire/hell-hound-jump.png" id="4_tex"]
+[ext_resource type="Script" uid="uid://xaa8hkrevw0r" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
+[ext_resource type="Script" uid="uid://c1k1n3k3fhgum" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
+[ext_resource type="Script" uid="uid://bararf4q2412t" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]
+[ext_resource type="Script" uid="uid://28smt4plcyet" path="res://Enemies/scripts/state_machine/enemy_passthrough_state.gd" id="93_passthrough_state"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1"]
 atlas = ExtResource("2_tex")
@@ -226,41 +230,72 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="RectangleShape2D" id="BodyShape"]
-size = Vector2(43, 25)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1n3bt"]
+size = Vector2(38, 24)
 
 [sub_resource type="RectangleShape2D" id="ContactShape"]
-size = Vector2(45, 27)
+size = Vector2(42.5, 27.5)
+
+[sub_resource type="CircleShape2D" id="StateMachineAttackArea2DShape"]
+radius = 63.28507
 
 [node name="HellHoundFire" type="CharacterBody2D" unique_id=2103057411 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_script")
+always_run_on_ground = true
+max_consecutive_jumps = 2
 max_health = 5
 contact_damage = 2
-move_speed = 80
-detection_range = 390
-always_run_on_ground = true
-jump_trigger_horizontal_range = 115.0
-max_consecutive_jumps = 2
-post_jump_walk_time = 2.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1227114172]
-position = Vector2(0, -20)
+position = Vector2(0, -24)
 sprite_frames = SubResource("SpriteFrames_1")
 animation = &"idle"
 autoplay = "idle"
 frame_progress = 0.35016748
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1042287682]
-position = Vector2(-2.5, -8.5)
-shape = SubResource("BodyShape")
+position = Vector2(-1, -12)
+shape = SubResource("RectangleShape2D_1n3bt")
 
 [node name="ContactArea" type="Area2D" parent="." unique_id=1739599488]
 collision_layer = 4
 collision_mask = 2
 
 [node name="ContactShape" type="CollisionShape2D" parent="ContactArea" unique_id=671469556]
-position = Vector2(-2.5, -8.5)
+position = Vector2(-0.75, -12.25)
 shape = SubResource("ContactShape")
+debug_color = Color(1, 0.4509804, 0.65882355, 0.41960785)
+
+[node name="StateMachineController" type="Node" parent="." unique_id=708185138]
+script = ExtResource("91_state_controller")
+entered_state = &"RunChase"
+
+[node name="StateMachine" type="Node" parent="." unique_id=1820052183]
+script = ExtResource("90_state_machine")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine" unique_id=1407016093]
+script = ExtResource("92_idle_state")
+
+[node name="RunChase" type="Node" parent="StateMachine" unique_id=1088694124]
+script = ExtResource("93_passthrough_state")
+
+[node name="LeapAttack" type="Node" parent="StateMachine" unique_id=1831248975]
+script = ExtResource("93_passthrough_state")
+
+[node name="WalkCooldown" type="Node" parent="StateMachine" unique_id=2124772683]
+script = ExtResource("93_passthrough_state")
+
+[node name="AttackArea2D" type="Area2D" parent="." unique_id=986507390]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea2D" unique_id=425431000]
+position = Vector2(-1, -14)
+shape = SubResource("StateMachineAttackArea2DShape")
+debug_color = Color(0.95, 0.85, 0.2, 0.28)
 
 [connection signal="body_entered" from="ContactArea" to="." method="_on_contact_body_entered"]
+[connection signal="body_entered" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_entered"]
+[connection signal="body_exited" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_exited"]

@@ -1,0 +1,523 @@
+[gd_scene load_steps=67 format=3]
+
+[ext_resource type="Script" path="res://Enemies/scripts/enemy_boss.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://Enemies/assets/boss_cinder_demon/boss_cinder_demon.png" id="2_texture"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_passthrough_state.gd" id="93_passthrough_state"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(288, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(576, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(864, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(1152, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_idle_6"]
+atlas = ExtResource("2_texture")
+region = Rect2(1440, 0, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(288, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(576, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(864, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(1152, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_6"]
+atlas = ExtResource("2_texture")
+region = Rect2(1440, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_7"]
+atlas = ExtResource("2_texture")
+region = Rect2(1728, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_8"]
+atlas = ExtResource("2_texture")
+region = Rect2(2016, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_9"]
+atlas = ExtResource("2_texture")
+region = Rect2(2304, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_10"]
+atlas = ExtResource("2_texture")
+region = Rect2(2592, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_11"]
+atlas = ExtResource("2_texture")
+region = Rect2(2880, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_walk_12"]
+atlas = ExtResource("2_texture")
+region = Rect2(3168, 160, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(288, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(576, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(864, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(1152, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_6"]
+atlas = ExtResource("2_texture")
+region = Rect2(1440, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_7"]
+atlas = ExtResource("2_texture")
+region = Rect2(1728, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_8"]
+atlas = ExtResource("2_texture")
+region = Rect2(2016, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_9"]
+atlas = ExtResource("2_texture")
+region = Rect2(2304, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_10"]
+atlas = ExtResource("2_texture")
+region = Rect2(2592, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_11"]
+atlas = ExtResource("2_texture")
+region = Rect2(2880, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_12"]
+atlas = ExtResource("2_texture")
+region = Rect2(3168, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_13"]
+atlas = ExtResource("2_texture")
+region = Rect2(3456, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_14"]
+atlas = ExtResource("2_texture")
+region = Rect2(3744, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_attack_15"]
+atlas = ExtResource("2_texture")
+region = Rect2(4032, 320, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 480, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(288, 480, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(576, 480, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(864, 480, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_hit_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(1152, 480, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(288, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(576, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(864, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(1152, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_6"]
+atlas = ExtResource("2_texture")
+region = Rect2(1440, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_7"]
+atlas = ExtResource("2_texture")
+region = Rect2(1728, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_8"]
+atlas = ExtResource("2_texture")
+region = Rect2(2016, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_9"]
+atlas = ExtResource("2_texture")
+region = Rect2(2304, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_10"]
+atlas = ExtResource("2_texture")
+region = Rect2(2592, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_11"]
+atlas = ExtResource("2_texture")
+region = Rect2(2880, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_12"]
+atlas = ExtResource("2_texture")
+region = Rect2(3168, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_13"]
+atlas = ExtResource("2_texture")
+region = Rect2(3456, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_14"]
+atlas = ExtResource("2_texture")
+region = Rect2(3744, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_15"]
+atlas = ExtResource("2_texture")
+region = Rect2(4032, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_16"]
+atlas = ExtResource("2_texture")
+region = Rect2(4320, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_17"]
+atlas = ExtResource("2_texture")
+region = Rect2(4608, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_18"]
+atlas = ExtResource("2_texture")
+region = Rect2(4896, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_19"]
+atlas = ExtResource("2_texture")
+region = Rect2(5184, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_20"]
+atlas = ExtResource("2_texture")
+region = Rect2(5472, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_21"]
+atlas = ExtResource("2_texture")
+region = Rect2(5760, 640, 288, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cinder_death_22"]
+atlas = ExtResource("2_texture")
+region = Rect2(6048, 640, 288, 160)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cinder"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_idle_6")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_walk_12")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_13")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_14")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_attack_15")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_hit_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_hit_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_hit_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_hit_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_hit_5")
+}],
+"loop": false,
+"name": &"hit",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_13")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_14")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_15")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_16")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_17")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_18")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_19")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_20")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_21")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cinder_death_22")
+}],
+"loop": false,
+"name": &"death",
+"speed": 12.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
+radius = 32.0
+height = 96.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_contact"]
+radius = 38.0
+height = 108.0
+
+[sub_resource type="CircleShape2D" id="StateMachineAttackArea2DShape"]
+radius = 150.0
+
+[node name="BossCinderDemon" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 4
+script = ExtResource("1_script")
+max_health = 16
+contact_damage = 2
+move_speed = 44.0
+boss_walk_speed = 34.0
+attack_interval = 1.8
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -58)
+sprite_frames = SubResource("SpriteFrames_cinder")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -50)
+shape = SubResource("CapsuleShape2D_body")
+
+[node name="ContactArea" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+
+[node name="ContactShape" type="CollisionShape2D" parent="ContactArea"]
+position = Vector2(0, -50)
+shape = SubResource("CapsuleShape2D_contact")
+
+[node name="StateMachineController" type="Node" parent="."]
+script = ExtResource("91_state_controller")
+entered_state = &"BossChase"
+exited_state = &"Idle"
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("90_state_machine")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("92_idle_state")
+
+[node name="BossChase" type="Node" parent="StateMachine"]
+script = ExtResource("93_passthrough_state")
+
+[node name="BossAttack" type="Node" parent="StateMachine"]
+script = ExtResource("93_passthrough_state")
+
+[node name="AttackArea2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea2D"]
+position = Vector2(0, -46)
+shape = SubResource("StateMachineAttackArea2DShape")
+
+[connection signal="body_entered" from="ContactArea" to="." method="_on_contact_body_entered"]
+[connection signal="body_entered" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_entered"]
+[connection signal="body_exited" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_exited"]

@@ -3,6 +3,10 @@
 [ext_resource type="Script" uid="uid://dp2pe5ew224mw" path="res://Enemies/enemy_crab.gd" id="1_bihbv"]
 [ext_resource type="Texture2D" uid="uid://dkroll6eii6vk" path="res://Enemies/crab-idle.png" id="1_meo72"]
 [ext_resource type="Texture2D" uid="uid://b1yqhhfux4sn8" path="res://Enemies/crab-walk.png" id="2_bihbv"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]
+[ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_passthrough_state.gd" id="93_passthrough_state"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tongn"]
 atlas = ExtResource("1_meo72")
@@ -76,6 +80,9 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_0xvsd"]
 radius = 13.0
 
+
+[sub_resource type="CircleShape2D" id="StateMachineAttackArea2DShape"]
+radius = 120.0
 [node name="EnemyCrab" type="CharacterBody2D" unique_id=1681054994 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_bihbv")
@@ -98,3 +105,29 @@ wait_time = 3.0
 one_shot = true
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[node name="StateMachineController" type="Node" parent="."]
+script = ExtResource("91_state_controller")
+state_machine_path = NodePath("../StateMachine")
+entered_state = &"Walk"
+exited_state = &"Idle"
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("90_state_machine")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("92_idle_state")
+
+[node name="Walk" type="Node" parent="StateMachine"]
+script = ExtResource("93_passthrough_state")
+
+[node name="AttackArea2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea2D"]
+shape = SubResource("StateMachineAttackArea2DShape")
+debug_color = Color(0.95, 0.85, 0.2, 0.28)
+
+[connection signal="body_entered" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_entered"]
+[connection signal="body_exited" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_exited"]

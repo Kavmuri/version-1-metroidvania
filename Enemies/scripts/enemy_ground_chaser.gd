@@ -23,10 +23,14 @@ func _ready() -> void:
 	super._ready()
 	_think_remaining = initial_think_time
 	_load_patrol_points()
-	_patrol_timer = Timer.new()
-	_patrol_timer.one_shot = true
-	_patrol_timer.timeout.connect(_on_patrol_timer_timeout)
-	add_child(_patrol_timer)
+	_patrol_timer = get_node_or_null("PatrolTimer") as Timer
+	if _patrol_timer == null:
+		_patrol_timer = Timer.new()
+		_patrol_timer.name = "PatrolTimer"
+		_patrol_timer.one_shot = true
+		add_child(_patrol_timer)
+	if not _patrol_timer.timeout.is_connected(_on_patrol_timer_timeout):
+		_patrol_timer.timeout.connect(_on_patrol_timer_timeout)
 	_enter_patrol_wait()
 
 func _physics_process(delta: float) -> void:
@@ -34,18 +38,22 @@ func _physics_process(delta: float) -> void:
 	_attack_cooldown_timer = max(_attack_cooldown_timer - delta, 0.0)
 
 	if _think_remaining > 0.0:
+		transition_state(&"Idle")
 		_think_remaining = max(_think_remaining - delta, 0.0)
 		velocity.x = 0.0
 	elif _is_attacking:
+		transition_state(&"MeleeAttack")
 		_update_attack(delta)
-	elif distance_to_player() <= melee_attack_range and _attack_cooldown_timer <= 0.0:
+	elif is_player_in_attack_area() and distance_to_player() <= melee_attack_range and _attack_cooldown_timer <= 0.0:
 		_start_attack()
-	elif distance_to_player() <= detection_range:
+	elif is_player_in_attack_area():
+		transition_state(&"Chase")
 		_chase_player()
 	else:
 		if _is_chasing_player:
 			_is_chasing_player = false
 			_enter_patrol_wait()
+		transition_state(&"Patrol")
 		_update_patrol(delta)
 
 	update_facing_from_velocity()
@@ -92,6 +100,7 @@ func _update_patrol(_delta: float) -> void:
 	velocity.x = sign(distance_x) * idle_patrol_speed
 
 func _enter_patrol_wait() -> void:
+	transition_state(&"Idle")
 	_waiting_for_patrol = true
 	velocity.x = 0.0
 	if _patrol_timer != null:
@@ -106,6 +115,7 @@ func _on_patrol_timer_timeout() -> void:
 	_waiting_for_patrol = false
 
 func _start_attack() -> void:
+	transition_state(&"MeleeAttack")
 	_is_attacking = true
 	_attack_damage_applied = false
 	_attack_hit_timer = max(melee_attack_hit_delay, 0.0)

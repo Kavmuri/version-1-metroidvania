@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bmy7kg6ynmcv5" path="res://Player1/player-run-shoot.png" id="8_vipk3"]
 [ext_resource type="Texture2D" uid="uid://do2dpil7w43ff" path="res://Player1/player-shoot-up.png" id="9_yxuh3"]
 [ext_resource type="Texture2D" uid="uid://bx3nmv3c4clgj" path="res://Player1/player-stand.png" id="10_l2bat"]
-[ext_resource type="PackedScene" path="res://Player1/player_projectile.tscn" id="11_projectile"]
+[ext_resource type="PackedScene" path="res://Player1/bullet.tscn" id="11_projectile"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_spprn"]
 atlas = ExtResource("2_sg1ih")
@@ -308,7 +308,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_i6qp4")
 }],
 "loop": true,
-"name": &"runshootingUP",
+"name": &"shootingUpP",
 "speed": 5.0
 }, {
 "frames": [{
@@ -337,7 +337,7 @@ projectile_scene = ExtResource("11_projectile")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1201985409]
 position = Vector2(0, -24)
 sprite_frames = SubResource("SpriteFrames_b1ygp")
-animation = &"stand"
+animation = &"runshooting"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=91798449]
@@ -346,3 +346,12 @@ shape = SubResource("CapsuleShape2D_o28un")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=444825954]
 position = Vector2(0, -21)
+
+[node name="Muzzle" type="Marker2D" parent="." unique_id=526095346]
+position = Vector2(26, -25)
+
+[node name="MuzzleUp" type="Marker2D" parent="." unique_id=1414247823]
+position = Vector2(4, -43)
+
+[node name="MuzzleDuck" type="Marker2D" parent="." unique_id=1283715658]
+position = Vector2(26, -14)

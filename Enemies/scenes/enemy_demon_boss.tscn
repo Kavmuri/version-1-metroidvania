@@ -25,6 +25,10 @@
 [ext_resource type="Texture2D" uid="uid://7gaj3l7sxf1g" path="res://Enemies/assets/demon_boss/demon_attack_16.png" id="23_tex"]
 [ext_resource type="Texture2D" uid="uid://em3s1rx44fo3" path="res://Enemies/assets/demon_boss/demon_attack_17.png" id="24_tex"]
 [ext_resource type="Texture2D" uid="uid://cbwy37hjqn3wv" path="res://Enemies/assets/demon_boss/demon_attack_18.png" id="25_tex"]
+[ext_resource type="Script" uid="uid://xaa8hkrevw0r" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
+[ext_resource type="Script" uid="uid://c1k1n3k3fhgum" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
+[ext_resource type="Script" uid="uid://bararf4q2412t" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]
+[ext_resource type="Script" uid="uid://28smt4plcyet" path="res://Enemies/scripts/state_machine/enemy_passthrough_state.gd" id="93_passthrough_state"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7"]
 atlas = ExtResource("8_tex")
@@ -207,38 +211,70 @@ animations = [{
 "speed": 6.0
 }]
 
-[sub_resource type="RectangleShape2D" id="BodyShape"]
-size = Vector2(144, 111)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ctr52"]
+radius = 75.0
+height = 150.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_emjvv"]
-radius = 72.0
-height = 144.0
+radius = 82.0
+height = 164.0
+
+[sub_resource type="CircleShape2D" id="StateMachineAttackArea2DShape"]
+radius = 360.0
 
 [node name="DemonBoss" type="CharacterBody2D" unique_id=406176283 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_script")
 max_health = 18
 contact_damage = 2
-move_speed = 42
-detection_range = 430
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=661801655]
-position = Vector2(0, -50)
+position = Vector2(2, -56)
 sprite_frames = SubResource("SpriteFrames_1")
 animation = &"idle"
 autoplay = "idle"
 frame_progress = 0.70010066
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=358292088]
-position = Vector2(0, -52.5)
-shape = SubResource("BodyShape")
+position = Vector2(2, -74)
+shape = SubResource("CapsuleShape2D_ctr52")
+debug_color = Color(0, 0.57254905, 0.69803923, 0.41960785)
 
 [node name="ContactArea" type="Area2D" parent="." unique_id=1646752067]
 collision_layer = 4
 collision_mask = 2
 
 [node name="ContactShape" type="CollisionShape2D" parent="ContactArea" unique_id=933539979]
-position = Vector2(0, -51)
+position = Vector2(2, -73)
 shape = SubResource("CapsuleShape2D_emjvv")
+debug_color = Color(1, 0.4509804, 0.65882355, 0.41960785)
+
+[node name="StateMachineController" type="Node" parent="." unique_id=65982856]
+script = ExtResource("91_state_controller")
+entered_state = &"BossChase"
+
+[node name="StateMachine" type="Node" parent="." unique_id=26863750]
+script = ExtResource("90_state_machine")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine" unique_id=1226628853]
+script = ExtResource("92_idle_state")
+
+[node name="BossChase" type="Node" parent="StateMachine" unique_id=63570515]
+script = ExtResource("93_passthrough_state")
+
+[node name="BossAttack" type="Node" parent="StateMachine" unique_id=1090119334]
+script = ExtResource("93_passthrough_state")
+
+[node name="AttackArea2D" type="Area2D" parent="." unique_id=380386703]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea2D" unique_id=1931069009]
+position = Vector2(2, -74)
+shape = SubResource("StateMachineAttackArea2DShape")
+debug_color = Color(0.95, 0.85, 0.2, 0.28)
 
 [connection signal="body_entered" from="ContactArea" to="." method="_on_contact_body_entered"]
+[connection signal="body_entered" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_entered"]
+[connection signal="body_exited" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_exited"]

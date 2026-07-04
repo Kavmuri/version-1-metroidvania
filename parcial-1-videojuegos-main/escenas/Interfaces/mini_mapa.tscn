@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://djhgl4jly15p5"]
-
-[ext_resource type="Script" uid="uid://dqrmfxih15fj8" path="res://scripts/MapaUI.gd" id="1_mf5l5"]
-
-[node name="miniMapa" type="CanvasLayer" unique_id=676333422]
-script = ExtResource("1_mf5l5")
