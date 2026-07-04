@@ -67,7 +67,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"attack",
-"speed": 9.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -122,9 +122,9 @@ flip_h_when_facing_right = false
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=344535587]
 position = Vector2(0, -33)
 sprite_frames = SubResource("SpriteFrames_1")
-animation = &"idle"
+animation = &"jump"
 autoplay = "idle"
-frame_progress = 0.56091905
+frame_progress = 0.49316722
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=7605026]
 position = Vector2(-1, -20)
