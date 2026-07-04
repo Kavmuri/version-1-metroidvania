@@ -10,21 +10,31 @@ extends CharacterBody2D
 @export var contact_damage_interval: float = 0.6
 @export var contact_groups: Array[StringName] = [&"Player", &"player"]
 @export var flip_h_when_facing_right: bool = true
+@export var death_effect_scene: PackedScene = preload("res://Enemies/scenes/enemy_death_effect.tscn")
+@export var auto_create_hurtbox: bool = true
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var contact_area: Area2D = get_node_or_null("ContactArea") as Area2D
+@onready var state_machine: Node = get_node_or_null("StateMachine")
 
 var health: int
 var player: Node2D
 var facing: int = -1
 var _contact_damage_cooldowns: Dictionary = {}
+var hurtbox: Area2D
+var _player_in_attack_area := false
+var is_dying := false
 
 func _ready() -> void:
 	health = max_health
+	_setup_hurtbox()
 	_find_player()
 	play_anim("idle")
 
 func _physics_process(delta: float) -> void:
+	if is_dying:
+		velocity = Vector2.ZERO
+		return
 	if player == null or not is_instance_valid(player):
 		_find_player()
 	if uses_gravity and not is_on_floor():
@@ -69,11 +79,15 @@ func update_facing_from_velocity() -> void:
 		sprite.flip_h = facing > 0 if flip_h_when_facing_right else facing < 0
 
 func play_anim(anim_name: StringName) -> void:
+	if sprite == null:
+		return
 	if sprite.sprite_frames != null and sprite.sprite_frames.has_animation(anim_name):
 		if sprite.animation != anim_name:
 			sprite.play(anim_name)
 
 func play_first_available_anim(anim_names: Array[StringName]) -> void:
+	if sprite == null:
+		return
 	if sprite.sprite_frames == null:
 		return
 	for anim_name in anim_names:
@@ -81,7 +95,19 @@ func play_first_available_anim(anim_names: Array[StringName]) -> void:
 			play_anim(anim_name)
 			return
 
+func transition_state(state_name: StringName) -> void:
+	if state_machine != null and state_machine.has_method("transition_to"):
+		state_machine.transition_to(state_name)
+
+func set_player_in_attack_area(is_inside: bool) -> void:
+	_player_in_attack_area = is_inside
+
+func is_player_in_attack_area() -> bool:
+	return _player_in_attack_area
+
 func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> void:
+	if is_dying:
+		return
 	health -= amount
 	if health <= 0:
 		AudioManager.play_sfx(&"enemy_death")
@@ -92,11 +118,90 @@ func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> voi
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
 	receive_damage(cantidad, fuente_pos)
 
+func get_hurtbox_damage_receiver() -> Node2D:
+	return self
+
 func die() -> void:
+	if is_dying:
+		return
+	is_dying = true
+	_disable_damage_areas()
+	_spawn_death_effect()
 	if sprite.sprite_frames != null and sprite.sprite_frames.has_animation(&"death"):
 		play_anim("death")
 		await sprite.animation_finished
 	queue_free()
+
+func _disable_damage_areas() -> void:
+	set_physics_process(false)
+	set_deferred("collision_layer", 0)
+	set_deferred("collision_mask", 0)
+	if contact_area != null:
+		contact_area.set_deferred("monitoring", false)
+		contact_area.set_deferred("monitorable", false)
+	if hurtbox != null:
+		hurtbox.set_deferred("monitoring", false)
+		hurtbox.set_deferred("monitorable", false)
+	var attack_area := get_node_or_null("AttackArea2D") as Area2D
+	if attack_area != null:
+		attack_area.set_deferred("monitoring", false)
+		attack_area.set_deferred("monitorable", false)
+
+func _spawn_death_effect() -> void:
+	if death_effect_scene == null:
+		return
+	var death_effect := death_effect_scene.instantiate() as Node2D
+	if death_effect == null:
+		return
+	get_tree().current_scene.add_child(death_effect)
+	death_effect.global_position = global_position + Vector2(0, -20)
+
+func _setup_hurtbox() -> void:
+	hurtbox = get_node_or_null("Hurtbox") as Area2D
+	if hurtbox == null and auto_create_hurtbox:
+		hurtbox = _create_hurtbox_from_collision()
+	if hurtbox == null:
+		return
+	hurtbox.collision_layer = 4
+	hurtbox.collision_mask = 8
+	if not hurtbox.area_entered.is_connected(_on_hurtbox_area_entered):
+		hurtbox.area_entered.connect(_on_hurtbox_area_entered)
+
+func _create_hurtbox_from_collision() -> Area2D:
+	var source_shape := _find_collision_shape(self)
+	if source_shape == null or source_shape.shape == null:
+		return null
+
+	var new_hurtbox := Area2D.new()
+	new_hurtbox.name = "Hurtbox"
+	add_child(new_hurtbox)
+
+	var hurt_shape := CollisionShape2D.new()
+	hurt_shape.name = "HurtboxShape"
+	hurt_shape.position = source_shape.position
+	hurt_shape.rotation = source_shape.rotation
+	hurt_shape.scale = source_shape.scale
+	hurt_shape.shape = source_shape.shape.duplicate()
+	new_hurtbox.add_child(hurt_shape)
+	return new_hurtbox
+
+func _find_collision_shape(root: Node) -> CollisionShape2D:
+	for child in root.get_children():
+		if child is CollisionShape2D:
+			return child as CollisionShape2D
+	for child in root.get_children():
+		var found := _find_collision_shape(child)
+		if found != null:
+			return found
+	return null
+
+func _on_hurtbox_area_entered(area: Area2D) -> void:
+	var projectile := area as Node
+	if projectile != null and projectile.has_method("try_apply_damage_to"):
+		projectile.try_apply_damage_to(self)
+		return
+	if projectile != null and projectile.has_method("get_damage_amount"):
+		receive_damage(projectile.get_damage_amount(), projectile.global_position)
 
 func _tick_contact_damage(delta: float) -> void:
 	for body_id in _contact_damage_cooldowns.keys():

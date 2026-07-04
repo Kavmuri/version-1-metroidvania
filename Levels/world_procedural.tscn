@@ -20,7 +20,6 @@
 [ext_resource type="PackedScene" uid="uid://w7rj8nmbk7mu" path="res://Player2/player_2.tscn" id="18_player2"]
 [ext_resource type="PackedScene" uid="uid://d7khnqpgvdfy" path="res://Enemies/scenes/enemy_flying_eye_demon.tscn" id="19_flying_eye"]
 [ext_resource type="PackedScene" uid="uid://br187ybjaqtx2" path="res://Enemies/scenes/enemy_ghost.tscn" id="20_ghost"]
-[ext_resource type="PackedScene" uid="uid://cw6h1u5xpwupf" path="res://Enemies/scenes/enemy_wizard.tscn" id="21_wizard"]
 [ext_resource type="PackedScene" uid="uid://e207mjh06ki8" path="res://Enemies/scenes/enemy_hell_hound_fire.tscn" id="22_hell_hound"]
 [ext_resource type="PackedScene" uid="uid://tsiyjyrxbiqy" path="res://Enemies/scenes/enemy_mutant_toad.tscn" id="23_mutant_toad"]
 [ext_resource type="PackedScene" uid="uid://wccmdv75j2hn" path="res://Enemies/scenes/enemy_nightmare.tscn" id="24_nightmare"]
@@ -34,7 +33,7 @@ plantillas_deadends = []
 
 [node name="gestorEnemigos" type="Node" parent="."]
 script = ExtResource("9_gestor")
-escenas_enemigos = Array[PackedScene]([ExtResource("11_enemy_crab"), ExtResource("19_flying_eye"), ExtResource("20_ghost"), ExtResource("21_wizard"), ExtResource("22_hell_hound"), ExtResource("23_mutant_toad"), ExtResource("24_nightmare"), ExtResource("25_ogre")])
+escenas_enemigos = Array[PackedScene]([ExtResource("11_enemy_crab"), ExtResource("19_flying_eye"), ExtResource("20_ghost"), ExtResource("22_hell_hound"), ExtResource("23_mutant_toad"), ExtResource("24_nightmare"), ExtResource("25_ogre")])
 
 [node name="spawnPlayer" type="Node2D" parent="."]
 script = ExtResource("6_spawn_script")

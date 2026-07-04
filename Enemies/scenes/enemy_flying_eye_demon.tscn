@@ -2,6 +2,10 @@
 
 [ext_resource type="Script" uid="uid://cf3i5mawnsbye" path="res://Enemies/scripts/enemy_flyer.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://bofy082cpeyif" path="res://Enemies/assets/flying_eye_demon/Spritesheet.png" id="2_tex"]
+[ext_resource type="Script" uid="uid://xaa8hkrevw0r" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
+[ext_resource type="Script" uid="uid://c1k1n3k3fhgum" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
+[ext_resource type="Script" uid="uid://bararf4q2412t" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]
+[ext_resource type="Script" uid="uid://28smt4plcyet" path="res://Enemies/scripts/state_machine/enemy_passthrough_state.gd" id="93_passthrough_state"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_9"]
 atlas = ExtResource("2_tex")
@@ -128,16 +132,19 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="RectangleShape2D" id="BodyShape"]
-size = Vector2(30, 30)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bouj4"]
+radius = 12.0
 
-[sub_resource type="RectangleShape2D" id="ContactShape"]
-size = Vector2(30, 28)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_w2bab"]
+radius = 13.0
+height = 32.0
+
+[sub_resource type="CircleShape2D" id="StateMachineAttackArea2DShape"]
+radius = 103.01942
 
 [node name="FlyingEyeDemon" type="CharacterBody2D" unique_id=88065506 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_script")
-move_speed = 75
 flip_h_when_facing_right = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=640671338]
@@ -147,14 +154,44 @@ autoplay = "idle"
 frame_progress = 0.23845232
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1783903267]
-position = Vector2(1, -1)
-shape = SubResource("BodyShape")
+position = Vector2(0, -1)
+shape = SubResource("CapsuleShape2D_bouj4")
 
 [node name="ContactArea" type="Area2D" parent="." unique_id=230320988]
 collision_layer = 4
 collision_mask = 2
 
 [node name="ContactShape" type="CollisionShape2D" parent="ContactArea" unique_id=1140277431]
-shape = SubResource("ContactShape")
+position = Vector2(0, -1)
+shape = SubResource("CapsuleShape2D_w2bab")
+debug_color = Color(1, 0.4509804, 0.65882355, 0.41960785)
+
+[node name="StateMachineController" type="Node" parent="." unique_id=730333310]
+script = ExtResource("91_state_controller")
+entered_state = &"HoverChase"
+exited_state = &"IdleFloat"
+
+[node name="StateMachine" type="Node" parent="." unique_id=737807673]
+script = ExtResource("90_state_machine")
+initial_state_path = NodePath("IdleFloat")
+
+[node name="IdleFloat" type="Node" parent="StateMachine" unique_id=956869129]
+script = ExtResource("92_idle_state")
+
+[node name="HoverChase" type="Node" parent="StateMachine" unique_id=936753633]
+script = ExtResource("93_passthrough_state")
+
+[node name="DiveAttack" type="Node" parent="StateMachine" unique_id=2022352336]
+script = ExtResource("93_passthrough_state")
+
+[node name="AttackArea2D" type="Area2D" parent="." unique_id=1914717328]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea2D" unique_id=1802072985]
+shape = SubResource("StateMachineAttackArea2DShape")
+debug_color = Color(0.95, 0.85, 0.2, 0.28)
 
 [connection signal="body_entered" from="ContactArea" to="." method="_on_contact_body_entered"]
+[connection signal="body_entered" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_entered"]
+[connection signal="body_exited" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_exited"]

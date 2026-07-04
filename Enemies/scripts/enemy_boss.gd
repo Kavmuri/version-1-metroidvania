@@ -15,21 +15,25 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	attack_timer -= delta
 	if _think_remaining > 0.0:
+		transition_state(&"Idle")
 		_think_remaining = max(_think_remaining - delta, 0.0)
 		velocity.x = 0
 		play_first_available_anim([&"idle", &"walk"])
 		move_and_slide()
 		return
-	if distance_to_player() <= detection_range:
+	if is_player_in_attack_area():
+		transition_state(&"BossChase")
 		var dir := direction_to_player()
 		velocity.x = sign(dir.x) * boss_walk_speed
 		update_facing_from_velocity()
 		if attack_timer <= 0.0:
+			transition_state(&"BossAttack")
 			play_first_available_anim([&"attack", &"idle"])
 			attack_timer = attack_interval
 		else:
 			play_first_available_anim([&"walk", &"idle"])
 	else:
+		transition_state(&"Idle")
 		velocity.x = 0
 		play_first_available_anim([&"idle", &"walk"])
 	move_and_slide()

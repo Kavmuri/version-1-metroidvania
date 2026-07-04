@@ -4,6 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://bg8k4dcgy2xfj" path="res://Enemies/assets/hell_beast_fire/hell-beast-idle.png" id="2_tex"]
 [ext_resource type="Texture2D" uid="uid://belicwfhmw3qp" path="res://Enemies/assets/hell_beast_fire/hell-beast-breath.png" id="3_tex"]
 [ext_resource type="Texture2D" uid="uid://do5bfjwmpqtu3" path="res://Enemies/assets/hell_beast_fire/hell-beast-burn.png" id="4_tex"]
+[ext_resource type="Script" uid="uid://xaa8hkrevw0r" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
+[ext_resource type="Script" uid="uid://c1k1n3k3fhgum" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
+[ext_resource type="Script" uid="uid://bararf4q2412t" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]
+[ext_resource type="Script" uid="uid://28smt4plcyet" path="res://Enemies/scripts/state_machine/enemy_passthrough_state.gd" id="93_passthrough_state"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7"]
 atlas = ExtResource("3_tex")
@@ -135,37 +139,69 @@ animations = [{
 "speed": 7.0
 }]
 
-[sub_resource type="RectangleShape2D" id="BodyShape"]
-size = Vector2(61, 61)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_06c6y"]
+radius = 22.0
+height = 68.0
 
-[sub_resource type="RectangleShape2D" id="ContactShape"]
-size = Vector2(60, 61)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ceh5c"]
+radius = 24.0
+height = 72.0
+
+[sub_resource type="CircleShape2D" id="StateMachineAttackArea2DShape"]
+radius = 115.84904
 
 [node name="HellBeastFire" type="CharacterBody2D" unique_id=2033781502 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_script")
 max_health = 20
 contact_damage = 3
-move_speed = 36
-detection_range = 500
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1510055178]
-position = Vector2(0, -42)
+position = Vector2(0, -81)
 sprite_frames = SubResource("SpriteFrames_1")
 animation = &"idle"
 autoplay = "idle"
 frame_progress = 0.18935913
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=319625823]
-position = Vector2(2.5, 9.5)
-shape = SubResource("BodyShape")
+position = Vector2(1, -31)
+shape = SubResource("CapsuleShape2D_06c6y")
 
 [node name="ContactArea" type="Area2D" parent="." unique_id=426842221]
 collision_layer = 4
 collision_mask = 2
 
 [node name="ContactShape" type="CollisionShape2D" parent="ContactArea" unique_id=99619996]
-position = Vector2(2, 9.5)
-shape = SubResource("ContactShape")
+position = Vector2(1, -31)
+shape = SubResource("CapsuleShape2D_ceh5c")
+debug_color = Color(1, 0.4509804, 0.65882355, 0.41960785)
+
+[node name="StateMachineController" type="Node" parent="." unique_id=1956378104]
+script = ExtResource("91_state_controller")
+entered_state = &"BossChase"
+
+[node name="StateMachine" type="Node" parent="." unique_id=1300248568]
+script = ExtResource("90_state_machine")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine" unique_id=1719357629]
+script = ExtResource("92_idle_state")
+
+[node name="BossChase" type="Node" parent="StateMachine" unique_id=727363384]
+script = ExtResource("93_passthrough_state")
+
+[node name="BossAttack" type="Node" parent="StateMachine" unique_id=351616268]
+script = ExtResource("93_passthrough_state")
+
+[node name="AttackArea2D" type="Area2D" parent="." unique_id=2132182184]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea2D" unique_id=1007402887]
+position = Vector2(2, -31)
+shape = SubResource("StateMachineAttackArea2DShape")
+debug_color = Color(0.95, 0.85, 0.2, 0.28)
 
 [connection signal="body_entered" from="ContactArea" to="." method="_on_contact_body_entered"]
+[connection signal="body_entered" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_entered"]
+[connection signal="body_exited" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_exited"]

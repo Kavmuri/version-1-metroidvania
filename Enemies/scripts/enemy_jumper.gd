@@ -36,8 +36,10 @@ func _physics_process(delta: float) -> void:
 	_post_jump_walk_remaining = max(_post_jump_walk_remaining - delta, 0.0)
 	var landed_this_frame: bool = is_on_floor() and not _was_on_floor
 	if landed_this_frame:
+		transition_state(&"LandWait")
 		_think_remaining = max(_think_remaining, initial_think_time)
 	if _think_remaining > 0.0:
+		transition_state(&"Idle")
 		_think_remaining = max(_think_remaining - delta, 0.0)
 		velocity.x = 0.0
 		play_first_available_anim([&"idle", &"walk"])
@@ -46,6 +48,7 @@ func _physics_process(delta: float) -> void:
 		_was_on_floor = is_on_floor()
 		return
 	if _is_attacking:
+		transition_state(&"CloseAttack")
 		_update_close_attack(delta)
 		update_facing_from_velocity()
 		move_and_slide()
@@ -56,15 +59,19 @@ func _physics_process(delta: float) -> void:
 		if _can_start_close_attack():
 			_start_close_attack(dir)
 		elif _blocked_wait_remaining > 0.0:
+			transition_state(&"Idle")
 			velocity.x = 0.0
 			play_first_available_anim([&"idle", &"walk"])
-		elif always_run_on_ground and distance_to_player() <= detection_range:
+		elif always_run_on_ground and is_player_in_attack_area():
+			transition_state(&"WalkCooldown")
 			velocity.x = sign(dir.x) * move_speed
 			play_first_available_anim([&"run", &"walk", &"idle"])
 		else:
+			transition_state(&"Idle")
 			velocity.x = move_toward(velocity.x, 0.0, move_speed * delta)
 			play_first_available_anim([&"idle", &"walk"])
 		if jump_timer <= 0.0 and _post_jump_walk_remaining <= 0.0 and _should_jump_at_player():
+			transition_state(&"LeapAttack" if always_run_on_ground else &"JumpChase")
 			velocity.x = sign(dir.x) * horizontal_jump_speed
 			velocity.y = jump_velocity
 			jump_timer = jump_cooldown
@@ -73,6 +80,7 @@ func _physics_process(delta: float) -> void:
 				_consecutive_jumps = 0
 				_post_jump_walk_remaining = post_jump_walk_time
 	else:
+		transition_state(&"JumpChase")
 		play_first_available_anim([&"jump", &"walk", &"idle"])
 	update_facing_from_velocity()
 	var tried_to_move: bool = abs(velocity.x) > 0.1
@@ -82,7 +90,7 @@ func _physics_process(delta: float) -> void:
 	_was_on_floor = is_on_floor()
 
 func _should_jump_at_player() -> bool:
-	if player == null or distance_to_player() > detection_range:
+	if player == null or not is_player_in_attack_area():
 		return false
 	if not always_run_on_ground:
 		return true
@@ -96,6 +104,7 @@ func _can_start_close_attack() -> bool:
 	return distance_to_player() <= close_attack_range
 
 func _start_close_attack(dir: Vector2) -> void:
+	transition_state(&"CloseAttack")
 	_is_attacking = true
 	_attack_damage_applied = false
 	_attack_hit_remaining = close_attack_hit_delay

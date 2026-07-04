@@ -4,6 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://cv6urvea3n6ng" path="res://Enemies/assets/mutant_toad/mutant-toad-idle.png" id="2_tex"]
 [ext_resource type="Texture2D" uid="uid://u5klreolhy5d" path="res://Enemies/assets/mutant_toad/mutant-toad-jump.png" id="3_tex"]
 [ext_resource type="Texture2D" uid="uid://d3whd76ghvxsn" path="res://Enemies/assets/mutant_toad/mutant-toad-attack.png" id="4_tex"]
+[ext_resource type="Script" uid="uid://xaa8hkrevw0r" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
+[ext_resource type="Script" uid="uid://c1k1n3k3fhgum" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
+[ext_resource type="Script" uid="uid://bararf4q2412t" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]
+[ext_resource type="Script" uid="uid://28smt4plcyet" path="res://Enemies/scripts/state_machine/enemy_passthrough_state.gd" id="93_passthrough_state"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_9"]
 atlas = ExtResource("4_tex")
@@ -100,37 +104,70 @@ animations = [{
 "speed": 8.0
 }]
 
-[sub_resource type="RectangleShape2D" id="BodyShape"]
-size = Vector2(50, 40)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k4dct"]
+size = Vector2(48, 38)
 
 [sub_resource type="RectangleShape2D" id="ContactShape"]
-size = Vector2(51, 39)
+size = Vector2(55, 44)
+
+[sub_resource type="CircleShape2D" id="StateMachineAttackArea2DShape"]
+radius = 107.37784
 
 [node name="MutantToad" type="CharacterBody2D" unique_id=2043244279 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_script")
 max_health = 4
-move_speed = 58
-detection_range = 340
 flip_h_when_facing_right = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=344535587]
-position = Vector2(0, -22)
+position = Vector2(0, -33)
 sprite_frames = SubResource("SpriteFrames_1")
 animation = &"idle"
 autoplay = "idle"
 frame_progress = 0.56091905
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=7605026]
-position = Vector2(-1, -9)
-shape = SubResource("BodyShape")
+position = Vector2(-1, -20)
+shape = SubResource("RectangleShape2D_k4dct")
 
 [node name="ContactArea" type="Area2D" parent="." unique_id=814626694]
 collision_layer = 4
 collision_mask = 2
 
 [node name="ContactShape" type="CollisionShape2D" parent="ContactArea" unique_id=1987064903]
-position = Vector2(-0.5, -8.5)
+position = Vector2(-0.5, -20)
 shape = SubResource("ContactShape")
+debug_color = Color(1, 0.4509804, 0.65882355, 0.41960785)
+
+[node name="StateMachineController" type="Node" parent="." unique_id=1419682068]
+script = ExtResource("91_state_controller")
+entered_state = &"JumpChase"
+
+[node name="StateMachine" type="Node" parent="." unique_id=279846319]
+script = ExtResource("90_state_machine")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine" unique_id=1944224056]
+script = ExtResource("92_idle_state")
+
+[node name="JumpChase" type="Node" parent="StateMachine" unique_id=1270495893]
+script = ExtResource("93_passthrough_state")
+
+[node name="CloseAttack" type="Node" parent="StateMachine" unique_id=1833582311]
+script = ExtResource("93_passthrough_state")
+
+[node name="LandWait" type="Node" parent="StateMachine" unique_id=484635208]
+script = ExtResource("93_passthrough_state")
+
+[node name="AttackArea2D" type="Area2D" parent="." unique_id=1302091354]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea2D" unique_id=1830760633]
+position = Vector2(-1, -22)
+shape = SubResource("StateMachineAttackArea2DShape")
+debug_color = Color(0.95, 0.85, 0.2, 0.28)
 
 [connection signal="body_entered" from="ContactArea" to="." method="_on_contact_body_entered"]
+[connection signal="body_entered" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_entered"]
+[connection signal="body_exited" from="AttackArea2D" to="StateMachineController" method="_on_attack_area_body_exited"]

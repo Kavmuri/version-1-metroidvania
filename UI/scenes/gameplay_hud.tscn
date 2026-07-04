@@ -12,6 +12,7 @@ content_margin_right = 14.0
 content_margin_bottom = 6.0
 
 [node name="GameplayHUD" type="CanvasLayer"]
+visible = false
 script = ExtResource("1_script")
 
 [node name="TopBar" type="PanelContainer" parent="."]
@@ -23,5 +24,5 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_top_bar")
 [node name="Player1Status" type="Label" parent="TopBar"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "Player1  ❤  3/3"
+text = ""
 vertical_alignment = 1
