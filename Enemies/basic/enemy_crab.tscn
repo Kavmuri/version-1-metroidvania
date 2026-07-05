@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cl7bil1d3h8ja"]
 
-[ext_resource type="Script" uid="uid://dp2pe5ew224mw" path="res://Enemies/enemy_crab.gd" id="1_bihbv"]
-[ext_resource type="Texture2D" uid="uid://dkroll6eii6vk" path="res://Enemies/crab-idle.png" id="1_meo72"]
-[ext_resource type="Texture2D" uid="uid://b1yqhhfux4sn8" path="res://Enemies/crab-walk.png" id="2_bihbv"]
+[ext_resource type="Script" uid="uid://dp2pe5ew224mw" path="res://Enemies/basic/enemy_crab.gd" id="1_bihbv"]
+[ext_resource type="Texture2D" uid="uid://dkroll6eii6vk" path="res://Enemies/basic/crab-idle.png" id="1_meo72"]
+[ext_resource type="Texture2D" uid="uid://b1yqhhfux4sn8" path="res://Enemies/basic/crab-walk.png" id="2_bihbv"]
 [ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
 [ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
 [ext_resource type="Script" path="res://Enemies/scripts/state_machine/enemy_idle_state.gd" id="92_idle_state"]

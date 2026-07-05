@@ -10,7 +10,7 @@ extends CharacterBody2D
 @export var contact_damage_interval: float = 0.6
 @export var contact_groups: Array[StringName] = [&"Player", &"player"]
 @export var flip_h_when_facing_right: bool = true
-@export var death_effect_scene: PackedScene = preload("res://Enemies/scenes/enemy_death_effect.tscn")
+@export var death_effect_scene: PackedScene = preload("res://Enemies/basic/enemy_death_effect.tscn")
 @export var auto_create_hurtbox: bool = true
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D

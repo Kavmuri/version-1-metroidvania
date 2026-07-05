@@ -6,18 +6,18 @@ const PLAYER_CATALOG := [
 ]
 
 const ENEMY_CATALOG := [
-	{"name": "Crab", "scene": preload("res://Enemies/enemy_crab.tscn")},
-	{"name": "Flying Eye Demon", "scene": preload("res://Enemies/scenes/enemy_flying_eye_demon.tscn")},
-	{"name": "Ghost", "scene": preload("res://Enemies/scenes/enemy_ghost.tscn")},
-	{"name": "Hell Hound Fire", "scene": preload("res://Enemies/scenes/enemy_hell_hound_fire.tscn")},
-	{"name": "Mutant Toad", "scene": preload("res://Enemies/scenes/enemy_mutant_toad.tscn")},
-	{"name": "Nightmare", "scene": preload("res://Enemies/scenes/enemy_nightmare.tscn")},
-	{"name": "Ogre", "scene": preload("res://Enemies/scenes/enemy_ogre.tscn")},
-	{"name": "Dragon", "scene": preload("res://Enemies/scenes/enemy_dragon.tscn")},
-	{"name": "Hell Beast Fire", "scene": preload("res://Enemies/scenes/enemy_hell_beast_fire.tscn")},
-	{"name": "Demon Boss", "scene": preload("res://Enemies/scenes/enemy_demon_boss.tscn")},
-	{"name": "Agis", "scene": preload("res://Enemies/scenes/enemy_agis.tscn")},
-	{"name": "BossCinderDemon", "scene": preload("res://Enemies/scenes/enemy_boss_cinder_demon.tscn")},
+	{"name": "Crab", "scene": preload("res://Enemies/basic/enemy_crab.tscn")},
+	{"name": "Flying Eye Demon", "scene": preload("res://Enemies/basic/enemy_flying_eye_demon.tscn")},
+	{"name": "Ghost", "scene": preload("res://Enemies/basic/enemy_ghost.tscn")},
+	{"name": "Hell Hound Fire", "scene": preload("res://Enemies/basic/enemy_hell_hound_fire.tscn")},
+	{"name": "Mutant Toad", "scene": preload("res://Enemies/basic/enemy_mutant_toad.tscn")},
+	{"name": "Nightmare", "scene": preload("res://Enemies/basic/enemy_nightmare.tscn")},
+	{"name": "Ogre", "scene": preload("res://Enemies/boss/enemy_ogre.tscn")},
+	{"name": "Dragon", "scene": preload("res://Enemies/basic/enemy_dragon.tscn")},
+	{"name": "Hell Beast Fire", "scene": preload("res://Enemies/basic/enemy_hell_beast_fire.tscn")},
+	{"name": "Demon Boss", "scene": preload("res://Enemies/basic/enemy_demon_boss.tscn")},
+	{"name": "Agis", "scene": preload("res://Enemies/boss/enemy_agis.tscn")},
+	{"name": "BossCinderDemon", "scene": preload("res://Enemies/boss/enemy_boss_cinder_demon.tscn")},
 ]
 
 @onready var _player_spawn: Marker2D = $PlayerSpawn

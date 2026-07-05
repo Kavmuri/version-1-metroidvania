@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="4_7lu2j"]
 [ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="5_nws1p"]
 [ext_resource type="PackedScene" uid="uid://w7rj8nmbk7mu" path="res://Player2/player_2.tscn" id="6_7lu2j"]
-[ext_resource type="PackedScene" uid="uid://cl7bil1d3h8ja" path="res://Enemies/enemy_crab.tscn" id="7_nws1p"]
+[ext_resource type="PackedScene" uid="uid://cl7bil1d3h8ja" path="res://Enemies/basic/enemy_crab.tscn" id="7_nws1p"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nws1p"]
 texture = ExtResource("3_aqvrb")
