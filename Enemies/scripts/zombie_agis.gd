@@ -1,8 +1,8 @@
 extends "res://Enemies/scripts/enemy_base.gd"
 
-@export var attack_range: float = 40.0
-@export var attack_cooldown: float = 1.0
-@export var damage_to_boss_on_death: int = 500 # Agis will have a lot of HP
+@export var attack_range: float = 45.0
+@export var attack_cooldown: float = 0.6
+@export var damage_to_boss_on_death: int = 500
 
 var boss_node: Node2D = null
 var difficulty_multiplier: float = 1.0
@@ -12,13 +12,13 @@ var _is_attacking: bool = false
 func _ready() -> void:
 	max_health = 500
 	contact_damage = 100
+	move_speed = 135.0 # High base speed
 	super._ready()
-	# Zombies should be aggressive from the start
 	_find_player()
 
 func _physics_process(delta: float) -> void:
 	if is_dying:
-		velocity.x = 0
+		velocity.x = move_toward(velocity.x, 0, 10)
 		move_and_slide()
 		return
 
@@ -28,37 +28,42 @@ func _physics_process(delta: float) -> void:
 
 	if player != null and is_instance_valid(player):
 		var dist = global_position.distance_to(player.global_position)
-		if dist < attack_range and _attack_timer <= 0.0:
-			_start_attack()
-		elif not _is_attacking:
-			_chase_player()
+		var dir_to_p = (player.global_position - global_position).normalized()
+
+		if not _is_attacking:
+			velocity.x = dir_to_p.x * move_speed * difficulty_multiplier
+			play_anim(&"zombieAGIS_Run")
+			sprite.speed_scale = difficulty_multiplier * 1.6
+
+			if dist < attack_range and _attack_timer <= 0.0:
+				_start_attack()
+		else:
+			# Continue moving slightly during attack to stay on player
+			velocity.x = move_toward(velocity.x, dir_to_p.x * move_speed * 0.4, 20)
 	else:
 		velocity.x = 0
 		play_anim(&"zombieAGIS_Idle")
+		sprite.speed_scale = 1.0
 
 	update_facing_from_velocity()
 	move_and_slide()
 
-func _chase_player() -> void:
-	var dir = direction_to_player()
-	var current_speed = move_speed * difficulty_multiplier
-	velocity.x = dir.x * current_speed
-	play_anim(&"zombieAGIS_Run")
-	# Update animation speed based on difficulty
-	sprite.speed_scale = difficulty_multiplier
-
 func _start_attack() -> void:
 	_is_attacking = true
-	velocity.x = 0
 	play_anim(&"zombieAGIS_Atack")
-	_attack_timer = attack_cooldown / difficulty_multiplier
+	sprite.speed_scale = difficulty_multiplier * 2.2
 
 	await sprite.animation_finished
-	_is_attacking = false
 
-	# If player still in range, deal damage
-	if player != null and is_instance_valid(player) and global_position.distance_to(player.global_position) < attack_range + 10:
-		_deal_contact_damage(player)
+	if is_dying: return
+
+	# Apply damage if close at end of animation
+	if player != null and is_instance_valid(player):
+		if global_position.distance_to(player.global_position) < attack_range + 30:
+			_deal_contact_damage(player)
+
+	_is_attacking = false
+	_attack_timer = attack_cooldown / difficulty_multiplier
 
 func die() -> void:
 	if is_dying:
@@ -71,6 +76,7 @@ func die() -> void:
 
 	_disable_damage_areas()
 	play_anim(&"zombieAGIS_Died")
+	sprite.speed_scale = 1.5
 	await sprite.animation_finished
 	queue_free()
 
