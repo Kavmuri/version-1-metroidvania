@@ -232,7 +232,17 @@ func _shoot_animation_for_current_motion() -> StringName:
 
 func _input_axis() -> float:
 	if input_mode == "keyboard" or input_mode == "both":
-		var keyboard_axis := Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+		var left_strength := Input.get_action_strength("move_left")
+		var right_strength := Input.get_action_strength("move_right")
+		if InputMap.has_action("ui_left"):
+			left_strength = max(left_strength, Input.get_action_strength("ui_left"))
+		if InputMap.has_action("ui_right"):
+			right_strength = max(right_strength, Input.get_action_strength("ui_right"))
+		if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
+			left_strength = 1.0
+		if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
+			right_strength = 1.0
+		var keyboard_axis := right_strength - left_strength
 		if abs(keyboard_axis) > 0.0:
 			return keyboard_axis
 	if input_mode == "gamepad" or input_mode == "both":

@@ -1,10 +1,10 @@
 extends Node2D
 
 # arena_rect: left, top, width, height
-@export var arena_rect: Rect2 = Rect2(3800, -520, 2200, 1100)
+@export var arena_rect: Rect2 = Rect2(3800, -360, 2200, 940)
 @export var global_limits: Rect2 = Rect2(0, -1000, 6500, 1580)
-@export var zoom_level: Vector2 = Vector2(0.95, 0.95)
-@export var camera_offset: Vector2 = Vector2(0, -64)
+@export var zoom_level: Vector2 = Vector2(0.85, 0.85)
+@export var camera_offset: Vector2 = Vector2(0, 48)
 
 var players_in_area: Array[Node2D] = []
 var active: bool = false
