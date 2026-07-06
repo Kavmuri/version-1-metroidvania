@@ -12,13 +12,13 @@ var _is_attacking: bool = false
 func _ready() -> void:
 	max_health = 500
 	contact_damage = 100
-	move_speed = 85.0 # Restored original speed or slightly adjusted
+	move_speed = 90.0
 	super._ready()
 	_find_player()
 
 func _physics_process(delta: float) -> void:
 	if is_dying:
-		velocity.x = move_toward(velocity.x, 0, 10)
+		velocity.x = 0
 		move_and_slide()
 		return
 
@@ -30,22 +30,21 @@ func _physics_process(delta: float) -> void:
 		var dist = global_position.distance_to(player.global_position)
 		var dir_to_p = (player.global_position - global_position).normalized()
 
-		# Always update facing to player, even during attack
-		if abs(dir_to_p.x) > 0.01:
-			facing = 1 if dir_to_p.x > 0 else -1
-			if sprite != null:
-				sprite.flip_h = (facing > 0)
+		# GIRO CORREGIDO: El sprite base mira a la DERECHA.
+		# Si el jugador está a la IZQUIERDA (player.x < zombie.x), activamos flip_h.
+		if sprite != null:
+			sprite.flip_h = (player.global_position.x < global_position.x)
 
 		if not _is_attacking:
 			velocity.x = dir_to_p.x * move_speed * difficulty_multiplier
 			play_anim(&"zombieAGIS_Run")
-			sprite.speed_scale = difficulty_multiplier * 1.5
+			sprite.speed_scale = difficulty_multiplier * 1.8 # Sigue siendo rápido
 
 			if dist < attack_range and _attack_timer <= 0.0:
 				_start_attack()
 		else:
-			# Continue moving toward player during attack
-			velocity.x = dir_to_p.x * move_speed * 0.5
+			# Seguir al jugador durante el ataque (corretear)
+			velocity.x = dir_to_p.x * move_speed * 0.6
 	else:
 		velocity.x = 0
 		play_anim(&"zombieAGIS_Idle")
@@ -56,13 +55,12 @@ func _physics_process(delta: float) -> void:
 func _start_attack() -> void:
 	_is_attacking = true
 	play_anim(&"zombieAGIS_Atack")
-	sprite.speed_scale = difficulty_multiplier * 2.0
+	sprite.speed_scale = difficulty_multiplier * 2.5
 
 	await sprite.animation_finished
 
 	if is_dying: return
 
-	# Apply damage if close at end of animation
 	if player != null and is_instance_valid(player):
 		if global_position.distance_to(player.global_position) < attack_range + 30:
 			_deal_contact_damage(player)
@@ -93,6 +91,5 @@ func play_anim(anim_name: StringName) -> void:
 	if sprite.sprite_frames.has_animation(anim_name):
 		sprite.play(anim_name)
 
-# Override base facing to prevent conflict
 func update_facing_from_velocity() -> void:
 	pass

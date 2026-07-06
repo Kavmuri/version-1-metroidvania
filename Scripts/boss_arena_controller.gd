@@ -1,9 +1,9 @@
 extends Node2D
 
 # arena_rect: left, top, width, height
-@export var arena_rect: Rect2 = Rect2(3800, -200, 2200, 785)
-@export var global_limits: Rect2 = Rect2(0, -1000, 6500, 785) # Overall level limits
-@export var zoom_level: Vector2 = Vector2(0.85, 0.85) # Even closer zoom
+@export var arena_rect: Rect2 = Rect2(3800, -600, 2200, 1180)
+@export var global_limits: Rect2 = Rect2(0, -1000, 6500, 580) # Tight bottom limit to hide purple
+@export var zoom_level: Vector2 = Vector2(1.2, 1.2) # Very close zoom
 
 var players_in_area: Array[Node2D] = []
 var active: bool = false
@@ -15,7 +15,6 @@ func _ready() -> void:
 		area.body_entered.connect(_on_body_entered)
 		area.body_exited.connect(_on_body_exited)
 
-	# Apply global limits immediately on start to hide purple
 	call_deferred("_apply_global_limits")
 
 func _apply_global_limits() -> void:
@@ -23,8 +22,10 @@ func _apply_global_limits() -> void:
 	for p in players:
 		var cam = p.get_node_or_null("Camera2D") as Camera2D
 		if cam:
-			cam.limit_bottom = int(global_limits.size.y)
-			cam.limit_right = int(global_limits.size.x)
+			cam.limit_bottom = 580
+			cam.limit_right = 6500
+			# Subir la vista: compensar para que el piso esté abajo
+			cam.offset.y = -80
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("Player") or body.is_in_group("player"):
@@ -60,16 +61,16 @@ func _lock_camera() -> void:
 			original_camera_limits[player] = {
 				"left": camera.limit_left, "top": camera.limit_top,
 				"right": camera.limit_right, "bottom": camera.limit_bottom,
-				"zoom": camera.zoom
+				"zoom": camera.zoom, "offset": camera.offset
 			}
-			# Lock specifically to arena area and floor
 			camera.limit_left = int(arena_rect.position.x)
 			camera.limit_top = int(arena_rect.position.y)
 			camera.limit_right = int(arena_rect.position.x + arena_rect.size.x)
-			camera.limit_bottom = int(785) # Strict floor limit
+			camera.limit_bottom = 580
 
-			var tween = create_tween()
-			tween.tween_property(camera, "zoom", zoom_level, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			var tween = create_tween().set_parallel(true)
+			tween.tween_property(camera, "zoom", zoom_level, 1.0).set_trans(Tween.TRANS_SINE)
+			tween.tween_property(camera, "offset:y", -120.0, 1.0).set_trans(Tween.TRANS_SINE)
 
 func release_camera() -> void:
 	for player in original_camera_limits.keys():
@@ -81,6 +82,7 @@ func release_camera() -> void:
 				camera.limit_top = limits["top"]
 				camera.limit_right = limits["right"]
 				camera.limit_bottom = limits["bottom"]
-				var tween = create_tween()
-				tween.tween_property(camera, "zoom", limits["zoom"], 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+				var tween = create_tween().set_parallel(true)
+				tween.tween_property(camera, "zoom", limits["zoom"], 1.0)
+				tween.tween_property(camera, "offset", limits["offset"], 1.0)
 	active = false
