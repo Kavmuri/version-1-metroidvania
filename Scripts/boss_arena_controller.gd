@@ -2,8 +2,8 @@ extends Node2D
 
 # arena_rect: left, top, width, height
 @export var arena_rect: Rect2 = Rect2(3800, -200, 2200, 785)
-@export var global_limits: Rect2 = Rect2(0, -1000, 6000, 785) # Overall level limits
-@export var zoom_level: Vector2 = Vector2(0.7, 0.7)
+@export var global_limits: Rect2 = Rect2(0, -1000, 6500, 785) # Overall level limits
+@export var zoom_level: Vector2 = Vector2(0.85, 0.85) # Even closer zoom
 
 var players_in_area: Array[Node2D] = []
 var active: bool = false
@@ -62,10 +62,12 @@ func _lock_camera() -> void:
 				"right": camera.limit_right, "bottom": camera.limit_bottom,
 				"zoom": camera.zoom
 			}
+			# Lock specifically to arena area and floor
 			camera.limit_left = int(arena_rect.position.x)
 			camera.limit_top = int(arena_rect.position.y)
 			camera.limit_right = int(arena_rect.position.x + arena_rect.size.x)
-			camera.limit_bottom = int(arena_rect.position.y + arena_rect.size.y)
+			camera.limit_bottom = int(785) # Strict floor limit
+
 			var tween = create_tween()
 			tween.tween_property(camera, "zoom", zoom_level, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 

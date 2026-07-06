@@ -12,7 +12,7 @@ var _is_attacking: bool = false
 func _ready() -> void:
 	max_health = 500
 	contact_damage = 100
-	move_speed = 135.0 # High base speed
+	move_speed = 85.0 # Restored original speed or slightly adjusted
 	super._ready()
 	_find_player()
 
@@ -30,28 +30,33 @@ func _physics_process(delta: float) -> void:
 		var dist = global_position.distance_to(player.global_position)
 		var dir_to_p = (player.global_position - global_position).normalized()
 
+		# Always update facing to player, even during attack
+		if abs(dir_to_p.x) > 0.01:
+			facing = 1 if dir_to_p.x > 0 else -1
+			if sprite != null:
+				sprite.flip_h = (facing > 0)
+
 		if not _is_attacking:
 			velocity.x = dir_to_p.x * move_speed * difficulty_multiplier
 			play_anim(&"zombieAGIS_Run")
-			sprite.speed_scale = difficulty_multiplier * 1.6
+			sprite.speed_scale = difficulty_multiplier * 1.5
 
 			if dist < attack_range and _attack_timer <= 0.0:
 				_start_attack()
 		else:
-			# Continue moving slightly during attack to stay on player
-			velocity.x = move_toward(velocity.x, dir_to_p.x * move_speed * 0.4, 20)
+			# Continue moving toward player during attack
+			velocity.x = dir_to_p.x * move_speed * 0.5
 	else:
 		velocity.x = 0
 		play_anim(&"zombieAGIS_Idle")
 		sprite.speed_scale = 1.0
 
-	update_facing_from_velocity()
 	move_and_slide()
 
 func _start_attack() -> void:
 	_is_attacking = true
 	play_anim(&"zombieAGIS_Atack")
-	sprite.speed_scale = difficulty_multiplier * 2.2
+	sprite.speed_scale = difficulty_multiplier * 2.0
 
 	await sprite.animation_finished
 
@@ -76,7 +81,7 @@ func die() -> void:
 
 	_disable_damage_areas()
 	play_anim(&"zombieAGIS_Died")
-	sprite.speed_scale = 1.5
+	sprite.speed_scale = 1.2
 	await sprite.animation_finished
 	queue_free()
 
@@ -87,3 +92,7 @@ func play_anim(anim_name: StringName) -> void:
 	if sprite == null: return
 	if sprite.sprite_frames.has_animation(anim_name):
 		sprite.play(anim_name)
+
+# Override base facing to prevent conflict
+func update_facing_from_velocity() -> void:
+	pass
