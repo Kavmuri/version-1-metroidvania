@@ -1,7 +1,7 @@
 extends Node2D
 
-@export var arena_rect: Rect2 = Rect2(3000, -200, 3400, 1200)
-@export var zoom_level: Vector2 = Vector2(0.7, 0.7)
+@export var arena_rect: Rect2 = Rect2(3000, -200, 4400, 1400)
+@export var zoom_level: Vector2 = Vector2(0.5, 0.5)
 
 var players_in_area: Array[Node2D] = []
 var active: bool = false

@@ -1076,12 +1076,12 @@ animations = [{
 script = ExtResource("9_agis_ctrl")
 
 [node name="transicionBOSS" type="Area2D" parent="." unique_id=1750022287]
-position = Vector2(6279, 475)
+position = Vector2(4600, 475)
 collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="transicionBOSS" unique_id=885347380]
-position = Vector2(-3263, -203)
+position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_408fv")
 
 [node name="fondos1" type="Sprite2D" parent="." unique_id=35946878]
