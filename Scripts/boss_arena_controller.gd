@@ -1,14 +1,18 @@
 extends Node2D
 
 # arena_rect: left, top, width, height
-@export var arena_rect: Rect2 = Rect2(3800, -360, 2200, 940)
+@export var arena_rect: Rect2 = Rect2(3800, -360, 1950, 940)
 @export var global_limits: Rect2 = Rect2(0, -1000, 6500, 1580)
 @export var zoom_level: Vector2 = Vector2(0.85, 0.85)
 @export var camera_offset: Vector2 = Vector2(0, 48)
+@export var arena_wall_top: float = -360.0
+@export var arena_wall_bottom: float = 620.0
+@export var zombie_spawn_margin: float = 180.0
 
 var players_in_area: Array[Node2D] = []
 var active: bool = false
 var original_camera_limits: Dictionary = {}
+var arena_walls: Array[StaticBody2D] = []
 
 func _ready() -> void:
 	call_deferred("_register_scene_players")
@@ -71,7 +75,9 @@ func _activate_boss_fight() -> void:
 			agis.activate()
 		if agis.has_signal("boss_defeated"):
 			agis.boss_defeated.connect(_on_boss_defeated)
+		_configure_agis_spawns(agis)
 	_show_combat_hud(agis)
+	_lock_arena_walls()
 	_lock_camera()
 
 func _show_combat_hud(agis: Node2D) -> void:
@@ -106,6 +112,7 @@ func _lock_camera() -> void:
 			tween.tween_property(camera, "offset", camera_offset, 1.0).set_trans(Tween.TRANS_SINE)
 
 func release_camera() -> void:
+	_unlock_arena_walls()
 	for player in original_camera_limits.keys():
 		if is_instance_valid(player):
 			var camera := player.get_node_or_null("Camera2D") as Camera2D
@@ -126,6 +133,44 @@ func _configure_camera(camera: Camera2D, limits: Rect2) -> void:
 	camera.limit_right = int(limits.position.x + limits.size.x)
 	camera.limit_bottom = int(limits.position.y + limits.size.y)
 	camera.offset = camera_offset
+
+func _configure_agis_spawns(agis: Node2D) -> void:
+	if "spawn_range_x" in agis:
+		agis.set("spawn_range_x", Vector2(
+			arena_rect.position.x + zombie_spawn_margin,
+			arena_rect.position.x + arena_rect.size.x - zombie_spawn_margin
+		))
+	if "spawn_y" in agis:
+		agis.set("spawn_y", 560.0)
+
+func _lock_arena_walls() -> void:
+	_unlock_arena_walls()
+	var left_x := arena_rect.position.x
+	var right_x := arena_rect.position.x + arena_rect.size.x
+	arena_walls.append(_create_arena_wall("AgisArenaLeftWall", Vector2(left_x, (arena_wall_top + arena_wall_bottom) * 0.5)))
+	arena_walls.append(_create_arena_wall("AgisArenaRightWall", Vector2(right_x, (arena_wall_top + arena_wall_bottom) * 0.5)))
+
+func _unlock_arena_walls() -> void:
+	for wall in arena_walls:
+		if is_instance_valid(wall):
+			wall.queue_free()
+	arena_walls.clear()
+
+func _create_arena_wall(wall_name: String, wall_position: Vector2) -> StaticBody2D:
+	var wall := StaticBody2D.new()
+	wall.name = wall_name
+	wall.collision_layer = 1
+	wall.collision_mask = 0
+	add_child(wall)
+	wall.global_position = wall_position
+
+	var shape := CollisionShape2D.new()
+	shape.name = "CollisionShape2D"
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(32, arena_wall_bottom - arena_wall_top)
+	shape.shape = rect
+	wall.add_child(shape)
+	return wall
 
 func _get_all_players() -> Array[Node]:
 	var players: Array[Node] = []

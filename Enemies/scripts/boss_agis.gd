@@ -74,7 +74,9 @@ func _spawn_wave() -> void:
 		if is_dying: break
 
 		# Pick a random spot on the arena floor
-		var spawn_pos = Vector2(randf_range(spawn_range_x.x, spawn_range_x.y), spawn_y)
+		var spawn_left := min(spawn_range_x.x, spawn_range_x.y)
+		var spawn_right := max(spawn_range_x.x, spawn_range_x.y)
+		var spawn_pos = Vector2(randf_range(spawn_left, spawn_right), spawn_y)
 
 		# Spawn individual effect for each zombie
 		var effect = effect_scene.instantiate()
