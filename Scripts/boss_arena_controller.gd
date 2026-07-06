@@ -17,7 +17,7 @@ var arena_walls: Array[StaticBody2D] = []
 func _ready() -> void:
 	call_deferred("_register_scene_players")
 
-	var area := get_node_or_null("transicionBOSS")
+	var area: Area2D = get_node_or_null("transicionBOSS") as Area2D
 	if area:
 		area.body_entered.connect(_on_body_entered)
 		area.body_exited.connect(_on_body_exited)
@@ -26,25 +26,25 @@ func _ready() -> void:
 
 func _apply_global_limits() -> void:
 	for player in _get_all_players():
-		var camera := player.get_node_or_null("Camera2D") as Camera2D
+		var camera: Camera2D = player.get_node_or_null("Camera2D") as Camera2D
 		if camera != null:
 			_configure_camera(camera, global_limits)
 
 func _register_scene_players() -> void:
-	var p1 := get_node_or_null("Player1") as Node2D
+	var p1: Node2D = get_node_or_null("Player1") as Node2D
 	if p1 != null:
 		GameManager.register_player1(p1)
 		if "input_mode" in p1:
 			p1.set("input_mode", "keyboard")
-		var camera := p1.get_node_or_null("Camera2D") as Camera2D
+		var camera: Camera2D = p1.get_node_or_null("Camera2D") as Camera2D
 		if camera != null:
 			camera.make_current()
 
-	var p2 := get_node_or_null("Player2") as Node2D
+	var p2: Node2D = get_node_or_null("Player2") as Node2D
 	if p2 != null:
 		GameManager.register_player2(p2)
 
-	var hud := get_node_or_null("GameplayHUD")
+	var hud: Node = get_node_or_null("GameplayHUD")
 	if hud != null:
 		hud.visible = false
 		if hud.has_method("setup"):
@@ -63,25 +63,25 @@ func _on_body_exited(body: Node2D) -> void:
 func _check_activation() -> void:
 	if active:
 		return
-	var expected := 2 if GameManager.current_game_mode == "coop" and GameManager.current_player1 and GameManager.current_player2 else 1
+	var expected: int = 2 if GameManager.current_game_mode == "coop" and GameManager.current_player1 and GameManager.current_player2 else 1
 	if players_in_area.size() >= expected:
 		_activate_boss_fight()
 
 func _activate_boss_fight() -> void:
 	active = true
-	var agis := find_child("Agis", true, false) as Node2D
+	var agis: Node2D = find_child("Agis", true, false) as Node2D
 	if agis != null:
 		if agis.has_method("activate"):
 			agis.activate()
 		if agis.has_signal("boss_defeated"):
-			agis.boss_defeated.connect(_on_boss_defeated)
+			agis.connect("boss_defeated", Callable(self, "_on_boss_defeated"))
 		_configure_agis_spawns(agis)
 	_show_combat_hud(agis)
 	_lock_arena_walls()
 	_lock_camera()
 
 func _show_combat_hud(agis: Node2D) -> void:
-	var hud := get_node_or_null("GameplayHUD")
+	var hud: Node = get_node_or_null("GameplayHUD")
 	if hud == null:
 		return
 	if hud.has_method("setup"):
@@ -98,7 +98,7 @@ func _on_boss_defeated() -> void:
 
 func _lock_camera() -> void:
 	for player in players_in_area:
-		var camera := player.get_node_or_null("Camera2D") as Camera2D
+		var camera: Camera2D = player.get_node_or_null("Camera2D") as Camera2D
 		if camera != null:
 			original_camera_limits[player] = {
 				"left": camera.limit_left, "top": camera.limit_top,
@@ -107,7 +107,7 @@ func _lock_camera() -> void:
 			}
 			_configure_camera(camera, arena_rect)
 
-			var tween := create_tween().set_parallel(true)
+			var tween: Tween = create_tween().set_parallel(true)
 			tween.tween_property(camera, "zoom", zoom_level, 1.0).set_trans(Tween.TRANS_SINE)
 			tween.tween_property(camera, "offset", camera_offset, 1.0).set_trans(Tween.TRANS_SINE)
 
@@ -115,14 +115,14 @@ func release_camera() -> void:
 	_unlock_arena_walls()
 	for player in original_camera_limits.keys():
 		if is_instance_valid(player):
-			var camera := player.get_node_or_null("Camera2D") as Camera2D
+			var camera: Camera2D = player.get_node_or_null("Camera2D") as Camera2D
 			if camera != null:
-				var limits = original_camera_limits[player]
+				var limits: Dictionary = original_camera_limits[player]
 				camera.limit_left = limits["left"]
 				camera.limit_top = limits["top"]
 				camera.limit_right = limits["right"]
 				camera.limit_bottom = limits["bottom"]
-				var tween := create_tween().set_parallel(true)
+				var tween: Tween = create_tween().set_parallel(true)
 				tween.tween_property(camera, "zoom", limits["zoom"], 1.0)
 				tween.tween_property(camera, "offset", limits["offset"], 1.0)
 	active = false
@@ -145,8 +145,8 @@ func _configure_agis_spawns(agis: Node2D) -> void:
 
 func _lock_arena_walls() -> void:
 	_unlock_arena_walls()
-	var left_x := arena_rect.position.x
-	var right_x := arena_rect.position.x + arena_rect.size.x
+	var left_x: float = arena_rect.position.x
+	var right_x: float = arena_rect.position.x + arena_rect.size.x
 	arena_walls.append(_create_arena_wall("AgisArenaLeftWall", Vector2(left_x, (arena_wall_top + arena_wall_bottom) * 0.5)))
 	arena_walls.append(_create_arena_wall("AgisArenaRightWall", Vector2(right_x, (arena_wall_top + arena_wall_bottom) * 0.5)))
 
@@ -157,16 +157,16 @@ func _unlock_arena_walls() -> void:
 	arena_walls.clear()
 
 func _create_arena_wall(wall_name: String, wall_position: Vector2) -> StaticBody2D:
-	var wall := StaticBody2D.new()
+	var wall: StaticBody2D = StaticBody2D.new()
 	wall.name = wall_name
 	wall.collision_layer = 1
 	wall.collision_mask = 0
 	add_child(wall)
 	wall.global_position = wall_position
 
-	var shape := CollisionShape2D.new()
+	var shape: CollisionShape2D = CollisionShape2D.new()
 	shape.name = "CollisionShape2D"
-	var rect := RectangleShape2D.new()
+	var rect: RectangleShape2D = RectangleShape2D.new()
 	rect.size = Vector2(32, arena_wall_bottom - arena_wall_top)
 	shape.shape = rect
 	wall.add_child(shape)
@@ -179,7 +179,7 @@ func _get_all_players() -> Array[Node]:
 			if player is Node2D and not players.has(player):
 				players.append(player)
 	for node_name in ["Player1", "Player2"]:
-		var player := get_node_or_null(node_name)
+		var player: Node = get_node_or_null(node_name)
 		if player is Node2D and not players.has(player):
 			players.append(player)
 	return players
