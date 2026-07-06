@@ -869,7 +869,7 @@ tile_map_data = PackedByteArray("AAAIAAMAAgAKAAYAAAAIAAQAAgAKAAcAAAAIAAUAAgAKAAg
 tile_set = SubResource("TileSet_0tjov")
 
 [node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("5_a0qy4")]
-position = Vector2(1246, -98)
+position = Vector2(64, -32)
 
 [node name="Camera2D2" type="Camera2D" parent="Player1" unique_id=1397476047]
 limit_left = 0
