@@ -1,50 +1,60 @@
 extends CanvasLayer
 
 var player1: Node2D = null
-var player1_name := "Kaizen"
+var player2: Node2D = null
+var boss: Node2D = null
 
-@onready var _player1_status: Label = $TopBar/Player1Status
+@onready var _p1_container = $TopBar/HBox/Player1Container
+@onready var _p1_name = $TopBar/HBox/Player1Container/Player1Name
+@onready var _p1_health = $TopBar/HBox/Player1Container/Player1Health
+
+@onready var _p2_container = $TopBar/HBox/Player2Container
+@onready var _p2_name = $TopBar/HBox/Player2Container/Player2Name
+@onready var _p2_health = $TopBar/HBox/Player2Container/Player2Health
+
+@onready var _boss_container = $BossContainer
+@onready var _boss_name = $BossContainer/BossName
+@onready var _boss_health = $BossContainer/BossHealth
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 15
-	visible = player1 != null and is_instance_valid(player1)
-
-func setup(p1: Node2D, _p2: Node2D = null, p1_name: String = "Kaizen") -> void:
-	player1 = p1
-	player1_name = p1_name
-	visible = player1 != null and is_instance_valid(player1)
-	_refresh()
+	visible = true
 
 func _process(_delta: float) -> void:
-	_refresh()
+	_update_players()
+	_update_boss()
 
-func _refresh() -> void:
-	if _player1_status == null:
-		return
-
+func _update_players() -> void:
 	if player1 == null or not is_instance_valid(player1):
-		player1 = _find_node_by_name(get_tree().current_scene, "Player1")
-		visible = player1 != null and is_instance_valid(player1)
+		player1 = GameManager.current_player1
 
-	if not visible:
+	if player2 == null or not is_instance_valid(player2):
+		player2 = GameManager.current_player2
+
+	if player1 != null and is_instance_valid(player1):
+		_p1_container.visible = true
+		_p1_health.max_value = player1.get("max_health")
+		_p1_health.value = player1.get("health")
+	else:
+		_p1_container.visible = false
+
+	if player2 != null and is_instance_valid(player2):
+		_p2_container.visible = true
+		_p2_health.max_value = player2.get("max_health")
+		_p2_health.value = player2.get("health")
+	else:
+		_p2_container.visible = false
+
+func _update_boss() -> void:
+	if boss == null or not is_instance_valid(boss):
+		_boss_container.visible = false
 		return
 
-	var current_health := 3
-	var max_health := 3
-	if player1 != null and is_instance_valid(player1):
-		current_health = int(player1.get("health"))
-		max_health = int(player1.get("max_health"))
+	_boss_container.visible = true
+	_boss_name.text = boss.get("boss_name") if boss.get("boss_name") else "Boss"
+	_boss_health.max_value = boss.get("max_health")
+	_boss_health.value = boss.get("health")
 
-	_player1_status.text = player1_name + "  HP  " + str(current_health) + "/" + str(max_health)
-
-func _find_node_by_name(root: Node, node_name: String) -> Node2D:
-	if root == null:
-		return null
-	if root.name == node_name and root is Node2D:
-		return root as Node2D
-	for child in root.get_children():
-		var found := _find_node_by_name(child, node_name)
-		if found != null:
-			return found
-	return null
+func set_boss(new_boss: Node2D) -> void:
+	boss = new_boss

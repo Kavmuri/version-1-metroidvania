@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://bleys7bgpee68" path="res://Background/blue-stars.png" id="6_ecxi5"]
 [ext_resource type="PackedScene" uid="uid://cqessp2vvin1v" path="res://Enemies/boss/enemy_agis.tscn" id="7_s4gj5"]
 [ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player1/player.tscn" id="8_ou1hc"]
+[ext_resource type="Script" path="res://Scripts/boss_arena_controller.gd" id="9_agis_ctrl"]
+[ext_resource type="PackedScene" path="res://UI/scenes/gameplay_hud.tscn" id="10_hud"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_408fv"]
 size = Vector2(32, 112)
@@ -1071,6 +1073,7 @@ animations = [{
 }]
 
 [node name="Area14" type="Node2D" unique_id=518607811]
+script = ExtResource("9_agis_ctrl")
 
 [node name="transicionBOSS" type="Area2D" parent="." unique_id=1750022287]
 position = Vector2(6279, 475)
@@ -1209,3 +1212,5 @@ position = Vector2(5088, 536)
 
 [node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("8_ou1hc")]
 position = Vector2(4216, 552)
+
+[node name="GameplayHUD" parent="." instance=ExtResource("10_hud")]

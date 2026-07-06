@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://UI/scripts/gameplay_hud.gd" id="1_script"]
 
@@ -11,6 +11,34 @@ content_margin_top = 6.0
 content_margin_right = 14.0
 content_margin_bottom = 6.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_bg"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.4, 0.4, 1)
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fill"]
+bg_color = Color(0.7, 0.1, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boss_health_fill"]
+bg_color = Color(0.5, 0.1, 0.6, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.2)
+
 [node name="GameplayHUD" type="CanvasLayer"]
 visible = false
 script = ExtResource("1_script")
@@ -18,11 +46,74 @@ script = ExtResource("1_script")
 [node name="TopBar" type="PanelContainer" parent="."]
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 38.0
+offset_bottom = 44.0
+grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_top_bar")
 
-[node name="Player1Status" type="Label" parent="TopBar"]
+[node name="HBox" type="HBoxContainer" parent="TopBar"]
 layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Player1Container" type="VBoxContainer" parent="TopBar/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Player1Name" type="Label" parent="TopBar/HBox/Player1Container"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Kaizen"
+
+[node name="Player1Health" type="ProgressBar" parent="TopBar/HBox/Player1Container"]
+custom_minimum_size = Vector2(120, 10)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_health_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_health_fill")
+value = 100.0
+show_percentage = false
+
+[node name="Player2Container" type="VBoxContainer" parent="TopBar/HBox"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Player2Name" type="Label" parent="TopBar/HBox/Player2Container"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Player 2"
+
+[node name="Player2Health" type="ProgressBar" parent="TopBar/HBox/Player2Container"]
+custom_minimum_size = Vector2(120, 10)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_health_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_health_fill")
+value = 100.0
+show_percentage = false
+
+[node name="BossContainer" type="VBoxContainer" parent="."]
+visible = false
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -50.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+
+[node name="BossName" type="Label" parent="BossContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 18
-text = ""
-vertical_alignment = 1
+text = "Agis"
+horizontal_alignment = 1
+
+[node name="BossHealth" type="ProgressBar" parent="BossContainer"]
+custom_minimum_size = Vector2(400, 12)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_health_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_boss_health_fill")
+value = 100.0
+show_percentage = false

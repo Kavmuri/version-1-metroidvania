@@ -20,11 +20,11 @@ const HURT_ANIMATION_TIME = 0.25
 const SHOOT_ANIMATION_TIME = 1.0
 const WALL_CLING_FALL_SPEED = 32.0
 
-@export var max_health: int = 3
+@export var max_health: int = 800
 @export var invulnerability_time: float = 1.2
 @export var projectile_scene: PackedScene
 @export var attack_cooldown: float = 0.45
-@export var attack_damage: int = 1
+@export var attack_damage: int = 100
 @export var projectile_spawn_offset: Vector2 = Vector2(32, -24)
 @export_enum("keyboard", "gamepad", "both") var input_mode: String = "both"
 
