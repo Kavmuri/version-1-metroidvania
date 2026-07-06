@@ -346,6 +346,7 @@ shape = SubResource("CapsuleShape2D_o28un")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=444825954]
 position = Vector2(0, -21)
+zoom = Vector2(0.85, 0.85)
 
 [node name="Muzzle" type="Marker2D" parent="." unique_id=526095346]
 position = Vector2(26, -25)

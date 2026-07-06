@@ -50,7 +50,7 @@ func activate() -> void:
 	_wave_timer = 2.0
 	play_anim(&"idle")
 
-	var hud = get_tree().current_scene.get_node_or_null("GameplayHUD")
+	var hud: Node = get_tree().current_scene.get_node_or_null("GameplayHUD")
 	if hud and hud.has_method("set_boss"):
 		hud.set_boss(self)
 	if hud and hud.has_method("show_combat_hud"):
@@ -68,18 +68,18 @@ func _spawn_wave() -> void:
 	_summoning = true
 	play_anim(&"attack")
 
-	var count = waves[current_wave_index]
+	var count: int = waves[current_wave_index]
 
 	for i in range(count):
 		if is_dying: break
 
 		# Pick a random spot on the arena floor
-		var spawn_left := min(spawn_range_x.x, spawn_range_x.y)
-		var spawn_right := max(spawn_range_x.x, spawn_range_x.y)
-		var spawn_pos = Vector2(randf_range(spawn_left, spawn_right), spawn_y)
+		var spawn_left: float = minf(spawn_range_x.x, spawn_range_x.y)
+		var spawn_right: float = maxf(spawn_range_x.x, spawn_range_x.y)
+		var spawn_pos: Vector2 = Vector2(randf_range(spawn_left, spawn_right), spawn_y)
 
 		# Spawn individual effect for each zombie
-		var effect = effect_scene.instantiate()
+		var effect: Node2D = effect_scene.instantiate() as Node2D
 		get_parent().add_child(effect)
 		effect.global_position = spawn_pos
 		if effect is AnimatedSprite2D:
@@ -90,12 +90,12 @@ func _spawn_wave() -> void:
 
 		if is_dying: break
 
-		var zombie = zombie_scene.instantiate()
+		var zombie: Node2D = zombie_scene.instantiate() as Node2D
 		get_parent().add_child(zombie)
 		zombie.global_position = spawn_pos
 		zombie.boss_node = self
 
-		var difficulty = 1.0 + (current_wave_index * 0.15)
+		var difficulty: float = 1.0 + (current_wave_index * 0.15)
 		if zombie.has_method("set_difficulty"):
 			zombie.set_difficulty(difficulty)
 

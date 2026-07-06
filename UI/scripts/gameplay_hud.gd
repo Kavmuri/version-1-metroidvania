@@ -74,7 +74,7 @@ func set_boss(new_boss: Node2D) -> void:
 	boss = new_boss
 
 func _find_player_by_name(player_name: String) -> Node2D:
-	var scene := get_tree().current_scene
+	var scene: Node = get_tree().current_scene
 	if scene == null:
 		return null
 	return scene.find_child(player_name, true, false) as Node2D

@@ -1,21 +1,25 @@
 extends Node2D
 
 # arena_rect: left, top, width, height
-@export var arena_rect: Rect2 = Rect2(3800, -360, 1950, 940)
-@export var global_limits: Rect2 = Rect2(0, -1000, 6500, 1580)
-@export var zoom_level: Vector2 = Vector2(0.85, 0.85)
-@export var camera_offset: Vector2 = Vector2(0, 48)
-@export var arena_wall_top: float = -360.0
-@export var arena_wall_bottom: float = 620.0
+@export var arena_rect: Rect2 = Rect2(3008, -48, 2496, 688)
+@export var global_limits: Rect2 = Rect2(0, -320, 6500, 960)
+@export var zoom_level: Vector2 = Vector2(0.8, 0.8)
+@export var camera_offset: Vector2 = Vector2.ZERO
+@export var arena_wall_top: float = -48.0
+@export var arena_wall_bottom: float = 640.0
 @export var zombie_spawn_margin: float = 180.0
+@export var clamp_players_during_fight: bool = true
+@export var extra_limit_rect: Rect2 = Rect2(2272, -320, 176, 928)
 
 var players_in_area: Array[Node2D] = []
 var active: bool = false
 var original_camera_limits: Dictionary = {}
 var arena_walls: Array[StaticBody2D] = []
+var extra_limit_walls: Array[StaticBody2D] = []
 
 func _ready() -> void:
 	call_deferred("_register_scene_players")
+	set_process(true)
 
 	var area: Area2D = get_node_or_null("transicionBOSS") as Area2D
 	if area:
@@ -23,6 +27,11 @@ func _ready() -> void:
 		area.body_exited.connect(_on_body_exited)
 
 	call_deferred("_apply_global_limits")
+	call_deferred("_create_extra_limit_walls")
+
+func _process(_delta: float) -> void:
+	if active and clamp_players_during_fight:
+		_clamp_players_to_arena()
 
 func _apply_global_limits() -> void:
 	for player in _get_all_players():
@@ -77,7 +86,7 @@ func _activate_boss_fight() -> void:
 			agis.connect("boss_defeated", Callable(self, "_on_boss_defeated"))
 		_configure_agis_spawns(agis)
 	_show_combat_hud(agis)
-	_lock_arena_walls()
+	call_deferred("_lock_arena_walls")
 	_lock_camera()
 
 func _show_combat_hud(agis: Node2D) -> void:
@@ -143,6 +152,17 @@ func _configure_agis_spawns(agis: Node2D) -> void:
 	if "spawn_y" in agis:
 		agis.set("spawn_y", 560.0)
 
+func _clamp_players_to_arena() -> void:
+	var min_position: Vector2 = arena_rect.position
+	var max_position: Vector2 = arena_rect.position + arena_rect.size
+	for player in _get_all_players():
+		if player is Node2D:
+			var player_2d: Node2D = player as Node2D
+			player_2d.global_position = Vector2(
+				clampf(player_2d.global_position.x, min_position.x, max_position.x),
+				clampf(player_2d.global_position.y, min_position.y, max_position.y)
+			)
+
 func _lock_arena_walls() -> void:
 	_unlock_arena_walls()
 	var left_x: float = arena_rect.position.x
@@ -153,10 +173,39 @@ func _lock_arena_walls() -> void:
 func _unlock_arena_walls() -> void:
 	for wall in arena_walls:
 		if is_instance_valid(wall):
-			wall.queue_free()
+			wall.call_deferred("queue_free")
 	arena_walls.clear()
 
 func _create_arena_wall(wall_name: String, wall_position: Vector2) -> StaticBody2D:
+	return _create_static_rect(
+		wall_name,
+		wall_position,
+		Vector2(32, arena_wall_bottom - arena_wall_top)
+	)
+
+func _create_extra_limit_walls() -> void:
+	_clear_extra_limit_walls()
+	var left: float = extra_limit_rect.position.x
+	var top: float = extra_limit_rect.position.y
+	var right: float = extra_limit_rect.position.x + extra_limit_rect.size.x
+	var bottom: float = extra_limit_rect.position.y + extra_limit_rect.size.y
+	var center_x: float = (left + right) * 0.5
+	var center_y: float = (top + bottom) * 0.5
+	var width: float = extra_limit_rect.size.x
+	var height: float = extra_limit_rect.size.y
+
+	extra_limit_walls.append(_create_static_rect("ExtraLimitLeftWall", Vector2(left, center_y), Vector2(32, height)))
+	extra_limit_walls.append(_create_static_rect("ExtraLimitRightWall", Vector2(right, center_y), Vector2(32, height)))
+	extra_limit_walls.append(_create_static_rect("ExtraLimitTopWall", Vector2(center_x, top), Vector2(width, 32)))
+	extra_limit_walls.append(_create_static_rect("ExtraLimitBottomWall", Vector2(center_x, bottom), Vector2(width, 32)))
+
+func _clear_extra_limit_walls() -> void:
+	for wall in extra_limit_walls:
+		if is_instance_valid(wall):
+			wall.call_deferred("queue_free")
+	extra_limit_walls.clear()
+
+func _create_static_rect(wall_name: String, wall_position: Vector2, wall_size: Vector2) -> StaticBody2D:
 	var wall: StaticBody2D = StaticBody2D.new()
 	wall.name = wall_name
 	wall.collision_layer = 1
@@ -167,7 +216,7 @@ func _create_arena_wall(wall_name: String, wall_position: Vector2) -> StaticBody
 	var shape: CollisionShape2D = CollisionShape2D.new()
 	shape.name = "CollisionShape2D"
 	var rect: RectangleShape2D = RectangleShape2D.new()
-	rect.size = Vector2(32, arena_wall_bottom - arena_wall_top)
+	rect.size = wall_size
 	shape.shape = rect
 	wall.add_child(shape)
 	return wall

@@ -5,6 +5,7 @@ class_name Player
 @onready var muzzle: Marker2D = $Muzzle
 @onready var muzzle_up: Marker2D = $MuzzleUp
 @onready var muzzle_duck: Marker2D = $MuzzleDuck
+@onready var camera_2d: Camera2D = get_node_or_null("Camera2D") as Camera2D
 
 # Movement constants
 const SPEED = 300.0
@@ -47,6 +48,8 @@ func _ready() -> void:
 	health = max_health
 	add_to_group(&"Player")
 	add_to_group(&"player")
+	if camera_2d != null:
+		camera_2d.call_deferred("make_current")
 
 func _physics_process(delta: float):
 	if is_dead:

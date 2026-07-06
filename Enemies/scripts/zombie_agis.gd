@@ -30,8 +30,8 @@ func _physics_process(delta: float) -> void:
 		_find_player()
 
 	if player != null and is_instance_valid(player):
-		var dist := global_position.distance_to(player.global_position)
-		var dir_to_player := (player.global_position - global_position).normalized()
+		var dist: float = global_position.distance_to(player.global_position)
+		var dir_to_player: Vector2 = (player.global_position - global_position).normalized()
 
 		if abs(dir_to_player.x) > 0.01:
 			facing = 1 if dir_to_player.x > 0 else -1
@@ -55,22 +55,22 @@ func _physics_process(delta: float) -> void:
 
 func _find_player() -> void:
 	var closest_player: Node2D = null
-	var closest_distance := INF
+	var closest_distance: float = INF
 	for group_name in [&"Player", &"player", &"players"]:
 		for candidate in get_tree().get_nodes_in_group(group_name):
 			if candidate is Node2D and is_instance_valid(candidate):
-				var distance := global_position.distance_to(candidate.global_position)
+				var distance: float = global_position.distance_to(candidate.global_position)
 				if distance < closest_distance:
 					closest_distance = distance
 					closest_player = candidate
-	var scene := get_tree().current_scene
+	var scene: Node = get_tree().current_scene
 	if scene == null:
 		player = closest_player
 		return
 	for node_name in ["Player1", "Player2"]:
-		var named_player := scene.find_child(node_name, true, false) as Node2D
+		var named_player: Node2D = scene.find_child(node_name, true, false) as Node2D
 		if named_player != null and is_instance_valid(named_player):
-			var named_distance := global_position.distance_to(named_player.global_position)
+			var named_distance: float = global_position.distance_to(named_player.global_position)
 			if named_distance < closest_distance:
 				closest_distance = named_distance
 				closest_player = named_player
@@ -80,7 +80,7 @@ func _start_attack() -> void:
 	_is_attacking = true
 	velocity.x = 0
 	if player != null and is_instance_valid(player):
-		var dir_to_player := player.global_position - global_position
+		var dir_to_player: Vector2 = player.global_position - global_position
 		if abs(dir_to_player.x) > 0.01:
 			facing = 1 if dir_to_player.x > 0 else -1
 			_update_sprite_facing()
