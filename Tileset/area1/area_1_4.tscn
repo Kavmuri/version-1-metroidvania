@@ -14,6 +14,9 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_408fv"]
 size = Vector2(32, 112)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_agis_floor"]
+size = Vector2(560, 24)
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_84k2f"]
 texture = ExtResource("3_s4gj5")
 2:1/0 = 0
@@ -1076,13 +1079,13 @@ animations = [{
 script = ExtResource("9_agis_ctrl")
 
 [node name="transicionBOSS" type="Area2D" parent="." unique_id=1750022287]
-position = Vector2(4600, 475)
+position = Vector2(4520, 560)
 collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="transicionBOSS" unique_id=885347380]
 position = Vector2(0, 0)
-shape = SubResource("RectangleShape2D_408fv")
+shape = SubResource("RectangleShape2D_agis_floor")
 
 [node name="fondos1" type="Sprite2D" parent="." unique_id=35946878]
 position = Vector2(624, -8)

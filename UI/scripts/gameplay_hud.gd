@@ -19,18 +19,32 @@ var boss: Node2D = null
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 15
-	visible = true
+	visible = false
 
 func _process(_delta: float) -> void:
+	_update_players()
+	_update_boss()
+
+func setup(p1: Node2D = null, p2: Node2D = null) -> void:
+	player1 = p1
+	player2 = p2
+	_update_players()
+
+func show_combat_hud() -> void:
+	visible = true
 	_update_players()
 	_update_boss()
 
 func _update_players() -> void:
 	if player1 == null or not is_instance_valid(player1):
 		player1 = GameManager.current_player1
+	if player1 == null or not is_instance_valid(player1):
+		player1 = _find_player_by_name("Player1")
 
 	if player2 == null or not is_instance_valid(player2):
 		player2 = GameManager.current_player2
+	if player2 == null or not is_instance_valid(player2):
+		player2 = _find_player_by_name("Player2")
 
 	if player1 != null and is_instance_valid(player1):
 		_p1_container.visible = true
@@ -58,3 +72,9 @@ func _update_boss() -> void:
 
 func set_boss(new_boss: Node2D) -> void:
 	boss = new_boss
+
+func _find_player_by_name(player_name: String) -> Node2D:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return null
+	return scene.find_child(player_name, true, false) as Node2D

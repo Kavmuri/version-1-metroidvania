@@ -7,6 +7,8 @@ extends "res://Enemies/scripts/enemy_base.gd"
 @export var symbolic_damage_taken: int = 5
 @export var spawn_range_x: Vector2 = Vector2(4000, 5600)
 @export var spawn_y: float = 560.0
+@export var zombie_entrance_delay: float = 0.9
+@export var zombie_effect_speed_scale: float = 0.55
 
 var is_active: bool = false
 var current_wave_index: int = 0
@@ -21,6 +23,15 @@ func _ready() -> void:
 	super._ready()
 	visible = true
 	process_mode = Node.PROCESS_MODE_PAUSABLE
+	play_anim(&"idle")
+
+func _process(_delta: float) -> void:
+	if is_dying or sprite == null:
+		return
+	if _summoning:
+		_keep_anim_looping(&"attack")
+	else:
+		_keep_anim_looping(&"idle")
 
 func _physics_process(delta: float) -> void:
 	if not is_active or is_dying:
@@ -37,10 +48,13 @@ func activate() -> void:
 	if is_active: return
 	is_active = true
 	_wave_timer = 2.0
+	play_anim(&"idle")
 
 	var hud = get_tree().current_scene.get_node_or_null("GameplayHUD")
 	if hud and hud.has_method("set_boss"):
 		hud.set_boss(self)
+	if hud and hud.has_method("show_combat_hud"):
+		hud.show_combat_hud()
 
 func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> void:
 	if not is_active or is_dying: return
@@ -66,9 +80,11 @@ func _spawn_wave() -> void:
 		var effect = effect_scene.instantiate()
 		get_parent().add_child(effect)
 		effect.global_position = spawn_pos
+		if effect is AnimatedSprite2D:
+			effect.speed_scale = zombie_effect_speed_scale
 
 		# Wait for a bit of the effect before spawning zombie
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(zombie_entrance_delay).timeout
 
 		if is_dying: break
 
@@ -101,4 +117,10 @@ func die() -> void:
 func play_anim(anim_name: StringName) -> void:
 	if sprite == null: return
 	if sprite.sprite_frames.has_animation(anim_name):
+		sprite.play(anim_name)
+
+func _keep_anim_looping(anim_name: StringName) -> void:
+	if sprite.sprite_frames == null or not sprite.sprite_frames.has_animation(anim_name):
+		return
+	if sprite.animation != anim_name or not sprite.is_playing():
 		sprite.play(anim_name)

@@ -231,12 +231,13 @@ func _shoot_animation_for_current_motion() -> StringName:
 	return &"stand"
 
 func _input_axis() -> float:
-	var axis := 0.0
 	if input_mode == "keyboard" or input_mode == "both":
-		axis += Input.get_axis("move_left", "move_right")
+		var keyboard_axis := Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+		if abs(keyboard_axis) > 0.0:
+			return keyboard_axis
 	if input_mode == "gamepad" or input_mode == "both":
-		axis += Input.get_axis("move_left_JOY", "move_right_JOY")
-	return clampf(axis, -1.0, 1.0)
+		return Input.get_axis("move_left_JOY", "move_right_JOY")
+	return 0.0
 
 func _shot_direction() -> Vector2:
 	if _is_aiming_up_on_floor():
