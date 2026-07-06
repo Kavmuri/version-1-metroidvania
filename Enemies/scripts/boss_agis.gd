@@ -3,8 +3,10 @@ extends "res://Enemies/scripts/enemy_base.gd"
 @export var boss_name: String = "Agis"
 @export var zombie_scene: PackedScene = preload("res://Enemies/boss/zombie_agis.tscn")
 @export var effect_scene: PackedScene = preload("res://Enemies/boss/efects_z.tscn")
-@export var wave_delay: float = 5.0
+@export var wave_delay: float = 8.0
 @export var symbolic_damage_taken: int = 5
+@export var spawn_range_x: Vector2 = Vector2(4000, 5600)
+@export var spawn_y: float = 560.0
 
 var is_active: bool = false
 var current_wave_index: int = 0
@@ -15,9 +17,9 @@ var _summoning: bool = false
 signal boss_defeated
 
 func _ready() -> void:
-	max_health = 15000 # High HP, mainly reduced by killing zombies
+	max_health = 15000
 	super._ready()
-	visible = true # Agis exists in level
+	visible = true
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 
 func _physics_process(delta: float) -> void:
@@ -34,16 +36,14 @@ func _physics_process(delta: float) -> void:
 func activate() -> void:
 	if is_active: return
 	is_active = true
-	_wave_timer = 1.0 # Start first wave soon
+	_wave_timer = 2.0
 
-	# Register boss in HUD if possible
 	var hud = get_tree().current_scene.get_node_or_null("GameplayHUD")
 	if hud and hud.has_method("set_boss"):
 		hud.set_boss(self)
 
 func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> void:
 	if not is_active or is_dying: return
-	# Players deal symbolic damage
 	super.receive_damage(symbolic_damage_taken)
 
 func receive_damage_from_zombie(amount: int) -> void:
@@ -52,32 +52,41 @@ func receive_damage_from_zombie(amount: int) -> void:
 
 func _spawn_wave() -> void:
 	_summoning = true
-	play_anim(&"attack") # Use attack for summoning
+	play_anim(&"attack")
 
 	var count = waves[current_wave_index]
 
-	# Spawn effect first
-	var effect = effect_scene.instantiate()
-	get_parent().add_child(effect)
-	effect.global_position = global_position + Vector2(0, 140) # Adjust based on Agis size
-
-	await get_tree().create_timer(0.5).timeout
-
 	for i in range(count):
+		if is_dying: break
+
+		# Pick a random spot on the arena floor
+		var spawn_pos = Vector2(randf_range(spawn_range_x.x, spawn_range_x.y), spawn_y)
+
+		# Spawn individual effect for each zombie
+		var effect = effect_scene.instantiate()
+		get_parent().add_child(effect)
+		effect.global_position = spawn_pos
+
+		# Wait for a bit of the effect before spawning zombie
+		await get_tree().create_timer(0.3).timeout
+
+		if is_dying: break
+
 		var zombie = zombie_scene.instantiate()
 		get_parent().add_child(zombie)
-		# Spread zombies slightly around the effect position
-		zombie.global_position = effect.global_position + Vector2(randf_range(-40, 40), 0)
+		zombie.global_position = spawn_pos
 		zombie.boss_node = self
-		# Scale difficulty based on wave index or time
-		var difficulty = 1.0 + (current_wave_index * 0.1)
+
+		var difficulty = 1.0 + (current_wave_index * 0.15)
 		if zombie.has_method("set_difficulty"):
 			zombie.set_difficulty(difficulty)
-		await get_tree().create_timer(0.2).timeout
+
+		# Delay between individual spawns in a wave
+		await get_tree().create_timer(randf_range(0.2, 0.6)).timeout
 
 	current_wave_index = (current_wave_index + 1) % waves.size()
 	if current_wave_index == 0:
-		current_wave_index = 1 # Restart from 6 as requested (cycle: 4, 6, 8, 10, 12, then 6...)
+		current_wave_index = 1
 
 	_wave_timer = wave_delay
 	_summoning = false
@@ -87,8 +96,6 @@ func die() -> void:
 	if is_dying: return
 	is_dying = true
 	boss_defeated.emit()
-	# Handle Agis death (explosion, fade out, etc.)
-	# For now just use base death
 	super.die()
 
 func play_anim(anim_name: StringName) -> void:
