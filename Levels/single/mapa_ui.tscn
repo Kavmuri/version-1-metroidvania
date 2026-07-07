@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://mapaui123456"]
+
+[ext_resource type="Script" uid="uid://creuc65lgcmnn" path="res://Scripts/MapaUI.gd" id="1_mf5l5"]
+
+[node name="MapaUI" type="CanvasLayer"]
+script = ExtResource("1_mf5l5")

@@ -269,15 +269,15 @@ radius = 12.0
 height = 34.0
 
 [node name="ZombieAgis" type="CharacterBody2D" unique_id=1039305670 groups=["enemy"]]
-visible = false
 collision_layer = 4
 script = ExtResource("1_script")
 move_speed = 85.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2024946299]
 sprite_frames = SubResource("SpriteFrames_h2tw3")
-animation = &"zombieAGIS_Idle"
+animation = &"zombieAGIS_Run"
 autoplay = "zombieAGIS_Idle"
+frame_progress = 0.7340363
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1752998585]
 position = Vector2(0, 1)
