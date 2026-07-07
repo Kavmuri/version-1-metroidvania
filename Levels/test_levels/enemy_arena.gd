@@ -5,6 +5,16 @@ const PLAYER_CATALOG := [
 	{"name": "Eldric", "scene": preload("res://Player2/player_2.tscn")},
 ]
 
+const KAIZEN_PROJECTILE_CATALOG := [
+	{"name": "0_original", "scene": preload("res://Player1/bullet.tscn"), "icon": "", "icon_flip_h": false},
+	{"name": "1_disparo_rapido", "scene": preload("res://Pickups/Kaizen/01_disparo_rapido/bullet.tscn"), "icon": "res://Pickups/Kaizen/01_disparo_rapido/sprites/01_disparo_rapido_01.png", "icon_flip_h": true},
+	{"name": "2_disparo_cargado", "scene": preload("res://Pickups/Kaizen/02_disparo_cargado/bullet.tscn"), "icon": "res://Pickups/Kaizen/02_disparo_cargado/sprites/02_disparo_cargado_01.png", "icon_flip_h": false},
+	{"name": "3_disparo_doble", "scene": preload("res://Pickups/Kaizen/03_disparo_doble/bullet.tscn"), "icon": "res://Pickups/Kaizen/03_disparo_doble/sprites/03_disparo_doble_01.png", "icon_flip_h": false},
+	{"name": "4_pulso_perforante", "scene": preload("res://Pickups/Kaizen/04_pulso_perforante/bullet.tscn"), "icon": "res://Pickups/Kaizen/04_pulso_perforante/sprites/04_pulso_perforante_01.png", "icon_flip_h": false},
+	{"name": "5_chispa_rebote", "scene": preload("res://Pickups/Kaizen/05_chispa_rebote/bullet.tscn"), "icon": "res://Pickups/Kaizen/05_chispa_rebote/sprites/05_chispa_rebote_01.png", "icon_flip_h": false},
+	{"name": "6_onda_expansiva", "scene": preload("res://Pickups/Kaizen/06_onda_expansiva/bullet.tscn"), "icon": "res://Pickups/Kaizen/06_onda_expansiva/sprites/06_onda_expansiva_01.png", "icon_flip_h": false},
+]
+
 const ENEMY_CATALOG := [
 	{"name": "Crab", "scene": preload("res://Enemies/basic/enemy_crab.tscn")},
 	{"name": "Flying Eye Demon", "scene": preload("res://Enemies/basic/enemy_flying_eye_demon.tscn")},
@@ -29,6 +39,7 @@ const ENEMY_CATALOG := [
 
 var _selected_player_index := 0
 var _selected_enemy_index := 0
+var _selected_kaizen_projectile_index := 0
 var _player: Node2D
 var _spawned_enemy: Node2D
 
@@ -44,6 +55,12 @@ func _ready() -> void:
 	_spawn_selected_enemy()
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and not event.double_click and event.button_index == MOUSE_BUTTON_RIGHT:
+		var viewport := get_viewport()
+		if viewport != null:
+			viewport.set_input_as_handled()
+		_cycle_kaizen_projectile()
+		return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_M:
 		var viewport := get_viewport()
 		if viewport != null:
@@ -142,10 +159,34 @@ func _configure_player_for_arena() -> void:
 		return
 	if "input_mode" in _player:
 		_player.set("input_mode", "both")
+	_apply_kaizen_projectile()
 	if _gameplay_hud.has_method("setup"):
 		_gameplay_hud.setup(_player, null, str(PLAYER_CATALOG[_selected_player_index]["name"]))
+	if _gameplay_hud.has_method("show_combat_hud"):
+		_gameplay_hud.show_combat_hud()
 	GameManager.register_player1(_player)
 	_ensure_player_camera()
+
+func _cycle_kaizen_projectile() -> void:
+	if _player == null or str(PLAYER_CATALOG[_selected_player_index]["name"]) != "Kaizen":
+		return
+	_selected_kaizen_projectile_index = (_selected_kaizen_projectile_index + 1) % KAIZEN_PROJECTILE_CATALOG.size()
+	_apply_kaizen_projectile()
+
+func _apply_kaizen_projectile() -> void:
+	if _player == null or str(PLAYER_CATALOG[_selected_player_index]["name"]) != "Kaizen":
+		if _gameplay_hud != null and _gameplay_hud.has_method("set_player1_powerup_icon"):
+			_gameplay_hud.set_player1_powerup_icon("")
+		return
+	var projectile_data: Dictionary = KAIZEN_PROJECTILE_CATALOG[_selected_kaizen_projectile_index]
+	var projectile_scene := projectile_data["scene"] as PackedScene
+	if projectile_scene == null:
+		push_warning("No se pudo cargar bala Kaizen: " + str(projectile_data["name"]))
+		return
+	_player.set("projectile_scene", projectile_scene)
+	if _gameplay_hud != null and _gameplay_hud.has_method("set_player1_powerup_icon"):
+		_gameplay_hud.set_player1_powerup_icon(str(projectile_data["icon"]), bool(projectile_data["icon_flip_h"]))
+	print("Kaizen bala: " + str(projectile_data["name"]))
 
 func _ensure_player_camera() -> void:
 	if _player == null or _player.get_node_or_null("Camera2D") != null:
@@ -166,6 +207,8 @@ func _reset_player() -> void:
 		player_body.velocity = Vector2.ZERO
 	if "max_health" in _player and "health" in _player:
 		_player.health = _player.max_health
+	if "max_hearts" in _player and "hearts" in _player:
+		_player.hearts = _player.max_hearts
 	if "is_dead" in _player:
 		_player.is_dead = false
 	for timer_name in [&"invulnerability_timer", &"hurt_timer", &"attack_timer", &"shoot_animation_timer", &"dash_timer", &"attack_animation_timer"]:

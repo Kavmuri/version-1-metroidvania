@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c8c8orai51xoa"
-path="res://.godot/imported/power-up.png-74bb14e3d652908e7a2ecce2346de41f.ctex"
+uid="uid://wtnlqh75svk"
+path="res://.godot/imported/01_disparo_rapido_04.png-ea6bec4087599948db98d2301b95b976.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Fx/power-up.png"
-dest_files=["res://.godot/imported/power-up.png-74bb14e3d652908e7a2ecce2346de41f.ctex"]
+source_file="res://Pickups/Kaizen/01_disparo_rapido/sprites/01_disparo_rapido_04.png"
+dest_files=["res://.godot/imported/01_disparo_rapido_04.png-ea6bec4087599948db98d2301b95b976.ctex"]
 
 [params]
 

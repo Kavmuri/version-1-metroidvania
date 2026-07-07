@@ -1,0 +1,5 @@
+06_onda_expansiva
+Nombre: Onda expansiva
+Bala ondulante con area mayor. En codigo: aplica escala mayor y movimiento sinusoidal opcional.
+Hit: usa 06_onda_expansiva/hit como FX de impacto.
+Color: sin azul ni verde; usa mas blanco y negro, con acentos suaves para distinguir la mejora.
