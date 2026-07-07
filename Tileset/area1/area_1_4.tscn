@@ -1214,6 +1214,6 @@ animation = &"atack"
 position = Vector2(5088, 536)
 
 [node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("8_ou1hc")]
-position = Vector2(88, 256)
+position = Vector2(4248, 520)
 
 [node name="GameplayHUD" parent="." unique_id=561633844 instance=ExtResource("10_hud")]

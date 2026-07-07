@@ -31,6 +31,7 @@ func _ready() -> void:
 	_ensure_player2()
 	$TransitionTrigger.body_entered.connect(_on_transition_trigger_entered)
 	call_deferred("_apply_area_limits")
+	call_deferred("_apply_pending_transition_positions")
 
 func _process(_delta: float) -> void:
 	_refresh_players()
@@ -110,6 +111,11 @@ func _apply_area_limits() -> void:
 
 	if player_camera != null:
 		player_camera.call_deferred("make_current")
+
+func _apply_pending_transition_positions() -> void:
+	_refresh_players()
+	GameManager.apply_pending_positions(player, player2)
+	_clamp_players_to_area()
 
 func _refresh_players() -> void:
 	if player == null or not is_instance_valid(player):
