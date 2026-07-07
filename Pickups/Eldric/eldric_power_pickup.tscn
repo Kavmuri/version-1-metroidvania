@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://Pickups/upgrade_pickup.tscn" id="1_pickup"]
+
+[node name="EldricPowerPickup" instance=ExtResource("1_pickup")]
+target_player = "eldric"
+upgrade_type = "damage"
+amount = 25

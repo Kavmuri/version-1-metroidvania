@@ -187,7 +187,7 @@ script = ExtResource("1_script")
 attack_interval = 2.0
 boss_walk_speed = 30.0
 max_health = 18
-contact_damage = 2
+contact_damage = 10
 move_speed = 42.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1200533026]

@@ -13,7 +13,8 @@ const GRAVITY = 1200.0
 const HURT_ANIMATION_TIME = 0.25
 const ATTACK_ANIMATION_TIME = 0.45
 
-@export var max_health: int = 800
+@export var max_health: int = 100
+@export var max_hearts: int = 2
 @export var invulnerability_time: float = 1.2
 @export var attack_damage: int = 100
 @export var attack_range: float = 52.0
@@ -23,17 +24,20 @@ const ATTACK_ANIMATION_TIME = 0.45
 enum State {Idle, Run, Jump, Fall, Duck, Attack}
 var current_state : State = State.Idle
 var health: int
+var hearts: int
 var invulnerability_timer: float = 0.0
 var hurt_timer: float = 0.0
 var attack_timer: float = 0.0
 var attack_animation_timer: float = 0.0
 var attack_damage_applied := false
 var attack_animation_name: StringName = &"golpeP2"
+var use_next_hand_attack := false
 var is_crouching := false
 var is_dead := false
 
 func _ready() -> void:
 	health = max_health
+	hearts = max_hearts
 	add_to_group(&"Player")
 	add_to_group(&"player")
 
@@ -133,7 +137,7 @@ func update_animations():
 			animated_sprite_2d.play(attack_animation_name)
 
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
-	if invulnerability_timer > 0.0 or health <= 0:
+	if invulnerability_timer > 0.0 or hearts <= 0:
 		return
 
 	health = max(health - cantidad, 0)
@@ -141,8 +145,11 @@ func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> voi
 	invulnerability_timer = invulnerability_time
 	hurt_timer = HURT_ANIMATION_TIME
 	if health <= 0:
-		_die()
-		return
+		hearts = max(hearts - 1, 0)
+		if hearts <= 0:
+			_die()
+			return
+		health = max_health
 	if fuente_pos != Vector2.ZERO:
 		var knockback_direction: float = sign(global_position.x - fuente_pos.x)
 		if knockback_direction != 0.0:
@@ -187,9 +194,9 @@ func _attack_animation_for_current_motion() -> StringName:
 		return &"golpeaireP2"
 	if is_crouching:
 		return &"golpeagachadoP2"
-	if _is_action_pressed_for_mode("aim_up", "aim_up_JOY"):
-		return &"golpeManoP2"
-	return &"golpeP2"
+	var selected_attack := &"golpeManoP2" if use_next_hand_attack else &"golpeP2"
+	use_next_hand_attack = not use_next_hand_attack
+	return selected_attack
 
 func _apply_melee_damage() -> void:
 	var facing_direction := -1.0 if animated_sprite_2d.flip_h else 1.0

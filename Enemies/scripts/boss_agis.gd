@@ -56,7 +56,7 @@ func activate() -> void:
 	if hud and hud.has_method("show_combat_hud"):
 		hud.show_combat_hud()
 
-func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> void:
+func receive_damage(_amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> void:
 	if not is_active or is_dying: return
 	super.receive_damage(symbolic_damage_taken)
 

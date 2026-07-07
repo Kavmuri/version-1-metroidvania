@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 @export var max_health: int = 3
-@export var contact_damage: int = 1
+@export var contact_damage: int = 10
 @export var move_speed: float = 55.0
 @export var gravity: float = 1000.0
 @export var detection_range: float = 360.0
