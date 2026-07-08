@@ -9,6 +9,8 @@ var _heart_full_texture: Texture2D
 var _heart_two_thirds_texture: Texture2D
 var _heart_one_third_texture: Texture2D
 var _heart_empty_texture: Texture2D
+var _upgrade_message_label: Label
+var _upgrade_message_timer := 0.0
 
 @onready var _p1_container = _find_required_node(["TopBar/Player1Container", "TopBar/HBox/Player1Container"]) as VBoxContainer
 @onready var _p1_name = _find_required_node(["TopBar/Player1Container/Player1Header/Player1Name", "TopBar/HBox/Player1Container/Player1Header/Player1Name", "TopBar/HBox/Player1Container/Player1Name"]) as Label
@@ -31,11 +33,13 @@ func _ready() -> void:
 	layer = 15
 	visible = false
 	_ensure_player1_hud_nodes()
+	_ensure_upgrade_message_label()
 	_setup_heart_textures()
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_update_players()
 	_update_boss()
+	_update_upgrade_message(delta)
 
 func setup(p1: Node2D = null, p2: Node2D = null, p1_name: String = "", p2_name: String = "") -> void:
 	player1 = p1
@@ -111,6 +115,21 @@ func set_player2_powerup_icon(texture_path: String, flip_h: bool = false) -> voi
 	var texture := load(texture_path) as Texture2D
 	_p2_powerup_icon.texture = texture
 	_p2_powerup_icon.visible = texture != null
+
+func show_upgrade_text(text: String) -> void:
+	_ensure_upgrade_message_label()
+	if _upgrade_message_label == null:
+		return
+	_upgrade_message_label.text = text
+	_upgrade_message_label.visible = true
+	_upgrade_message_timer = 2.5
+
+func _update_upgrade_message(delta: float) -> void:
+	if _upgrade_message_timer <= 0.0:
+		return
+	_upgrade_message_timer = max(_upgrade_message_timer - delta, 0.0)
+	if _upgrade_message_timer <= 0.0 and _upgrade_message_label != null:
+		_upgrade_message_label.visible = false
 
 func _update_player1_hearts() -> void:
 	_update_player_hearts(player1, _p1_hearts, _p1_health)
@@ -195,6 +214,24 @@ func _ensure_player1_hud_nodes() -> void:
 			heart.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			hearts_row.add_child(heart)
 		_p1_hearts = hearts_row
+
+func _ensure_upgrade_message_label() -> void:
+	if _upgrade_message_label != null and is_instance_valid(_upgrade_message_label):
+		return
+	_upgrade_message_label = Label.new()
+	_upgrade_message_label.name = "UpgradeMessage"
+	_upgrade_message_label.visible = false
+	_upgrade_message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_upgrade_message_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_upgrade_message_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_upgrade_message_label.offset_top = 112
+	_upgrade_message_label.offset_bottom = 168
+	_upgrade_message_label.add_theme_font_size_override("font_size", 18)
+	_upgrade_message_label.add_theme_color_override("font_color", Color(1.0, 0.94, 0.62))
+	_upgrade_message_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.85))
+	_upgrade_message_label.add_theme_constant_override("shadow_offset_x", 2)
+	_upgrade_message_label.add_theme_constant_override("shadow_offset_y", 2)
+	add_child(_upgrade_message_label)
 
 func _find_player_by_name(player_name: String) -> Node2D:
 	var scene: Node = get_tree().current_scene

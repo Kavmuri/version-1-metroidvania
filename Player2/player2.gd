@@ -32,6 +32,8 @@ var attack_animation_timer: float = 0.0
 var attack_damage_applied := false
 var attack_animation_name: StringName = &"golpeP2"
 var use_next_hand_attack := false
+var tiene_salto_infinito: bool = false
+var _air_jump_available := false
 var is_crouching := false
 var is_dead := false
 
@@ -53,6 +55,8 @@ func _physics_process(delta: float):
 	attack_animation_timer = max(attack_animation_timer - delta, 0.0)
 	_update_invulnerability_blink()
 	_update_crouch_state()
+	if is_on_floor():
+		_air_jump_available = true
 
 	apply_gravity(delta)
 	handle_jump()
@@ -69,9 +73,18 @@ func apply_gravity(delta: float):
 		velocity.y += GRAVITY * delta
 
 func handle_jump():
-	if _is_action_just_pressed_for_mode("jump", "jump_JOY") and is_on_floor():
+	if not _is_action_just_pressed_for_mode("jump", "jump_JOY"):
+		return
+
+	if is_on_floor():
 		AudioManager.play_sfx(&"player_jump")
 		velocity.y = JUMP_VELOCITY
+		if tiene_salto_infinito:
+			_air_jump_available = true
+	elif tiene_salto_infinito and _air_jump_available:
+		AudioManager.play_sfx(&"player_jump")
+		velocity.y = JUMP_VELOCITY
+		_air_jump_available = false
 
 func handle_movement(delta: float):
 	var direction = _input_axis()
@@ -135,6 +148,27 @@ func update_animations():
 			animated_sprite_2d.play("agacharP2")
 		State.Attack:
 			animated_sprite_2d.play(attack_animation_name)
+
+func apply_next_linear_upgrade() -> Dictionary:
+	if not tiene_salto_infinito:
+		set_salto_infinito_activo(true)
+		return {
+			"applied": true,
+			"title": "Doble salto",
+			"description": "Eldric puede hacer un segundo salto en el aire.",
+			"icon_path": "",
+		}
+	return {
+		"applied": false,
+		"title": "Mejoras completas",
+		"description": "Eldric ya tiene su mejora disponible.",
+		"icon_path": "",
+	}
+
+func set_salto_infinito_activo(activo: bool) -> void:
+	tiene_salto_infinito = activo
+	if not activo:
+		_air_jump_available = false
 
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
 	if invulnerability_timer > 0.0 or hearts <= 0:
