@@ -1,0 +1,5 @@
+05_chispa_rebote
+Nombre: Chispa de rebote
+Bala que rebota una vez en pared. En codigo: invierte direccion al primer choque con tilemap.
+Hit: usa 05_chispa_rebote/hit como FX de impacto.
+Color: sin azul ni verde; usa mas blanco y negro, con acentos suaves para distinguir la mejora.

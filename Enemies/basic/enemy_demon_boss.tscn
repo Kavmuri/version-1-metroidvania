@@ -226,7 +226,7 @@ radius = 360.0
 collision_layer = 4
 script = ExtResource("1_script")
 max_health = 18
-contact_damage = 2
+contact_damage = 10
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=661801655]
 position = Vector2(2, -56)

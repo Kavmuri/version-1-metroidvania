@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://bp3378g2hwpb3"]
+
+[ext_resource type="Script" uid="uid://bfgstfv76vvkx" path="res://Pickups/upgrade_pickup.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://c8c8orai51xoa" path="res://Pickups/power-up.png" id="2_texture"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_frame_0"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 0, 23, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_frame_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(23, 0, 23, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_frame_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(46, 0, 23, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_frame_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(69, 0, 23, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_frame_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(92, 0, 23, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_frame_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(115, 0, 23, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_frame_6"]
+atlas = ExtResource("2_texture")
+region = Rect2(138, 0, 23, 21)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pickup"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_frame_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_frame_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_frame_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_frame_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_frame_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_frame_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_frame_6")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pickup"]
+radius = 11.045361
+
+[node name="UpgradePickup" type="Area2D" unique_id=1069957860]
+collision_layer = 0
+collision_mask = 3
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=700080166]
+scale = Vector2(1.5, 1.5)
+sprite_frames = SubResource("SpriteFrames_pickup")
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.108498126
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2029965650]
+shape = SubResource("CircleShape2D_pickup")

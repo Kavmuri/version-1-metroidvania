@@ -21,7 +21,8 @@ const HURT_ANIMATION_TIME = 0.25
 const SHOOT_ANIMATION_TIME = 1.0
 const WALL_CLING_FALL_SPEED = 32.0
 
-@export var max_health: int = 800
+@export var max_health: int = 100
+@export var max_hearts: int = 3
 @export var invulnerability_time: float = 1.2
 @export var projectile_scene: PackedScene
 @export var attack_cooldown: float = 0.45
@@ -32,6 +33,7 @@ const WALL_CLING_FALL_SPEED = 32.0
 enum State {Idle, Run, Jump, Duck, Cling}
 var current_state : State = State.Idle
 var health: int
+var hearts: int
 var tiene_salto_infinito: bool = false
 var tiene_dash: bool = false
 var dash_timer: float = 0.0
@@ -46,6 +48,7 @@ var is_clinging := false
 
 func _ready() -> void:
 	health = max_health
+	hearts = max_hearts
 	add_to_group(&"Player")
 	add_to_group(&"player")
 	if camera_2d != null:
@@ -166,7 +169,7 @@ func set_dash_activo(activo: bool) -> void:
 		dash_timer = 0.0
 
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
-	if invulnerability_timer > 0.0 or health <= 0:
+	if invulnerability_timer > 0.0 or hearts <= 0:
 		return
 
 	health = max(health - cantidad, 0)
@@ -174,8 +177,11 @@ func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> voi
 	invulnerability_timer = invulnerability_time
 	hurt_timer = HURT_ANIMATION_TIME
 	if health <= 0:
-		_die()
-		return
+		hearts = max(hearts - 1, 0)
+		if hearts <= 0:
+			_die()
+			return
+		health = max_health
 	if fuente_pos != Vector2.ZERO:
 		var knockback_direction: float = sign(global_position.x - fuente_pos.x)
 		if knockback_direction != 0.0:
