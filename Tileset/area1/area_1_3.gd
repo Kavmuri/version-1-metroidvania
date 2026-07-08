@@ -26,8 +26,11 @@ const MAP_MAX: Vector2 = Vector2(LIMIT_RIGHT, LIMIT_BOTTOM)
 const START_PLAYER2_POSITION: Vector2 = Vector2(344, 56)
 const PLAYER2_SCENE: PackedScene = preload("res://Player2/player_2.tscn")
 const PREVIOUS_AREA_SCENE: String = "res://Tileset/area1/area_1_2.tscn"
+const NEXT_AREA_SCENE: String = "res://Tileset/area1/area_1_4.tscn"
 const PREVIOUS_AREA_PLAYER1_POSITION: Vector2 = Vector2(3710, -94)
 const PREVIOUS_AREA_PLAYER2_POSITION: Vector2 = Vector2(3662, -94)
+const NEXT_AREA_PLAYER1_POSITION: Vector2 = Vector2(96, 176)
+const NEXT_AREA_PLAYER2_POSITION: Vector2 = Vector2(144, 176)
 const SECTION_1_PLAYER1_POSITION: Vector2 = Vector2(1888, 56)
 const SECTION_1_PLAYER2_POSITION: Vector2 = Vector2(1840, 56)
 const SECTION_2_PLAYER1_POSITION: Vector2 = Vector2(2208, 56)
@@ -37,6 +40,11 @@ const FADE_WAIT_SECONDS: float = 0.55
 var player_camera: Camera2D = null
 var active_camera_limit_name: String = FIRST_SECTION_CAMERA_LIMIT_NAME
 var _is_transitioning: bool = false
+var normal_camera_zoom: Vector2 = Vector2(0.78, 0.78)
+var gate_camera_zoom: Vector2 = Vector2(0.95, 0.95)
+var gate_zoom_start_x: float = 4000.0
+var gate_zoom_end_x: float = 4352.0
+var zoom_lerp_speed: float = 1.8
 
 func _ready() -> void:
 	_prepare_transition_rect()
@@ -44,10 +52,11 @@ func _ready() -> void:
 	_connect_transition_area("transicionarea1_3ENTER2seccion1", _on_section_1_enter_transition_entered)
 	_connect_transition_area("transicionarea1_3OUTseccion1_22", _on_section_1_out_transition_entered)
 	_connect_transition_area("transicionarea1_3ENTER2seccion2", _on_section_2_enter_transition_entered)
+	_connect_transition_area("transicionarea1_3ENTER2seccion3", _on_section_3_enter_transition_entered)
 	call_deferred("_apply_area_limits")
 	call_deferred("_apply_pending_transition_positions")
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_refresh_players()
 	if player == null:
 		return
@@ -55,6 +64,7 @@ func _process(_delta: float) -> void:
 		_apply_area_limits()
 
 	_update_active_camera_limit()
+	_update_camera_zoom(delta)
 	_clamp_players_to_area()
 
 func _on_section_1_enter_transition_entered(body: Node2D) -> void:
@@ -75,6 +85,12 @@ func _on_section_2_enter_transition_entered(body: Node2D) -> void:
 	if _is_player_body(body):
 		_transition_to_section_1()
 
+func _on_section_3_enter_transition_entered(body: Node2D) -> void:
+	if _is_transitioning:
+		return
+	if _is_player_body(body):
+		_transition_to_next_area()
+
 func _transition_to_previous_area() -> void:
 	_is_transitioning = true
 	await _play_fade_to_black("transicionarea1_3ENTERseccion1")
@@ -88,6 +104,20 @@ func _transition_to_previous_area() -> void:
 	}
 	GameManager.current_game_mode = "coop" if player2_exists else GameManager.current_game_mode
 	get_tree().change_scene_to_file(PREVIOUS_AREA_SCENE)
+
+func _transition_to_next_area() -> void:
+	_is_transitioning = true
+	await _play_fade_to_black("transicionarea1_3ENTERseccion3")
+
+	var player2_exists: bool = player2 != null and is_instance_valid(player2)
+	GameManager.pending_load_data = {
+		"player1_position": NEXT_AREA_PLAYER1_POSITION,
+		"player2_exists": player2_exists,
+		"player2_position": NEXT_AREA_PLAYER2_POSITION,
+		"game_mode": "coop" if player2_exists else GameManager.current_game_mode
+	}
+	GameManager.current_game_mode = "coop" if player2_exists else GameManager.current_game_mode
+	get_tree().change_scene_to_file(NEXT_AREA_SCENE)
 
 func _transition_to_section_2() -> void:
 	_is_transitioning = true
@@ -233,6 +263,7 @@ func _apply_area_limits() -> void:
 			_configure_camera_limits(child as Camera2D)
 
 	if player_camera != null:
+		player_camera.zoom = normal_camera_zoom
 		player_camera.call_deferred("make_current")
 
 func _apply_pending_transition_positions() -> void:
@@ -303,6 +334,16 @@ func _update_active_camera_limit() -> void:
 	active_camera_limit_name = target_limit_name
 	if player_camera != null and is_instance_valid(player_camera):
 		_configure_camera_limits(player_camera)
+
+func _update_camera_zoom(delta: float) -> void:
+	if player_camera == null or not is_instance_valid(player_camera):
+		return
+
+	var progress: float = inverse_lerp(gate_zoom_start_x, gate_zoom_end_x, player.global_position.x)
+	progress = clampf(progress, 0.0, 1.0)
+	var target_zoom: Vector2 = normal_camera_zoom.lerp(gate_camera_zoom, progress)
+	var weight: float = clampf(delta * zoom_lerp_speed, 0.0, 1.0)
+	player_camera.zoom = player_camera.zoom.lerp(target_zoom, weight)
 
 func _clamp_players_to_area() -> void:
 	_clamp_player_to_area(player)
