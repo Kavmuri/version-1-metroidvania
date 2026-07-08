@@ -18,7 +18,6 @@ var _heart_empty_texture: Texture2D
 
 @onready var _p2_container = _find_required_node(["TopBar/Player2Container", "TopBar/HBox/Player2Container"]) as VBoxContainer
 @onready var _p2_name = _find_required_node(["TopBar/Player2Container/Player2Name", "TopBar/HBox/Player2Container/Player2Name"]) as Label
-@onready var _p2_powerup_icon = _find_required_node(["TopBar/Player2Container/PowerupSlot/PowerupIcon", "TopBar/HBox/Player2Container/PowerupSlot/PowerupIcon"]) as TextureRect
 @onready var _p2_hearts = _find_required_node(["TopBar/Player2Container/Player2Hearts", "TopBar/HBox/Player2Container/Player2Hearts"]) as HBoxContainer
 @onready var _p2_health = _find_required_node(["TopBar/Player2Container/Player2Health", "TopBar/HBox/Player2Container/Player2Health"]) as Range
 
@@ -99,18 +98,6 @@ func set_player1_powerup_icon(texture_path: String, flip_h: bool = false) -> voi
 	var texture := load(texture_path) as Texture2D
 	_p1_powerup_icon.texture = texture
 	_p1_powerup_icon.visible = texture != null
-
-func set_player2_powerup_icon(texture_path: String, flip_h: bool = false) -> void:
-	if _p2_powerup_icon == null:
-		return
-	_p2_powerup_icon.flip_h = flip_h
-	if texture_path.is_empty():
-		_p2_powerup_icon.texture = null
-		_p2_powerup_icon.visible = false
-		return
-	var texture := load(texture_path) as Texture2D
-	_p2_powerup_icon.texture = texture
-	_p2_powerup_icon.visible = texture != null
 
 func _update_player1_hearts() -> void:
 	_update_player_hearts(player1, _p1_hearts, _p1_health)

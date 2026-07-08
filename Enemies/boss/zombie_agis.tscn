@@ -269,7 +269,6 @@ radius = 12.0
 height = 34.0
 
 [node name="ZombieAgis" type="CharacterBody2D" unique_id=1039305670 groups=["enemy"]]
-visible = false
 collision_layer = 4
 script = ExtResource("1_script")
 move_speed = 85.0
