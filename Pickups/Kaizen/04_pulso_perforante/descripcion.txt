@@ -1,0 +1,5 @@
+04_pulso_perforante
+Nombre: Pulso perforante
+Bala que atraviesa un enemigo antes de desaparecer. En codigo: permite pierce_count = 1.
+Hit: usa 04_pulso_perforante/hit como FX de impacto.
+Color: sin azul ni verde; usa mas blanco y negro, con acentos suaves para distinguir la mejora.

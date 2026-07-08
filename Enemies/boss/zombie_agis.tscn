@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dbnfo2qmlic7y"]
 
 [ext_resource type="Texture2D" uid="uid://ewh8ocdxhs6" path="res://Enemies/boss/Cyber_zombie_sprite_sheet.png" id="1_jad0p"]
+[ext_resource type="Script" uid="uid://c6raraador7m0" path="res://Enemies/scripts/zombie_agis.gd" id="1_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_c42nm"]
 atlas = ExtResource("1_jad0p")
@@ -194,7 +195,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pexno")
 }],
-"loop": true,
+"loop": false,
 "name": &"zombieAGIS_Died",
 "speed": 7.0
 }, {
@@ -263,8 +264,29 @@ animations = [{
 "speed": 8.0
 }]
 
-[node name="ZombieAgis" type="AnimatedSprite2D" unique_id=223094352]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_zombie"]
+radius = 12.0
+height = 34.0
+
+[node name="ZombieAgis" type="CharacterBody2D" unique_id=1039305670 groups=["enemy"]]
+visible = false
+collision_layer = 4
+script = ExtResource("1_script")
+move_speed = 85.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2024946299]
 sprite_frames = SubResource("SpriteFrames_h2tw3")
-animation = &"zombieAGIS_Died"
+animation = &"zombieAGIS_Idle"
 autoplay = "zombieAGIS_Idle"
-frame_progress = 0.79004425
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1752998585]
+position = Vector2(0, 1)
+shape = SubResource("CapsuleShape2D_zombie")
+
+[node name="ContactArea" type="Area2D" parent="." unique_id=44265576]
+collision_layer = 4
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ContactArea" unique_id=1702232533]
+position = Vector2(0, 1)
+shape = SubResource("CapsuleShape2D_zombie")

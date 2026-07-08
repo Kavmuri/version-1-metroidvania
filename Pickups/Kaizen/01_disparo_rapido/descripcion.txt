@@ -1,0 +1,5 @@
+01_disparo_rapido
+Nombre: Disparo rapido
+Bala directa de alta velocidad. En codigo: aumenta speed y mantiene damage base.
+Hit: usa 01_disparo_rapido/hit como FX de impacto.
+Color: sin azul ni verde; usa mas blanco y negro, con acentos suaves para distinguir la mejora.

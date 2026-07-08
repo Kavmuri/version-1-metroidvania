@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cqessp2vvin1v"]
 
-[ext_resource type="Script" uid="uid://bmbnxnblsrd8t" path="res://Enemies/scripts/enemy_boss.gd" id="1_script"]
+[ext_resource type="Script" path="res://Enemies/scripts/boss_agis.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://bhjf0684cjva7" path="res://Enemies/assets/agis/agis.png" id="2_texture"]
 [ext_resource type="Script" uid="uid://xaa8hkrevw0r" path="res://Enemies/scripts/state_machine/enemy_state_machine.gd" id="90_state_machine"]
 [ext_resource type="Script" uid="uid://c1k1n3k3fhgum" path="res://Enemies/scripts/state_machine/enemy_state_machine_controller.gd" id="91_state_controller"]
@@ -116,6 +116,56 @@ animations = [{
 "texture": SubResource("AtlasTexture_u7f0c")
 }],
 "loop": true,
+"name": &"attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ny42")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_df0lj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_luymy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xbldp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u3wb6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_44hhw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g4tft")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_opt58")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ncj4h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mfsrw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_re1qj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3m3s6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kba3h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2bu6j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u7f0c")
+}],
+"loop": true,
 "name": &"idle",
 "speed": 8.0
 }]
@@ -137,7 +187,7 @@ script = ExtResource("1_script")
 attack_interval = 2.0
 boss_walk_speed = 30.0
 max_health = 18
-contact_damage = 2
+contact_damage = 10
 move_speed = 42.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1200533026]

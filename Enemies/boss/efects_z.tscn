@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://7lpwnvaekm2a"]
+[gd_scene load_steps=23 format=3 uid="uid://7lpwnvaekm2a"]
 
 [ext_resource type="Texture2D" uid="uid://cee1miiqb7dfo" path="res://Enemies/boss/Dark VFX 2 (48x64).png" id="1_eu2q3"]
+[ext_resource type="Script" path="res://Enemies/boss/efects_z.gd" id="1_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_03h01"]
 atlas = ExtResource("1_eu2q3")
@@ -117,12 +118,12 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_5l05p")
 }],
-"loop": true,
+"loop": false,
 "name": &"aparicion",
-"speed": 10.0
+"speed": 12.0
 }]
 
-[node name="efects Z" type="AnimatedSprite2D" unique_id=1299592481]
+[node name="efects Z" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_4r5ms")
 animation = &"aparicion"
-frame_progress = 0.6556501
+script = ExtResource("1_script")

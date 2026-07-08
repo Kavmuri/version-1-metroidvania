@@ -5,6 +5,7 @@ class_name Player
 @onready var muzzle: Marker2D = $Muzzle
 @onready var muzzle_up: Marker2D = $MuzzleUp
 @onready var muzzle_duck: Marker2D = $MuzzleDuck
+@onready var camera_2d: Camera2D = get_node_or_null("Camera2D") as Camera2D
 
 # Movement constants
 const SPEED = 300.0
@@ -20,17 +21,19 @@ const HURT_ANIMATION_TIME = 0.25
 const SHOOT_ANIMATION_TIME = 1.0
 const WALL_CLING_FALL_SPEED = 32.0
 
-@export var max_health: int = 3
+@export var max_health: int = 100
+@export var max_hearts: int = 3
 @export var invulnerability_time: float = 1.2
 @export var projectile_scene: PackedScene
 @export var attack_cooldown: float = 0.45
-@export var attack_damage: int = 1
+@export var attack_damage: int = 100
 @export var projectile_spawn_offset: Vector2 = Vector2(32, -24)
 @export_enum("keyboard", "gamepad", "both") var input_mode: String = "both"
 
 enum State {Idle, Run, Jump, Duck, Cling}
 var current_state : State = State.Idle
 var health: int
+var hearts: int
 var tiene_salto_infinito: bool = false
 var tiene_dash: bool = false
 var dash_timer: float = 0.0
@@ -45,8 +48,11 @@ var is_clinging := false
 
 func _ready() -> void:
 	health = max_health
+	hearts = max_hearts
 	add_to_group(&"Player")
 	add_to_group(&"player")
+	if camera_2d != null:
+		camera_2d.call_deferred("make_current")
 
 func _physics_process(delta: float):
 	if is_dead:
@@ -163,7 +169,7 @@ func set_dash_activo(activo: bool) -> void:
 		dash_timer = 0.0
 
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
-	if invulnerability_timer > 0.0 or health <= 0:
+	if invulnerability_timer > 0.0 or hearts <= 0:
 		return
 
 	health = max(health - cantidad, 0)
@@ -171,8 +177,11 @@ func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> voi
 	invulnerability_timer = invulnerability_time
 	hurt_timer = HURT_ANIMATION_TIME
 	if health <= 0:
-		_die()
-		return
+		hearts = max(hearts - 1, 0)
+		if hearts <= 0:
+			_die()
+			return
+		health = max_health
 	if fuente_pos != Vector2.ZERO:
 		var knockback_direction: float = sign(global_position.x - fuente_pos.x)
 		if knockback_direction != 0.0:
@@ -231,12 +240,23 @@ func _shoot_animation_for_current_motion() -> StringName:
 	return &"stand"
 
 func _input_axis() -> float:
-	var axis := 0.0
 	if input_mode == "keyboard" or input_mode == "both":
-		axis += Input.get_axis("move_left", "move_right")
+		var left_strength := Input.get_action_strength("move_left")
+		var right_strength := Input.get_action_strength("move_right")
+		if InputMap.has_action("ui_left"):
+			left_strength = max(left_strength, Input.get_action_strength("ui_left"))
+		if InputMap.has_action("ui_right"):
+			right_strength = max(right_strength, Input.get_action_strength("ui_right"))
+		if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
+			left_strength = 1.0
+		if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
+			right_strength = 1.0
+		var keyboard_axis := right_strength - left_strength
+		if abs(keyboard_axis) > 0.0:
+			return keyboard_axis
 	if input_mode == "gamepad" or input_mode == "both":
-		axis += Input.get_axis("move_left_JOY", "move_right_JOY")
-	return clampf(axis, -1.0, 1.0)
+		return Input.get_axis("move_left_JOY", "move_right_JOY")
+	return 0.0
 
 func _shot_direction() -> Vector2:
 	if _is_aiming_up_on_floor():

@@ -1,0 +1,5 @@
+03_disparo_doble
+Nombre: Disparo doble
+Bala que puede duplicarse en dos direcciones. En codigo: instancia dos proyectiles con angulos separados.
+Hit: usa 03_disparo_doble/hit como FX de impacto.
+Color: sin azul ni verde; usa mas blanco y negro, con acentos suaves para distinguir la mejora.

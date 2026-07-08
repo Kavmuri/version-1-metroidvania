@@ -1,0 +1,5 @@
+02_disparo_cargado
+Nombre: Disparo cargado
+Bala mas grande y fuerte. En codigo: sube damage y baja un poco speed.
+Hit: usa 02_disparo_cargado/hit como FX de impacto.
+Color: sin azul ni verde; usa mas blanco y negro, con acentos suaves para distinguir la mejora.

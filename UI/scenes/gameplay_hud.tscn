@@ -1,28 +1,267 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://dcru6inw7g4ym"]
 
-[ext_resource type="Script" path="res://UI/scripts/gameplay_hud.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://brl66sbrrmky4" path="res://UI/scripts/gameplay_hud.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://yxwkjyqntjx1" path="res://UI/CrimsonFantasyGUI/GUISprite.png" id="2_gui"]
+[ext_resource type="Texture2D" uid="uid://oatyrytwlh4q" path="res://UI/CrimsonFantasyGUI/Inventory.png" id="3_inventory"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_top_bar"]
-bg_color = Color(0.025, 0.03, 0.04, 0.82)
-border_width_bottom = 1
-border_color = Color(0.42, 0.78, 0.72, 0.75)
-content_margin_left = 14.0
-content_margin_top = 6.0
-content_margin_right = 14.0
-content_margin_bottom = 6.0
+[sub_resource type="AtlasTexture" id="AtlasTexture_heart_full"]
+atlas = ExtResource("2_gui")
+region = Rect2(16, 16, 16, 16)
 
-[node name="GameplayHUD" type="CanvasLayer"]
-visible = false
+[sub_resource type="AtlasTexture" id="AtlasTexture_health_under"]
+atlas = ExtResource("2_gui")
+region = Rect2(16, 48, 64, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_health_progress"]
+atlas = ExtResource("2_gui")
+region = Rect2(16, 32, 64, 16)
+margin = Rect2(0, -0.96, 0, 0)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_power_slot"]
+atlas = ExtResource("3_inventory")
+region = Rect2(80, 160, 32, 32)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_health_bg"]
+texture = ExtResource("2_gui")
+texture_margin_left = 3.0
+texture_margin_top = 2.0
+texture_margin_right = 3.0
+texture_margin_bottom = 2.0
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+region_rect = Rect2(17, 37, 62, 7)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_boss_health_fill"]
+texture = ExtResource("2_gui")
+region_rect = Rect2(106, 36, 61, 8)
+
+[node name="GameplayHUD" type="CanvasLayer" unique_id=370620952]
 script = ExtResource("1_script")
 
-[node name="TopBar" type="PanelContainer" parent="."]
+[node name="TopBar" type="Control" parent="." unique_id=676033738]
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 38.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_top_bar")
+offset_bottom = 118.0
+grow_horizontal = 2
 
-[node name="Player1Status" type="Label" parent="TopBar"]
+[node name="Player1Container" type="VBoxContainer" parent="TopBar" unique_id=872556638]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 1
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 192.0
+offset_bottom = 118.0
+size_flags_horizontal = 0
+theme_override_constants/separation = 5
+
+[node name="Player1Header" type="HBoxContainer" parent="TopBar/Player1Container" unique_id=1887966050]
 layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Player1Name" type="Label" parent="TopBar/Player1Container/Player1Header" unique_id=638615622]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "Kaizen"
+
+[node name="Player1Hearts" type="HBoxContainer" parent="TopBar/Player1Container" unique_id=1685765482]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Heart1" type="TextureRect" parent="TopBar/Player1Container/Player1Hearts" unique_id=1268610183]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = SubResource("AtlasTexture_heart_full")
+stretch_mode = 5
+
+[node name="Heart2" type="TextureRect" parent="TopBar/Player1Container/Player1Hearts" unique_id=1725353547]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = SubResource("AtlasTexture_heart_full")
+stretch_mode = 5
+
+[node name="Heart3" type="TextureRect" parent="TopBar/Player1Container/Player1Hearts" unique_id=2116461706]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = SubResource("AtlasTexture_heart_full")
+stretch_mode = 5
+
+[node name="Heart4" type="TextureRect" parent="TopBar/Player1Container/Player1Hearts" unique_id=397927039]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = SubResource("AtlasTexture_heart_full")
+stretch_mode = 5
+
+[node name="Player1Health" type="TextureProgressBar" parent="TopBar/Player1Container" unique_id=1518436027]
+custom_minimum_size = Vector2(138, 21)
+layout_mode = 2
+size_flags_horizontal = 0
+step = 10.0
+value = 40.0
+nine_patch_stretch = true
+stretch_margin_left = 4
+stretch_margin_top = 2
+stretch_margin_right = 4
+stretch_margin_bottom = 2
+texture_under = SubResource("AtlasTexture_health_under")
+texture_progress = SubResource("AtlasTexture_health_progress")
+
+[node name="PowerupSlot" type="Control" parent="TopBar/Player1Container" unique_id=1977634659]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="SlotFrame" type="TextureRect" parent="TopBar/Player1Container/PowerupSlot" unique_id=329325427]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -25.0
+offset_top = -17.0
+offset_right = 26.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("AtlasTexture_power_slot")
+stretch_mode = 5
+
+[node name="PowerupIcon" type="TextureRect" parent="TopBar/Player1Container/PowerupSlot" unique_id=1169027820]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -7.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+
+[node name="Player2Container" type="VBoxContainer" parent="TopBar" unique_id=458315903]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -192.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = 118.0
+grow_horizontal = 0
+size_flags_horizontal = 0
+theme_override_constants/separation = 5
+
+[node name="Player2Name" type="Label" parent="TopBar/Player2Container" unique_id=1261825239]
+layout_mode = 2
+size_flags_horizontal = 8
+horizontal_alignment = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "Eldric"
+
+[node name="Player2Hearts" type="HBoxContainer" parent="TopBar/Player2Container" unique_id=778288332]
+layout_mode = 2
+size_flags_horizontal = 8
+alignment = 2
+theme_override_constants/separation = 2
+
+[node name="Heart1" type="TextureRect" parent="TopBar/Player2Container/Player2Hearts" unique_id=25853706]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = SubResource("AtlasTexture_heart_full")
+stretch_mode = 5
+
+[node name="Heart2" type="TextureRect" parent="TopBar/Player2Container/Player2Hearts" unique_id=1647506335]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = SubResource("AtlasTexture_heart_full")
+stretch_mode = 5
+
+[node name="Heart3" type="TextureRect" parent="TopBar/Player2Container/Player2Hearts" unique_id=1387241423]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = SubResource("AtlasTexture_heart_full")
+stretch_mode = 5
+
+[node name="Player2Health" type="TextureProgressBar" parent="TopBar/Player2Container" unique_id=1395754447]
+custom_minimum_size = Vector2(138, 21)
+layout_mode = 2
+size_flags_horizontal = 8
+step = 10.0
+value = 100.0
+fill_mode = 1
+nine_patch_stretch = true
+stretch_margin_left = 4
+stretch_margin_top = 2
+stretch_margin_right = 4
+stretch_margin_bottom = 2
+texture_under = SubResource("AtlasTexture_health_under")
+texture_progress = SubResource("AtlasTexture_health_progress")
+
+[node name="PowerupSlot" type="Control" parent="TopBar/Player2Container"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="SlotFrame" type="TextureRect" parent="TopBar/Player2Container/PowerupSlot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -25.0
+offset_top = -17.0
+offset_right = 26.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("AtlasTexture_power_slot")
+stretch_mode = 5
+
+[node name="PowerupIcon" type="TextureRect" parent="TopBar/Player2Container/PowerupSlot"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -7.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+
+[node name="BossContainer" type="VBoxContainer" parent="." unique_id=1876967134]
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 64.0
+offset_right = 200.0
+offset_bottom = 106.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+
+[node name="BossName" type="Label" parent="BossContainer" unique_id=1064254046]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 18
-text = ""
-vertical_alignment = 1
+text = "Agis"
+horizontal_alignment = 1
+
+[node name="BossHealth" type="ProgressBar" parent="BossContainer" unique_id=311474959]
+custom_minimum_size = Vector2(400, 16)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/background = SubResource("StyleBoxTexture_health_bg")
+theme_override_styles/fill = SubResource("StyleBoxTexture_boss_health_fill")
+value = 100.0
+show_percentage = false
