@@ -20,6 +20,54 @@ const DASH_TIME = 0.16
 const HURT_ANIMATION_TIME = 0.25
 const SHOOT_ANIMATION_TIME = 1.0
 const WALL_CLING_FALL_SPEED = 32.0
+const WALL_JUMP_HORIZONTAL_SPEED = 360.0
+const WALL_JUMP_VERTICAL_SPEED = -430.0
+const DOUBLE_JUMP_UPGRADE_NAME := "Doble salto"
+const DOUBLE_JUMP_UPGRADE_DESCRIPTION := "Kaizen puede hacer un segundo salto en el aire."
+const KAIZEN_PROJECTILE_UPGRADES := [
+	{
+		"id": "01_disparo_rapido",
+		"name": "Disparo rapido",
+		"description": "Disparo mas veloz con menor espera entre tiros.",
+		"scene": "res://Pickups/Kaizen/01_disparo_rapido/bullet.tscn",
+		"icon": "res://Pickups/Kaizen/01_disparo_rapido/sprites/01_disparo_rapido_01.png",
+	},
+	{
+		"id": "02_disparo_cargado",
+		"name": "Disparo cargado",
+		"description": "Disparo mas grande y fuerte, pero mas lento.",
+		"scene": "res://Pickups/Kaizen/02_disparo_cargado/bullet.tscn",
+		"icon": "res://Pickups/Kaizen/02_disparo_cargado/sprites/02_disparo_cargado_01.png",
+	},
+	{
+		"id": "03_disparo_doble",
+		"name": "Disparo doble",
+		"description": "Kaizen lanza dos disparos separados.",
+		"scene": "res://Pickups/Kaizen/03_disparo_doble/bullet.tscn",
+		"icon": "res://Pickups/Kaizen/03_disparo_doble/sprites/03_disparo_doble_01.png",
+	},
+	{
+		"id": "04_pulso_perforante",
+		"name": "Pulso perforante",
+		"description": "El disparo atraviesa un enemigo antes de desaparecer.",
+		"scene": "res://Pickups/Kaizen/04_pulso_perforante/bullet.tscn",
+		"icon": "res://Pickups/Kaizen/04_pulso_perforante/sprites/04_pulso_perforante_01.png",
+	},
+	{
+		"id": "05_chispa_rebote",
+		"name": "Chispa de rebote",
+		"description": "El disparo puede rebotar una vez contra paredes.",
+		"scene": "res://Pickups/Kaizen/05_chispa_rebote/bullet.tscn",
+		"icon": "res://Pickups/Kaizen/05_chispa_rebote/sprites/05_chispa_rebote_01.png",
+	},
+	{
+		"id": "06_onda_expansiva",
+		"name": "Onda expansiva",
+		"description": "Disparo amplio con movimiento ondulado.",
+		"scene": "res://Pickups/Kaizen/06_onda_expansiva/bullet.tscn",
+		"icon": "res://Pickups/Kaizen/06_onda_expansiva/sprites/06_onda_expansiva_01.png",
+	},
+]
 
 @export var max_health: int = 100
 @export var max_hearts: int = 3
@@ -36,12 +84,15 @@ var health: int
 var hearts: int
 var tiene_salto_infinito: bool = false
 var tiene_dash: bool = false
+var unlocked_projectile_upgrades: Array[int] = []
+var active_projectile_upgrade_index: int = -1
 var dash_timer: float = 0.0
 var dash_direction: float = 1.0
 var invulnerability_timer: float = 0.0
 var hurt_timer: float = 0.0
 var attack_timer: float = 0.0
 var shoot_animation_timer: float = 0.0
+var _air_jump_available := false
 var is_dead := false
 var is_crouching := false
 var is_clinging := false
@@ -53,6 +104,12 @@ func _ready() -> void:
 	add_to_group(&"player")
 	if camera_2d != null:
 		camera_2d.call_deferred("make_current")
+
+func _input(event: InputEvent) -> void:
+	if is_dead:
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		cycle_projectile_upgrade()
 
 func _physics_process(delta: float):
 	if is_dead:
@@ -67,6 +124,8 @@ func _physics_process(delta: float):
 	_update_invulnerability_blink()
 	is_clinging = false
 	_update_crouch_state()
+	if is_on_floor():
+		_air_jump_available = true
 
 	apply_gravity(delta)
 	handle_jump()
@@ -91,12 +150,32 @@ func handle_jump():
 	if not _is_action_just_pressed_for_mode("jump", "jump_JOY"):
 		return
 
+	if _try_wall_jump():
+		return
+
 	if is_on_floor():
 		AudioManager.play_sfx(&"player_jump")
 		velocity.y = JUMP_VELOCITY
-	elif tiene_salto_infinito:
+		if tiene_salto_infinito:
+			_air_jump_available = true
+	elif tiene_salto_infinito and _air_jump_available:
 		AudioManager.play_sfx(&"player_jump")
 		velocity.y = JUMP_VELOCITY
+		_air_jump_available = false
+
+func _try_wall_jump() -> bool:
+	if not is_clinging and not _should_wall_cling():
+		return false
+	var wall_normal_x := _wall_normal_x()
+	if wall_normal_x == 0.0:
+		return false
+	AudioManager.play_sfx(&"player_jump")
+	velocity.x = wall_normal_x * WALL_JUMP_HORIZONTAL_SPEED
+	velocity.y = WALL_JUMP_VERTICAL_SPEED
+	_air_jump_available = false
+	is_clinging = false
+	animated_sprite_2d.flip_h = wall_normal_x < 0.0
+	return true
 
 func handle_dash(delta: float):
 	if dash_timer > 0.0:
@@ -142,19 +221,27 @@ func handle_attack() -> void:
 		push_warning("Player1: projectile_scene no asignado.")
 		return
 
+	var shot_direction := _shot_direction()
+	if _active_projectile_id() == "03_disparo_doble":
+		_spawn_projectile(shot_direction.rotated(-0.16))
+		_spawn_projectile(shot_direction.rotated(0.16))
+	else:
+		_spawn_projectile(shot_direction)
+
+	AudioManager.play_sfx(&"player_shoot")
+	attack_timer = _attack_cooldown_for_active_projectile()
+	shoot_animation_timer = SHOOT_ANIMATION_TIME
+
+func _spawn_projectile(shot_direction: Vector2) -> void:
 	var projectile := projectile_scene.instantiate() as Node2D
 	if projectile == null:
 		return
 
-	var shot_direction := _shot_direction()
 	get_tree().current_scene.add_child(projectile)
 	projectile.global_position = _projectile_spawn_position(shot_direction)
 	if projectile.has_method("setup"):
-		projectile.setup(shot_direction, attack_damage)
-
-	AudioManager.play_sfx(&"player_shoot")
-	attack_timer = attack_cooldown
-	shoot_animation_timer = SHOOT_ANIMATION_TIME
+		projectile.setup(shot_direction, _damage_for_active_projectile())
+	_apply_active_projectile_modifiers(projectile)
 
 func activar_debug_habilidades():
 	tiene_salto_infinito = true
@@ -162,11 +249,154 @@ func activar_debug_habilidades():
 
 func set_salto_infinito_activo(activo: bool) -> void:
 	tiene_salto_infinito = activo
+	if not activo:
+		_air_jump_available = false
 
 func set_dash_activo(activo: bool) -> void:
 	tiene_dash = activo
 	if not activo:
 		dash_timer = 0.0
+
+func apply_next_linear_upgrade() -> Dictionary:
+	if not tiene_salto_infinito:
+		set_salto_infinito_activo(true)
+		return {
+			"applied": true,
+			"title": DOUBLE_JUMP_UPGRADE_NAME,
+			"description": DOUBLE_JUMP_UPGRADE_DESCRIPTION,
+			"icon_path": "",
+		}
+
+	var next_projectile_index := unlocked_projectile_upgrades.size()
+	if next_projectile_index >= KAIZEN_PROJECTILE_UPGRADES.size():
+		return {
+			"applied": false,
+			"title": "Mejoras completas",
+			"description": "Kaizen ya tiene todos los disparos disponibles.",
+			"icon_path": get_active_powerup_icon_path(),
+		}
+
+	unlock_projectile_upgrade(next_projectile_index)
+	var upgrade: Dictionary = KAIZEN_PROJECTILE_UPGRADES[next_projectile_index]
+	return {
+		"applied": true,
+		"title": str(upgrade["name"]),
+		"description": str(upgrade["description"]),
+		"icon_path": str(upgrade["icon"]),
+	}
+
+func unlock_projectile_upgrade(upgrade_index: int) -> bool:
+	if upgrade_index < 0 or upgrade_index >= KAIZEN_PROJECTILE_UPGRADES.size():
+		return false
+	if unlocked_projectile_upgrades.has(upgrade_index):
+		active_projectile_upgrade_index = unlocked_projectile_upgrades.find(upgrade_index)
+	else:
+		unlocked_projectile_upgrades.append(upgrade_index)
+		active_projectile_upgrade_index = unlocked_projectile_upgrades.size() - 1
+	_apply_active_projectile_upgrade()
+	_notify_active_powerup_icon()
+	return true
+
+func cycle_projectile_upgrade() -> bool:
+	if unlocked_projectile_upgrades.is_empty():
+		return false
+	active_projectile_upgrade_index = (active_projectile_upgrade_index + 1) % unlocked_projectile_upgrades.size()
+	_apply_active_projectile_upgrade()
+	_notify_active_powerup_icon()
+	return true
+
+func get_active_powerup_icon_path() -> String:
+	var upgrade: Dictionary = _active_projectile_definition()
+	if upgrade.is_empty():
+		return ""
+	return str(upgrade["icon"])
+
+func _apply_active_projectile_upgrade() -> void:
+	var upgrade: Dictionary = _active_projectile_definition()
+	if upgrade.is_empty():
+		return
+	var next_projectile_scene := load(str(upgrade["scene"])) as PackedScene
+	if next_projectile_scene == null:
+		push_warning("Kaizen: no se pudo cargar el disparo " + str(upgrade["scene"]))
+		return
+	projectile_scene = next_projectile_scene
+
+func _active_projectile_definition() -> Dictionary:
+	if active_projectile_upgrade_index < 0 or active_projectile_upgrade_index >= unlocked_projectile_upgrades.size():
+		return {}
+	var upgrade_index := int(unlocked_projectile_upgrades[active_projectile_upgrade_index])
+	if upgrade_index < 0 or upgrade_index >= KAIZEN_PROJECTILE_UPGRADES.size():
+		return {}
+	return KAIZEN_PROJECTILE_UPGRADES[upgrade_index]
+
+func _active_projectile_id() -> String:
+	var upgrade: Dictionary = _active_projectile_definition()
+	if upgrade.is_empty():
+		return ""
+	return str(upgrade["id"])
+
+func _attack_cooldown_for_active_projectile() -> float:
+	match _active_projectile_id():
+		"01_disparo_rapido":
+			return max(0.18, attack_cooldown * 0.65)
+		"02_disparo_cargado":
+			return attack_cooldown * 1.3
+		"03_disparo_doble":
+			return attack_cooldown * 1.15
+	return attack_cooldown
+
+func _damage_for_active_projectile() -> int:
+	match _active_projectile_id():
+		"02_disparo_cargado":
+			return attack_damage + 50
+		"06_onda_expansiva":
+			return attack_damage + 25
+	return attack_damage
+
+func _apply_active_projectile_modifiers(projectile: Node2D) -> void:
+	match _active_projectile_id():
+		"01_disparo_rapido":
+			if "speed" in projectile:
+				projectile.speed = 720.0
+		"02_disparo_cargado":
+			if "speed" in projectile:
+				projectile.speed = 360.0
+			projectile.scale *= 1.25
+		"04_pulso_perforante":
+			if "pierce_count" in projectile:
+				projectile.pierce_count = 1
+		"05_chispa_rebote":
+			if "bounce_count" in projectile:
+				projectile.bounce_count = 1
+		"06_onda_expansiva":
+			projectile.scale *= 1.35
+			if "wave_amplitude" in projectile:
+				projectile.wave_amplitude = 36.0
+			if "wave_frequency" in projectile:
+				projectile.wave_frequency = 9.0
+
+func _notify_active_powerup_icon() -> void:
+	var hud := _find_gameplay_hud()
+	if hud != null and hud.has_method("set_player1_powerup_icon"):
+		hud.set_player1_powerup_icon(get_active_powerup_icon_path())
+
+func _find_gameplay_hud() -> Node:
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		return null
+	var named_hud := current_scene.find_child("GameplayHUD", true, false)
+	if named_hud != null:
+		return named_hud
+	return _find_node_with_method(current_scene, "set_player1_powerup_icon")
+
+func _find_node_with_method(node: Node, method_name: String) -> Node:
+	if node.has_method(method_name):
+		return node
+	for child in node.get_children():
+		var found := _find_node_with_method(child, method_name)
+		if found != null:
+			return found
+	return null
 
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
 	if invulnerability_timer > 0.0 or hearts <= 0:
@@ -295,15 +525,7 @@ func _update_crouch_state() -> void:
 func _should_wall_cling() -> bool:
 	if is_on_floor() or not is_on_wall():
 		return false
-	var direction := _input_axis()
-	if abs(direction) <= 0.0:
-		return false
-	var wall_normal_x := _wall_normal_x()
-	if wall_normal_x > 0.0:
-		return direction < 0.0
-	if wall_normal_x < 0.0:
-		return direction > 0.0
-	return false
+	return Input.is_key_pressed(KEY_SHIFT)
 
 func _update_cling_facing() -> void:
 	var wall_normal_x := _wall_normal_x()

@@ -4,6 +4,7 @@ extends Area2D
 @export_enum("max_health", "damage", "cooldown", "dash", "double_jump") var upgrade_type: String = "damage"
 @export var amount: int = 25
 @export var cooldown_delta: float = -0.05
+@export var use_linear_progression := true
 @export var consume_on_pickup := true
 
 var _collected := false
@@ -15,10 +16,12 @@ func _on_body_entered(body: Node2D) -> void:
 	if _collected or body == null or not _is_valid_player(body):
 		return
 
-	if not _apply_upgrade(body):
+	var upgrade_result := _apply_upgrade(body)
+	if not bool(upgrade_result.get("applied", false)):
 		return
 
 	_collected = true
+	_show_upgrade_feedback(body, upgrade_result)
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager != null and audio_manager.has_method("play_sfx"):
 		audio_manager.play_sfx(&"ui_confirm")
@@ -41,19 +44,66 @@ func _player_key(body: Node2D) -> String:
 		return "eldric"
 	return ""
 
-func _apply_upgrade(player: Node2D) -> bool:
+func _apply_upgrade(player: Node2D) -> Dictionary:
+	if use_linear_progression and player.has_method("apply_next_linear_upgrade"):
+		var linear_result = player.apply_next_linear_upgrade()
+		if linear_result is Dictionary:
+			return linear_result
+
 	match upgrade_type:
 		"max_health":
-			return _increase_max_health(player)
+			return _legacy_result(_increase_max_health(player), "Vida maxima", "Aumenta la vida maxima.")
 		"damage":
-			return _increase_damage(player)
+			return _legacy_result(_increase_damage(player), "Daño", "Aumenta el daño base.")
 		"cooldown":
-			return _improve_cooldown(player)
+			return _legacy_result(_improve_cooldown(player), "Cadencia", "Reduce el tiempo entre ataques.")
 		"dash":
-			return _set_dash(player)
+			return _legacy_result(_set_dash(player), "Dash", "Desbloquea el dash.")
 		"double_jump":
-			return _set_double_jump(player)
-	return false
+			return _legacy_result(_set_double_jump(player), "Doble salto", "Desbloquea un salto extra.")
+	return _legacy_result(false, "", "")
+
+func _legacy_result(applied: bool, title: String, description: String) -> Dictionary:
+	return {
+		"applied": applied,
+		"title": title,
+		"description": description,
+		"icon_path": "",
+	}
+
+func _show_upgrade_feedback(player: Node2D, upgrade_result: Dictionary) -> void:
+	var hud := _find_gameplay_hud()
+	if hud == null:
+		return
+	var title := str(upgrade_result.get("title", "Mejora obtenida"))
+	var description := str(upgrade_result.get("description", ""))
+	var text := title
+	if not description.is_empty():
+		text += "\n" + description
+	if hud.has_method("show_upgrade_text"):
+		hud.show_upgrade_text(text)
+	if _player_key(player) == "kaizen" and hud.has_method("set_player1_powerup_icon"):
+		var icon_path := str(upgrade_result.get("icon_path", ""))
+		if not icon_path.is_empty():
+			hud.set_player1_powerup_icon(icon_path)
+
+func _find_gameplay_hud() -> Node:
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		return null
+	var named_hud := current_scene.find_child("GameplayHUD", true, false)
+	if named_hud != null:
+		return named_hud
+	return _find_node_with_method(current_scene, "show_upgrade_text")
+
+func _find_node_with_method(node: Node, method_name: String) -> Node:
+	if node.has_method(method_name):
+		return node
+	for child in node.get_children():
+		var found := _find_node_with_method(child, method_name)
+		if found != null:
+			return found
+	return null
 
 func _increase_max_health(player: Node2D) -> bool:
 	if not ("max_health" in player and "health" in player):

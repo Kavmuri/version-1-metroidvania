@@ -4,6 +4,10 @@ extends AnimatedSprite2D
 @export var damage: int = 1
 @export var lifetime: float = 1.2
 @export var impact_scene: PackedScene
+@export var pierce_count: int = 0
+@export var bounce_count: int = 0
+@export var wave_amplitude: float = 0.0
+@export var wave_frequency: float = 8.0
 
 @onready var cleanup_timer: Timer = $Timer
 @onready var hitbox: Area2D = $Hitbox
@@ -11,13 +15,20 @@ extends AnimatedSprite2D
 var direction: float = 1.0
 var travel_direction: Vector2 = Vector2.RIGHT
 var _has_hit := false
+var _hit_targets: Array[Node2D] = []
+var _age := 0.0
 
 func _ready() -> void:
 	cleanup_timer.start(lifetime)
 	play(&"shot")
 
 func _physics_process(delta: float) -> void:
-	global_position += travel_direction * speed * delta
+	_age += delta
+	var movement := travel_direction * speed * delta
+	if wave_amplitude > 0.0:
+		var perpendicular := Vector2(-travel_direction.y, travel_direction.x)
+		movement += perpendicular * sin(_age * wave_frequency) * wave_amplitude * delta
+	global_position += movement
 
 func setup(projectile_direction, projectile_damage: int) -> void:
 	if projectile_direction is Vector2:
@@ -54,14 +65,25 @@ func _on_hitbox_area_entered(area: Area2D) -> void:
 	try_apply_damage_to(target)
 
 func try_apply_damage_to(target: Node2D) -> bool:
-	if _has_hit:
+	if _has_hit or _hit_targets.has(target):
 		return false
-	_has_hit = true
 	if target.has_method("receive_damage"):
 		target.receive_damage(get_damage_amount(), global_position)
 		_spawn_impact()
+		_hit_targets.append(target)
+		if pierce_count > 0:
+			pierce_count -= 1
+			return true
+		_has_hit = true
 		queue_free()
 		return true
+	if bounce_count > 0:
+		bounce_count -= 1
+		travel_direction = -travel_direction
+		rotation = travel_direction.angle()
+		_spawn_impact()
+		return false
+	_has_hit = true
 	_spawn_impact()
 	queue_free()
 	return false
