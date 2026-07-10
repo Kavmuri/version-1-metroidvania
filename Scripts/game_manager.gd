@@ -2,6 +2,7 @@ extends Node
 
 const MAIN_MENU_SCENE := "res://UI/scenes/main_menu.tscn"
 const WORLD_SCENE := "res://Tileset/area1/Area1.tscn"
+const SINGLE_WORLD_SCENE := "res://Levels/single/Tileset/area1/Area1.tscn"
 const ENEMY_ARENA_SCENE := "res://Levels/test_levels/enemy_arena.tscn"
 const DEATH_SCREEN_SCENE := preload("res://UI/scenes/death_screen.tscn")
 const SAVE_PATH := "user://save_game.cfg"
@@ -72,7 +73,7 @@ func start_new_game(mode: String = "single", selected_player: String = "player1"
 	current_world = null
 	current_player1 = null
 	current_player2 = null
-	get_tree().change_scene_to_file(WORLD_SCENE)
+	get_tree().change_scene_to_file(_world_scene_for_mode(mode))
 
 func continue_game() -> bool:
 	var data = _read_save_data()
@@ -89,9 +90,9 @@ func continue_game() -> bool:
 	current_world = null
 	current_player1 = null
 	current_player2 = null
-	var scene_path = str(data.get("scene", WORLD_SCENE))
+	var scene_path = str(data.get("scene", _world_scene_for_mode(current_game_mode)))
 	if scene_path.is_empty():
-		scene_path = WORLD_SCENE
+		scene_path = _world_scene_for_mode(current_game_mode)
 	return get_tree().change_scene_to_file(scene_path) == OK
 
 func go_to_main_menu() -> void:
@@ -117,16 +118,18 @@ func has_save_game() -> bool:
 
 func save_game() -> bool:
 	var player1 = _resolve_player1()
-	if player1 == null:
+	var player2 = _resolve_player2()
+	var active_player: Node2D = player2 if current_game_mode == "single" and selected_single_player == "player2" else player1
+	if active_player == null:
 		return false
 
-	var player2 = _resolve_player2()
+	var is_coop_save := current_game_mode == "coop" and player2 != null
 	var cfg = ConfigFile.new()
-	cfg.set_value("game", "scene", WORLD_SCENE)
-	cfg.set_value("game", "game_mode", "coop" if player2 != null else current_game_mode)
+	cfg.set_value("game", "scene", _current_scene_path())
+	cfg.set_value("game", "game_mode", "coop" if is_coop_save else current_game_mode)
 	cfg.set_value("game", "selected_single_player", selected_single_player)
 	cfg.set_value("game", "world_seed", current_world_seed)
-	cfg.set_value("game", "player1_position", player1.global_position)
+	cfg.set_value("game", "player1_position", player1.global_position if player1 != null else active_player.global_position)
 	cfg.set_value("game", "player2_exists", player2 != null)
 	if player2 != null:
 		cfg.set_value("game", "player2_position", player2.global_position)
@@ -165,6 +168,15 @@ func register_player1(player: Node2D) -> void:
 
 func register_player2(player: Node2D = null) -> void:
 	current_player2 = player
+
+func _world_scene_for_mode(mode: String) -> String:
+	return SINGLE_WORLD_SCENE if mode == "single" else WORLD_SCENE
+
+func _current_scene_path() -> String:
+	var scene := get_tree().current_scene
+	if scene != null and not scene.scene_file_path.is_empty():
+		return scene.scene_file_path
+	return _world_scene_for_mode(current_game_mode)
 
 func should_restore_player2() -> bool:
 	if bool(pending_load_data.get("player2_exists", false)):
