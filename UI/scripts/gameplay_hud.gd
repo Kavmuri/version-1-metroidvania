@@ -103,18 +103,6 @@ func set_player1_powerup_icon(texture_path: String, flip_h: bool = false) -> voi
 	_p1_powerup_icon.texture = texture
 	_p1_powerup_icon.visible = texture != null
 
-func set_player2_powerup_icon(texture_path: String, flip_h: bool = false) -> void:
-	if _p2_powerup_icon == null:
-		return
-	_p2_powerup_icon.flip_h = flip_h
-	if texture_path.is_empty():
-		_p2_powerup_icon.texture = null
-		_p2_powerup_icon.visible = false
-		return
-	var texture := load(texture_path) as Texture2D
-	_p2_powerup_icon.texture = texture
-	_p2_powerup_icon.visible = texture != null
-
 func show_upgrade_text(text: String) -> void:
 	_ensure_upgrade_message_label()
 	if _upgrade_message_label == null:
