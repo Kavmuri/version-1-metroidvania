@@ -20,7 +20,6 @@ var _upgrade_message_timer := 0.0
 
 @onready var _p2_container = _find_required_node(["TopBar/Player2Container", "TopBar/HBox/Player2Container"]) as VBoxContainer
 @onready var _p2_name = _find_required_node(["TopBar/Player2Container/Player2Name", "TopBar/HBox/Player2Container/Player2Name"]) as Label
-@onready var _p2_powerup_icon = _find_required_node(["TopBar/Player2Container/PowerupSlot/PowerupIcon", "TopBar/HBox/Player2Container/PowerupSlot/PowerupIcon"]) as TextureRect
 @onready var _p2_hearts = _find_required_node(["TopBar/Player2Container/Player2Hearts", "TopBar/HBox/Player2Container/Player2Hearts"]) as HBoxContainer
 @onready var _p2_health = _find_required_node(["TopBar/Player2Container/Player2Health", "TopBar/HBox/Player2Container/Player2Health"]) as Range
 

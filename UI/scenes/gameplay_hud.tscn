@@ -204,39 +204,6 @@ stretch_margin_bottom = 2
 texture_under = SubResource("AtlasTexture_health_under")
 texture_progress = SubResource("AtlasTexture_health_progress")
 
-[node name="PowerupSlot" type="Control" parent="TopBar/Player2Container"]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
-size_flags_horizontal = 8
-
-[node name="SlotFrame" type="TextureRect" parent="TopBar/Player2Container/PowerupSlot"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -25.0
-offset_top = -17.0
-offset_right = 26.0
-offset_bottom = 16.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = SubResource("AtlasTexture_power_slot")
-stretch_mode = 5
-
-[node name="PowerupIcon" type="TextureRect" parent="TopBar/Player2Container/PowerupSlot"]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 6.0
-offset_top = 5.0
-offset_right = -5.0
-offset_bottom = -7.0
-grow_horizontal = 2
-grow_vertical = 2
-stretch_mode = 5
-
 [node name="BossContainer" type="VBoxContainer" parent="." unique_id=1876967134]
 visible = false
 anchors_preset = 5
