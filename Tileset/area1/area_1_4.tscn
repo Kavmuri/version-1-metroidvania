@@ -1,15 +1,15 @@
 [gd_scene format=4 uid="uid://b82atur2hf75c"]
 
-[ext_resource type="Texture2D" uid="uid://bhkwbbm13gx4f" path="res://Tileset/area1/crystal_cave_background_by_fellfeline_dektmf0-fullview.jpg" id="1_7vv7k"]
 [ext_resource type="TileSet" uid="uid://dwoae3wqtlmvi" path="res://Tileset/area1/tileset.tres" id="2_408fv"]
-[ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="3_s4gj5"]
-[ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="4_ou1hc"]
-[ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="5_stmqj"]
+[ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Levels/single/Tileset/area1/GAME_TILESET1.png" id="3_s4gj5"]
+[ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Levels/single/Tileset/area1/GAME_TILESET_WALLS.png" id="4_ou1hc"]
+[ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Levels/single/Tileset/area1/GAME_TILSET_PROPS.png" id="5_stmqj"]
 [ext_resource type="Texture2D" uid="uid://bleys7bgpee68" path="res://Background/blue-stars.png" id="6_ecxi5"]
-[ext_resource type="PackedScene" uid="uid://cqessp2vvin1v" path="res://Enemies/boss/agis sprites/enemy_agis.tscn" id="7_s4gj5"]
+[ext_resource type="PackedScene" uid="uid://cqessp2vvin1v" path="res://Enemies/boss/enemy_agis.tscn" id="7_s4gj5"]
 [ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player1/player.tscn" id="8_ou1hc"]
 [ext_resource type="Script" uid="uid://d0qpgxi8m12su" path="res://Scripts/boss_arena_controller.gd" id="9_agis_ctrl"]
-[ext_resource type="PackedScene" path="res://UI/scenes/gameplay_hud.tscn" id="10_hud"]
+[ext_resource type="PackedScene" uid="uid://dcru6inw7g4ym" path="res://UI/scenes/gameplay_hud.tscn" id="10_hud"]
+[ext_resource type="PackedScene" path="res://Background/parrallax area 1.4/area_1_4_parallax.tscn" id="11_area14_parallax"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_agis_floor"]
 size = Vector2(560, 24)
@@ -1078,43 +1078,9 @@ animations = [{
 [node name="Area14" type="Node2D" unique_id=518607811]
 script = ExtResource("9_agis_ctrl")
 
-[node name="transicionBOSS" type="Area2D" parent="." unique_id=1750022287]
-position = Vector2(4520, 560)
-collision_layer = 0
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="transicionBOSS" unique_id=885347380]
-shape = SubResource("RectangleShape2D_agis_floor")
-
-[node name="fondos1" type="Sprite2D" parent="." unique_id=35946878]
-position = Vector2(624, -8)
-scale = Vector2(1.6145834, 1.7083334)
-texture = ExtResource("1_7vv7k")
-
-[node name="fondos2" type="Sprite2D" parent="." unique_id=183688456]
-position = Vector2(1856.7395, -7.000001)
-scale = Vector2(1.5996364, 1.7135416)
-texture = ExtResource("1_7vv7k")
-
-[node name="fondos3" type="Sprite2D" parent="." unique_id=1159526657]
-position = Vector2(615.9999, 600.00006)
-scale = Vector2(1.5996364, 1.7135416)
-texture = ExtResource("1_7vv7k")
-
-[node name="fondos4" type="Sprite2D" parent="." unique_id=1533464599]
-position = Vector2(1850.8699, 601.99994)
-scale = Vector2(1.6175265, 1.7135416)
-texture = ExtResource("1_7vv7k")
-
-[node name="fondos5" type="Sprite2D" parent="." unique_id=138469938]
-position = Vector2(3616, 280)
-scale = Vector2(1.6175265, 1.7135416)
-texture = ExtResource("1_7vv7k")
-
-[node name="fondos6" type="Sprite2D" parent="." unique_id=779397975]
-position = Vector2(4848, 280)
-scale = Vector2(1.6175265, 1.7135416)
-texture = ExtResource("1_7vv7k")
+[node name="Area14Parallax" parent="." unique_id=1110080725 instance=ExtResource("11_area14_parallax")]
+offset = Vector2(0, -32)
+transform = Transform2D(1, 0, 0, 1, 0, -32)
 
 [node name="mapa secuencia" type="TileMapLayer" parent="." unique_id=1368960911]
 z_index = 2
@@ -1287,14 +1253,5 @@ position = Vector2(-3805, 287)
 shape = SubResource("RectangleShape2D_408fv")
 debug_color = Color(0.3118364, 0.49341303, 1, 0.41960785)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=12974607]
-sprite_frames = SubResource("SpriteFrames_7vv7k")
-animation = &"atack"
-
-[node name="Agis" parent="." unique_id=1843184752 instance=ExtResource("7_s4gj5")]
-position = Vector2(5088, 536)
-
 [node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("8_ou1hc")]
 position = Vector2(2328, 136)
-
-[node name="GameplayHUD" parent="." unique_id=561633844 instance=ExtResource("10_hud")]
