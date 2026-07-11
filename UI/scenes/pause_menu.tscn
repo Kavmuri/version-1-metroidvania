@@ -1,57 +1,80 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://duar4w8dwhler"]
 
-[ext_resource type="Script" path="res://UI/scripts/pause_menu.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://bdubpm1e4np1w" path="res://UI/scripts/pause_menu.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://UI/scenes/controls_menu.tscn" id="2_controls"]
+[ext_resource type="Script" uid="uid://c0ij4vhgvou8r" path="res://UI/scripts/pause_menu_navigation.gd" id="3_navigation"]
 
-[node name="PauseMenu" type="CanvasLayer"]
+[node name="PauseMenu" type="CanvasLayer" unique_id=1536534356]
 script = ExtResource("1_script")
 
-[node name="Overlay" type="ColorRect" parent="."]
+[node name="NavigationController" type="Node" parent="." unique_id=1234567890]
+script = ExtResource("3_navigation")
+
+[node name="Title" type="Label" parent="." unique_id=505608949]
+offset_left = 72.0
+offset_top = 160.0
+offset_right = 155.12503
+offset_bottom = 179.0
+scale = Vector2(1.6, 1.6)
+text = "Pausa"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="." unique_id=856557788]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 181.0
+offset_top = 90.0
+offset_right = 461.0
+offset_bottom = 98.0
+
+[node name="ButtonContinuar" type="Button" parent="." unique_id=440165232]
+custom_minimum_size = Vector2(220, 32)
+offset_left = 28.0
+offset_top = 208.0
+offset_right = 248.0
+offset_bottom = 240.0
+focus_mode = 1
+text = "Continuar"
+flat = true
+
+[node name="ButtonControles" type="Button" parent="." unique_id=675703245]
+custom_minimum_size = Vector2(220, 32)
+offset_left = 24.0
+offset_top = 248.0
+offset_right = 244.0
+offset_bottom = 280.0
+focus_mode = 1
+text = "Controles"
+flat = true
+
+[node name="ButtonSalir" type="Button" parent="." unique_id=760025223]
+custom_minimum_size = Vector2(220, 32)
+offset_left = 28.0
+offset_top = 288.0
+offset_right = 248.0
+offset_bottom = 320.0
+focus_mode = 1
+text = "Salir"
+flat = true
+
+[node name="Status" type="Label" parent="." unique_id=719932710]
+offset_left = 181.0
+offset_top = 230.0
+offset_right = 461.0
+offset_bottom = 249.0
+horizontal_alignment = 1
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=1584428885]
+z_index = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 14.0
+offset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.64)
 
-[node name="Panel" type="PanelContainer" parent="."]
-offset_left = 181.0
-offset_top = 62.0
-offset_right = 461.0
-offset_bottom = 298.0
-
-[node name="Content" type="VBoxContainer" parent="Panel"]
-layout_mode = 2
-theme_override_constants/separation = 9
-
-[node name="Title" type="Label" parent="Panel/Content"]
-layout_mode = 2
-text = "Pausa"
-horizontal_alignment = 1
-
-[node name="ResumeButton" type="Button" parent="Panel/Content"]
-custom_minimum_size = Vector2(220, 32)
-layout_mode = 2
-text = "Continuar"
-
-[node name="SaveButton" type="Button" parent="Panel/Content"]
-custom_minimum_size = Vector2(220, 32)
-layout_mode = 2
-text = "Guardar"
-
-[node name="ConfigButton" type="Button" parent="Panel/Content"]
-custom_minimum_size = Vector2(220, 32)
-layout_mode = 2
-text = "Configuracion"
-
-[node name="MainMenuButton" type="Button" parent="Panel/Content"]
-custom_minimum_size = Vector2(220, 32)
-layout_mode = 2
-text = "Menu principal"
-
-[node name="Status" type="Label" parent="Panel/Content"]
-layout_mode = 2
-horizontal_alignment = 1
-
-[node name="ControlsMenu" parent="." instance=ExtResource("2_controls")]
+[node name="ControlsMenu" parent="." unique_id=2025839142 instance=ExtResource("2_controls")]
 visible = false

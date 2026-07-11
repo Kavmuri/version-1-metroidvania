@@ -223,6 +223,15 @@ func set_keyboard_action(action_name: String, physical_keycode: int) -> void:
 		InputMap.action_add_event(action_name, joy_event)
 	_apply_ui_navigation_actions()
 
+func set_gamepad_action(action_name: String, button_index: int) -> void:
+	var gamepad_action = action_name + "_JOY"
+	_ensure_action(gamepad_action)
+	InputMap.action_erase_events(gamepad_action)
+	var joy_event = InputEventJoypadButton.new()
+	joy_event.button_index = button_index
+	InputMap.action_add_event(gamepad_action, joy_event)
+	save_controls()
+
 func is_keyboard_action_allowed(action_name: String, physical_keycode: int) -> bool:
 	return not physical_keycode in BLOCKED_GAMEPLAY_KEYS.get(action_name, [])
 

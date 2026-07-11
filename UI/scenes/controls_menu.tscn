@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Script" path="res://UI/scripts/controls_menu.gd" id="1_script"]
+[ext_resource type="Script" path="res://UI/scripts/controls_menu_new.gd" id="1_script"]
 
 [node name="ControlsMenu" type="CanvasLayer"]
+layer = 60
 script = ExtResource("1_script")
 
 [node name="Overlay" type="ColorRect" parent="."]
@@ -19,10 +20,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = -150.0
-offset_right = 250.0
-offset_bottom = 150.0
+offset_left = -300.0
+offset_top = -160.0
+offset_right = 300.0
+offset_bottom = 160.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -33,30 +34,64 @@ theme_override_constants/separation = 12
 [node name="Title" type="Label" parent="Panel/Content"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "Controles"
+text = "Configurar Controles"
 horizontal_alignment = 1
 
-[node name="ActionSelector" type="OptionButton" parent="Panel/Content"]
-custom_minimum_size = Vector2(200, 32)
+[node name="MainContainer" type="HBoxContainer" parent="Panel/Content"]
 layout_mode = 2
-size_flags_horizontal = 4
+custom_minimum_size = Vector2(0, 220)
+theme_override_constants/separation = 20
 
-[node name="Keyboard" type="VBoxContainer" parent="Panel/Content"]
+[node name="LeftPanel" type="VBoxContainer" parent="Panel/Content/MainContainer"]
 layout_mode = 2
-theme_override_constants/separation = 4
+custom_minimum_size = Vector2(280, 0)
+theme_override_constants/separation = 8
 
-[node name="Status" type="Label" parent="Panel/Content"]
-custom_minimum_size = Vector2(0, 24)
+[node name="GamepadTitle" type="Label" parent="Panel/Content/MainContainer/LeftPanel"]
 layout_mode = 2
-text = "Presiona una tecla para asignar"
+text = "Mando / Joystick"
 horizontal_alignment = 1
-autowrap_mode = 2
+theme_override_font_sizes/font_size = 16
 
-[node name="Actions" type="HBoxContainer" parent="Panel/Content"]
+[node name="GamepadSection" type="VBoxContainer" parent="Panel/Content/MainContainer/LeftPanel"]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 180)
+
+[node name="GamepadContainer" type="VBoxContainer" parent="Panel/Content/MainContainer/LeftPanel/GamepadSection"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="RightPanel" type="VBoxContainer" parent="Panel/Content/MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(280, 0)
+theme_override_constants/separation = 8
+
+[node name="KeyboardTitle" type="Label" parent="Panel/Content/MainContainer/RightPanel"]
+layout_mode = 2
+text = "Teclado"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+
+[node name="KeyboardSection" type="VBoxContainer" parent="Panel/Content/MainContainer/RightPanel"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 180)
+
+[node name="KeyboardContainer" type="VBoxContainer" parent="Panel/Content/MainContainer/RightPanel/KeyboardSection"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ButtonsRow" type="HBoxContainer" parent="Panel/Content"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
 alignment = 1
+theme_override_constants/separation = 12
 
-[node name="BackButton" type="Button" parent="Panel/Content/Actions"]
+[node name="ResetButton" type="Button" parent="Panel/Content/ButtonsRow"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+text = "Resetear"
+
+[node name="BackButton" type="Button" parent="Panel/Content/ButtonsRow"]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
 text = "Volver"

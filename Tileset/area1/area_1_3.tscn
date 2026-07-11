@@ -813,7 +813,7 @@ region_enabled = true
 region_rect = Rect2(56, 56, 168, 112)
 
 [node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("3_4qlin")]
-position = Vector2(4240, -208)
+position = Vector2(1928, 48)
 
 [node name="ground" type="TileMapLayer" parent="." unique_id=1596836496]
 z_index = 1
