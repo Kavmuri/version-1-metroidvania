@@ -4,7 +4,7 @@ const MAIN_MENU_SCENE := "res://UI/scenes/main_menu.tscn"
 const WORLD_SCENE := "res://Tileset/area1/Area1.tscn"
 const SINGLE_WORLD_SCENE := "res://Levels/single/Tileset/area1/Area1.tscn"
 const ENEMY_ARENA_SCENE := "res://Levels/test_levels/enemy_arena.tscn"
-const DEATH_SCREEN_SCENE := preload("res://UI/scenes/death_screen.tscn")
+const DEATH_SCREEN_SCENE := preload("res://UI/Interfaz/menuMuerte/MenuMuerte.tscn")
 const SAVE_PATH := "user://save_game.cfg"
 const CONTROLS_PATH := "user://controls.cfg"
 
@@ -55,7 +55,7 @@ var current_world_seed: int = 0
 var current_game_mode: String = "single"
 var selected_single_player: String = "player1"
 var pending_load_data: Dictionary = {}
-var _death_screen: CanvasLayer = null
+var _death_screen: Control = null
 var _is_restoring_save := false
 
 func _ready() -> void:
@@ -102,6 +102,7 @@ func go_to_main_menu() -> void:
 	current_world = null
 	current_player1 = null
 	current_player2 = null
+	PauseManager.force_close()
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 func open_enemy_arena() -> void:
@@ -111,6 +112,7 @@ func open_enemy_arena() -> void:
 	current_world = null
 	current_player1 = null
 	current_player2 = null
+	PauseManager.force_close()
 	get_tree().change_scene_to_file(ENEMY_ARENA_SCENE)
 
 func has_save_game() -> bool:
@@ -149,8 +151,6 @@ func show_death_screen() -> void:
 	get_tree().paused = true
 	_death_screen = DEATH_SCREEN_SCENE.instantiate()
 	get_tree().root.add_child(_death_screen)
-	_death_screen.continue_requested.connect(_on_death_continue_requested)
-	_death_screen.exit_requested.connect(_on_death_exit_requested)
 
 func get_world_seed_for_generation() -> int:
 	if pending_load_data.has("world_seed"):
@@ -192,12 +192,6 @@ func apply_pending_positions(player1: Node2D, player2: Node2D = null) -> void:
 	if player2 != null and pending_load_data.has("player2_position"):
 		player2.global_position = pending_load_data["player2_position"]
 	pending_load_data.clear()
-
-func _on_death_continue_requested() -> void:
-	continue_game()
-
-func _on_death_exit_requested() -> void:
-	go_to_main_menu()
 
 func _clear_death_screen() -> void:
 	if _death_screen != null and is_instance_valid(_death_screen):

@@ -52,10 +52,16 @@ func _open_controls() -> void:
 
 func _go_main_menu() -> void:
 	AudioManager.play_sfx(&"ui_back")
+	force_close()
+	GameManager.go_to_main_menu()
+
+func force_close() -> void:
 	_open = false
 	visible = false
 	get_tree().paused = false
-	GameManager.go_to_main_menu()
+	if _controls_menu != null:
+		_controls_menu.visible = false
+		_controls_menu.close_edit_menu()
 
 func _connect_buttons() -> void:
 	if _button_continuar:

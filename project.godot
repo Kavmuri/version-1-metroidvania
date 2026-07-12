@@ -21,7 +21,8 @@ config/theme="res://UI/main_theme.tres"
 
 GameManager="*uid://d4dgdlvf0feyv"
 AudioManager="*res://Audio/audio_manager.gd"
-PauseManager="res://UI/scenes/pause_menu.tscn"
+PauseManager="*res://UI/scenes/pause_menu.tscn"
+CursorManager="*res://UI/scripts/cursor_manager.gd"
 
 [display]
 

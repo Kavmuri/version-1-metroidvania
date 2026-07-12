@@ -1,97 +1,65 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://chyu22uyvngmu"]
 
-[ext_resource type="Script" path="res://UI/scripts/controls_menu_new.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://c381glwmxnkne" path="res://UI/scripts/controls_menu_new.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cccmi1t56huor" path="res://UI/Interfaz/controlesUI/mando controls.png" id="2_mando"]
+[ext_resource type="Texture2D" uid="uid://b6amcm8w15sbk" path="res://UI/Interfaz/controlesUI/teclado controls.png" id="3_teclado"]
 
-[node name="ControlsMenu" type="CanvasLayer"]
+[node name="ControlsMenu" type="CanvasLayer" unique_id=392922165]
 layer = 60
 script = ExtResource("1_script")
 
-[node name="Overlay" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1883379320]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0, 0, 0, 1)
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=1177343445]
+z_index = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.75)
+mouse_filter = 2
+color = Color(0, 0, 0, 0.95)
 
-[node name="Panel" type="PanelContainer" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -160.0
-offset_right = 300.0
-offset_bottom = 160.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Content" type="VBoxContainer" parent="Panel"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Title" type="Label" parent="Panel/Content"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Configurar Controles"
-horizontal_alignment = 1
-
-[node name="MainContainer" type="HBoxContainer" parent="Panel/Content"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 220)
-theme_override_constants/separation = 20
-
-[node name="LeftPanel" type="VBoxContainer" parent="Panel/Content/MainContainer"]
-layout_mode = 2
-custom_minimum_size = Vector2(280, 0)
-theme_override_constants/separation = 8
-
-[node name="GamepadTitle" type="Label" parent="Panel/Content/MainContainer/LeftPanel"]
-layout_mode = 2
-text = "Mando / Joystick"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
-
-[node name="GamepadSection" type="VBoxContainer" parent="Panel/Content/MainContainer/LeftPanel"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 180)
-
-[node name="GamepadContainer" type="VBoxContainer" parent="Panel/Content/MainContainer/LeftPanel/GamepadSection"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="RightPanel" type="VBoxContainer" parent="Panel/Content/MainContainer"]
-layout_mode = 2
-custom_minimum_size = Vector2(280, 0)
-theme_override_constants/separation = 8
-
-[node name="KeyboardTitle" type="Label" parent="Panel/Content/MainContainer/RightPanel"]
-layout_mode = 2
-text = "Teclado"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
-
-[node name="KeyboardSection" type="VBoxContainer" parent="Panel/Content/MainContainer/RightPanel"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 180)
-
-[node name="KeyboardContainer" type="VBoxContainer" parent="Panel/Content/MainContainer/RightPanel/KeyboardSection"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="ButtonsRow" type="HBoxContainer" parent="Panel/Content"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 40)
+[node name="ImagesRow" type="HBoxContainer" parent="." unique_id=375362230]
+offset_left = 1.0
+offset_top = 24.0
+offset_right = 641.0
+offset_bottom = 284.0
+mouse_filter = 2
+theme_override_constants/separation = 24
 alignment = 1
-theme_override_constants/separation = 12
 
-[node name="ResetButton" type="Button" parent="Panel/Content/ButtonsRow"]
-custom_minimum_size = Vector2(120, 32)
+[node name="MandoImage" type="TextureRect" parent="ImagesRow" unique_id=873787540]
+custom_minimum_size = Vector2(260, 260)
 layout_mode = 2
-text = "Resetear"
+mouse_filter = 2
+texture = ExtResource("2_mando")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="BackButton" type="Button" parent="Panel/Content/ButtonsRow"]
-custom_minimum_size = Vector2(120, 32)
+[node name="TecladoImage" type="TextureRect" parent="ImagesRow" unique_id=529946195]
+custom_minimum_size = Vector2(260, 260)
 layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_teclado")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BackButton" type="Button" parent="." unique_id=449920481]
+custom_minimum_size = Vector2(140, 32)
+offset_left = 141.0
+offset_top = 300.0
+offset_right = 281.0
+offset_bottom = 340.0
 text = "Volver"
+
+[node name="EditarButton" type="Button" parent="." unique_id=1408255717]
+custom_minimum_size = Vector2(200, 32)
+offset_left = 301.0
+offset_top = 300.0
+offset_right = 501.0
+offset_bottom = 340.0
+text = "Editar controles"

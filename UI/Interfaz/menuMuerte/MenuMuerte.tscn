@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://6r55sdqc11or"]
+
+[ext_resource type="Texture2D" uid="uid://cv3w5ovn0dne0" path="res://UI/Interfaz/menuMuerte/pantalla de died.png" id="1_1cxbc"]
+[ext_resource type="Script" uid="uid://byfdam0eu08c7" path="res://UI/Interfaz/MenuInicio/gradient_overlay.gd" id="2_bvfts"]
+[ext_resource type="Script" uid="uid://bnfmmspnacvlx" path="res://UI/Interfaz/menuMuerte/menu_muerte.gd" id="3_muerte"]
+
+[node name="MenuMuerte" type="Control" unique_id=1481478698]
+custom_minimum_size = Vector2(0, 19)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_muerte")
+
+[node name="PantallaDeDied" type="Sprite2D" parent="." unique_id=630906100]
+position = Vector2(321.375, 220)
+scale = Vector2(0.08, 0.079)
+texture = ExtResource("1_1cxbc")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1821065634]
+z_index = -1
+layout_mode = 0
+offset_left = -1.0
+offset_right = 655.0
+offset_bottom = 360.0
+color = Color(0, 0, 0, 1)
+
+[node name="GradientOverlay" type="Node2D" parent="." unique_id=1355238601]
+script = ExtResource("2_bvfts")
+
+[node name="Particles" type="CPUParticles2D" parent="." unique_id=1328980875]
+position = Vector2(321, 380)
+amount = 30
+lifetime = 5.0
+preprocess = 5.0
+speed_scale = 0.6
+emission_shape = 3
+emission_rect_extents = Vector2(320, 1)
+direction = Vector2(0, -1)
+spread = 15.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 30.0
+initial_velocity_max = 60.0
+scale_amount_max = 2.5
+color = Color(0.7, 0.4, 0.9, 0.4)
+
+[node name="Continuar" type="Label" parent="." unique_id=424998186]
+layout_mode = 0
+offset_left = 283.0
+offset_top = 280.0
+offset_right = 356.0
+offset_bottom = 299.0
+text = "Continuar?"
+
+[node name="Moriste" type="Label" parent="." unique_id=2037430298]
+layout_mode = 0
+offset_left = 293.0
+offset_top = 144.0
+offset_right = 348.0
+offset_bottom = 163.0
+text = "Moriste"
+
+[node name="SI" type="Button" parent="." unique_id=827746883]
+layout_mode = 0
+offset_left = 246.0
+offset_top = 312.0
+offset_right = 310.0
+offset_bottom = 336.0
+text = "Si"
+flat = true
+
+[node name="NO" type="Button" parent="." unique_id=1103453751]
+layout_mode = 0
+offset_left = 330.0
+offset_top = 312.0
+offset_right = 402.0
+offset_bottom = 336.0
+text = "No"
+flat = true

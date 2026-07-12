@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://oyuspm6jgn1y"]
+
+[ext_resource type="Texture2D" uid="uid://c3qdhlcehgkkj" path="res://UI/Interfaz/controlesUI/cursor/cursor.png" id="1_sr1es"]
+[ext_resource type="Texture2D" uid="uid://cb5q6pft27ba7" path="res://UI/Interfaz/controlesUI/cursor/pointer.png" id="2_aoh43"]
+[ext_resource type="Texture2D" uid="uid://b4lv01fswwu5f" path="res://UI/Interfaz/controlesUI/cursor/two-fingers.png" id="3_811ri"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cte70"]
+atlas = ExtResource("1_sr1es")
+region = Rect2(0, 0, 100, 140)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_42q35"]
+atlas = ExtResource("2_aoh43")
+region = Rect2(0, 0, 160, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_203h3"]
+atlas = ExtResource("3_811ri")
+region = Rect2(0, 0, 160, 160)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vpjlu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cte70")
+}],
+"loop": true,
+"name": &"Cursor",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_42q35")
+}],
+"loop": true,
+"name": &"pointer",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_203h3")
+}],
+"loop": true,
+"name": &"two",
+"speed": 5.0
+}]
+
+[node name="Animacionesdecursor" type="Node2D" unique_id=677317076]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=242221552]
+sprite_frames = SubResource("SpriteFrames_vpjlu")
+animation = &"two"
+autoplay = "Cursor"
