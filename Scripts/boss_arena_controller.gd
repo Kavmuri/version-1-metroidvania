@@ -19,11 +19,16 @@ extends Node2D
 @export var transition_focus_seconds: float = 5.0
 @export var camera_zoom_lerp_speed: float = 0.9
 @export var gate_zoom_distance: float = 260.0
+@export var boss_scene: bool = false
+@export var create_extra_limit_walls_enabled: bool = false
+@export var previous_area_scene: String = "res://Tileset/area1/area_1_3.tscn"
+@export var previous_area_player1_position: Vector2 = Vector2(4208, -256)
+@export var previous_area_player2_position: Vector2 = Vector2(4160, -256)
+@export var next_area_scene: String = "res://Tileset/area1/area_1_5.tscn"
+@export var next_area_player1_position: Vector2 = Vector2(3032, 32)
+@export var next_area_player2_position: Vector2 = Vector2(3080, 32)
 
 const PLAYER2_SCENE: PackedScene = preload("res://Player2/player_2.tscn")
-const PREVIOUS_AREA_SCENE: String = "res://Tileset/area1/area_1_3.tscn"
-const PREVIOUS_AREA_PLAYER1_POSITION: Vector2 = Vector2(4208, -256)
-const PREVIOUS_AREA_PLAYER2_POSITION: Vector2 = Vector2(4160, -256)
 const SECTION_1_PLAYER1_POSITION: Vector2 = Vector2(96, 176)
 const SECTION_1_PLAYER2_POSITION: Vector2 = Vector2(144, 176)
 const SECTION_2_PLAYER1_POSITION: Vector2 = Vector2(3032, 32)
@@ -46,6 +51,8 @@ var _last_applied_section_name: String = ""
 var _cached_gate_centers: Array[Vector2] = []
 
 func _ready() -> void:
+	if boss_scene:
+		active_section_name = SECTION_2_NAME
 	_ensure_player2_from_pending()
 	_prepare_transition_rect()
 	call_deferred("_register_scene_players")
@@ -59,7 +66,8 @@ func _ready() -> void:
 
 	_connect_area14_transitions()
 	call_deferred("_apply_global_limits")
-	call_deferred("_create_extra_limit_walls")
+	if create_extra_limit_walls_enabled:
+		call_deferred("_create_extra_limit_walls")
 	call_deferred("_cache_transition_gate_centers")
 
 func _process(delta: float) -> void:
@@ -114,13 +122,16 @@ func _ensure_player2_from_pending() -> void:
 	if new_player is Node2D:
 		var player2: Node2D = new_player as Node2D
 		player2.name = "Player2"
-		player2.global_position = SECTION_1_PLAYER2_POSITION
+		player2.global_position = SECTION_2_PLAYER2_POSITION if boss_scene else SECTION_1_PLAYER2_POSITION
 		add_child(player2)
 
 func _connect_area14_transitions() -> void:
-	_connect_transition_area("transicionarea14ENTER2", _on_area14_enter_transition_entered)
-	_connect_transition_area("transicionarea14OUT2", _on_area14_out_transition_entered)
-	_connect_transition_area("transicionarea14ENTER4", _on_area14_section_2_enter_transition_entered)
+	if boss_scene:
+		_connect_transition_area("transicionarea14ENTER2", _on_area14_enter_transition_entered)
+		_connect_transition_area("transicionarea14ENTER4", _on_area14_enter_transition_entered)
+	else:
+		_connect_transition_area("transicionarea14ENTER2", _on_area14_enter_transition_entered)
+		_connect_transition_area("transicionarea14OUT2", _on_area14_out_transition_entered)
 
 func _on_area14_enter_transition_entered(body: Node2D) -> void:
 	if _area_transitioning:
@@ -132,7 +143,7 @@ func _on_area14_out_transition_entered(body: Node2D) -> void:
 	if _area_transitioning:
 		return
 	if _is_player_body(body):
-		_transition_to_section_2()
+		_transition_to_next_area()
 
 func _on_area14_section_2_enter_transition_entered(body: Node2D) -> void:
 	if _area_transitioning:
@@ -147,23 +158,28 @@ func _transition_to_previous_area() -> void:
 	var p2: Node2D = get_node_or_null("Player2") as Node2D
 	var player2_exists: bool = p2 != null and is_instance_valid(p2)
 	GameManager.pending_load_data = {
-		"player1_position": PREVIOUS_AREA_PLAYER1_POSITION,
+		"player1_position": previous_area_player1_position,
 		"player2_exists": player2_exists,
-		"player2_position": PREVIOUS_AREA_PLAYER2_POSITION,
+		"player2_position": previous_area_player2_position,
 		"game_mode": "coop" if player2_exists else GameManager.current_game_mode
 	}
 	GameManager.current_game_mode = "coop" if player2_exists else GameManager.current_game_mode
-	get_tree().change_scene_to_file(PREVIOUS_AREA_SCENE)
+	get_tree().change_scene_to_file(previous_area_scene)
 
-func _transition_to_section_2() -> void:
+func _transition_to_next_area() -> void:
 	_area_transitioning = true
 	await _play_fade_to_black("transicionarea14OUT1")
-	_move_players_to_positions(SECTION_2_PLAYER1_POSITION, SECTION_2_PLAYER2_POSITION)
-	active_section_name = SECTION_2_NAME
-	_apply_section_camera_limits()
-	_start_camera_focus()
-	await _fade_from_black()
-	_area_transitioning = false
+
+	var p2: Node2D = get_node_or_null("Player2") as Node2D
+	var player2_exists: bool = p2 != null and is_instance_valid(p2)
+	GameManager.pending_load_data = {
+		"player1_position": next_area_player1_position,
+		"player2_exists": player2_exists,
+		"player2_position": next_area_player2_position,
+		"game_mode": "coop" if player2_exists else GameManager.current_game_mode
+	}
+	GameManager.current_game_mode = "coop" if player2_exists else GameManager.current_game_mode
+	get_tree().change_scene_to_file(next_area_scene)
 
 func _transition_to_section_1() -> void:
 	_area_transitioning = true
