@@ -1,15 +1,13 @@
 extends CanvasLayer
 
-var player1: Node2D = null
 var _open := false
 
-@onready var _panel: PanelContainer = $Panel
-@onready var _status: Label = $Panel/Content/Status
-@onready var _resume_button: Button = $Panel/Content/ResumeButton
-@onready var _save_button: Button = $Panel/Content/SaveButton
-@onready var _config_button: Button = $Panel/Content/ConfigButton
-@onready var _main_menu_button: Button = $Panel/Content/MainMenuButton
-@onready var _controls_menu: CanvasLayer = $ControlsMenu
+@onready var _status: Label = $Status
+@onready var _button_continuar: Button = $ButtonContinuar
+@onready var _button_controles: Button = $ButtonControles
+@onready var _button_salir: Button = $ButtonSalir
+@onready var _overlay: ColorRect = $Overlay
+@onready var _controls_menu: CanvasLayer = get_node_or_null("ControlsMenu") as CanvasLayer
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -17,10 +15,6 @@ func _ready() -> void:
 	visible = false
 	_apply_styles()
 	_connect_buttons()
-	_center_panel()
-
-func setup(p1: Node2D) -> void:
-	player1 = p1
 
 func _input(event: InputEvent) -> void:
 	if _controls_menu != null and _controls_menu.visible:
@@ -40,9 +34,10 @@ func _open_menu() -> void:
 	_open = true
 	visible = true
 	get_tree().paused = true
-	_status.text = ""
-	_center_panel()
-	_resume_button.grab_focus()
+	if _status:
+		_status.text = ""
+	if _button_continuar:
+		_button_continuar.grab_focus()
 
 func _resume() -> void:
 	AudioManager.play_sfx(&"ui_back")
@@ -50,35 +45,50 @@ func _resume() -> void:
 	visible = false
 	get_tree().paused = false
 
-func _save_game() -> void:
-	AudioManager.play_sfx(&"ui_confirm")
-	if GameManager.save_game():
-		_status.text = "Partida guardada."
-	else:
-		_status.text = "No se pudo guardar."
-
 func _open_controls() -> void:
 	AudioManager.play_sfx(&"ui_confirm")
-	_controls_menu.open_menu()
+	if _controls_menu != null:
+		_controls_menu.open_menu()
 
 func _go_main_menu() -> void:
 	AudioManager.play_sfx(&"ui_back")
-	get_tree().paused = false
+	force_close()
 	GameManager.go_to_main_menu()
 
+func force_close() -> void:
+	_open = false
+	visible = false
+	get_tree().paused = false
+	if _controls_menu != null:
+		_controls_menu.visible = false
+		_controls_menu.close_edit_menu()
+
 func _connect_buttons() -> void:
-	_resume_button.pressed.connect(_resume)
-	_save_button.pressed.connect(_save_game)
-	_config_button.pressed.connect(_open_controls)
-	_main_menu_button.pressed.connect(_go_main_menu)
-	_controls_menu.closed.connect(func(): _config_button.grab_focus())
+	if _button_continuar:
+		_button_continuar.pressed.connect(_resume)
+	if _button_controles:
+		_button_controles.pressed.connect(_open_controls)
+	if _button_salir:
+		_button_salir.pressed.connect(_go_main_menu)
+	if _controls_menu:
+		_controls_menu.closed.connect(func():
+			if _button_controles and _button_controles.visible:
+				_button_controles.grab_focus()
+		)
 
 func _apply_styles() -> void:
-	_panel.add_theme_stylebox_override("panel", _panel_style())
-	for button in [_resume_button, _save_button, _config_button, _main_menu_button]:
-		button.add_theme_stylebox_override("normal", _button_style(Color(0.07, 0.08, 0.105)))
-		button.add_theme_stylebox_override("hover", _button_style(Color(0.12, 0.16, 0.19)))
-		button.add_theme_stylebox_override("pressed", _button_style(Color(0.04, 0.08, 0.09)))
+	if _button_continuar != null:
+		_button_continuar.add_theme_stylebox_override("normal", _button_style(Color(0.07, 0.08, 0.105)))
+		_button_continuar.add_theme_stylebox_override("hover", _button_style(Color(0.12, 0.16, 0.19)))
+		_button_continuar.add_theme_stylebox_override("pressed", _button_style(Color(0.04, 0.08, 0.09)))
+	if _button_controles != null:
+		_button_controles.add_theme_stylebox_override("normal", _button_style(Color(0.07, 0.08, 0.105)))
+		_button_controles.add_theme_stylebox_override("hover", _button_style(Color(0.12, 0.16, 0.19)))
+		_button_controles.add_theme_stylebox_override("pressed", _button_style(Color(0.04, 0.08, 0.09)))
+	if _button_salir != null:
+		_button_salir.add_theme_stylebox_override("normal", _button_style(Color(0.07, 0.08, 0.105)))
+		_button_salir.add_theme_stylebox_override("hover", _button_style(Color(0.12, 0.16, 0.19)))
+		_button_salir.add_theme_stylebox_override("pressed", _button_style(Color(0.04, 0.08, 0.09)))
 
 func _panel_style() -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
@@ -111,7 +121,3 @@ func _button_style(color: Color) -> StyleBoxFlat:
 	style.corner_radius_bottom_left = 4
 	style.corner_radius_bottom_right = 4
 	return style
-
-func _center_panel() -> void:
-	var viewport_size = get_viewport().get_visible_rect().size
-	_panel.position = (viewport_size - _panel.size) * 0.5
