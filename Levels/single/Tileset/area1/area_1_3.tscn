@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://c16j78qifd8iu"]
 
 [ext_resource type="Texture2D" uid="uid://cjnvliaxl7366" path="res://Tileset/area3/tileset.png" id="1_5rj4u"]
-[ext_resource type="Script" path="res://Levels/single/Tileset/area1/area_1_3.gd" id="1_agrqf"]
+[ext_resource type="Script" uid="uid://654rtbwwuix2" path="res://Levels/single/Tileset/area1/area_1_3.gd" id="1_agrqf"]
 [ext_resource type="Texture2D" uid="uid://cp7qtfjj58tia" path="res://Background/background.png" id="2_4qlin"]
 [ext_resource type="Texture2D" uid="uid://b0p0rmct5kf7r" path="res://Background/middleground.png" id="3_p4m4k"]
 [ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="5_agrqf"]

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="2_dbhdx"]
 [ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="3_6hnu3"]
 [ext_resource type="Texture2D" uid="uid://bleys7bgpee68" path="res://Background/blue-stars.png" id="4_dbhdx"]
-[ext_resource type="Script" path="res://Levels/single/Tileset/area1/area_1_2.gd" id="6_script"]
+[ext_resource type="Script" uid="uid://bn2s2txfj33oa" path="res://Levels/single/Tileset/area1/area_1_2.gd" id="6_script"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tkpsf"]
 texture = ExtResource("1_c7as5")
