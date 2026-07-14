@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://b82atur2hf75c"]
+[gd_scene format=4 uid="uid://tixoetlbwqus"]
 
 [ext_resource type="Texture2D" uid="uid://bhkwbbm13gx4f" path="res://Tileset/area1/crystal_cave_background_by_fellfeline_dektmf0-fullview.jpg" id="1_7vv7k"]
 [ext_resource type="TileSet" uid="uid://dwoae3wqtlmvi" path="res://Tileset/area1/tileset.tres" id="2_408fv"]
@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="4_ou1hc"]
 [ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="5_stmqj"]
 [ext_resource type="Texture2D" uid="uid://bleys7bgpee68" path="res://Background/blue-stars.png" id="6_ecxi5"]
-[ext_resource type="PackedScene" uid="uid://cqessp2vvin1v" path="res://Enemies/boss/enemy_agis.tscn" id="7_s4gj5"]
+[ext_resource type="PackedScene" path="res://Enemies/boss/agis sprites/enemy_agis.tscn" id="7_s4gj5"]
 [ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player1/player.tscn" id="8_ou1hc"]
 [ext_resource type="Script" uid="uid://d0qpgxi8m12su" path="res://Scripts/boss_arena_controller.gd" id="9_agis_ctrl"]
 [ext_resource type="PackedScene" path="res://UI/scenes/gameplay_hud.tscn" id="10_hud"]
@@ -1214,6 +1214,6 @@ animation = &"atack"
 position = Vector2(5088, 536)
 
 [node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("8_ou1hc")]
-position = Vector2(4248, 520)
+position = Vector2(88, 256)
 
 [node name="GameplayHUD" parent="." unique_id=561633844 instance=ExtResource("10_hud")]

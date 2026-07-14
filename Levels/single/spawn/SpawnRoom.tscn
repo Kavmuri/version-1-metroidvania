@@ -2,10 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="1_f7hv5"]
 [ext_resource type="PackedScene" uid="uid://dgqumuicedl0p" path="res://Background/parallax_background.tscn" id="1_hky4e"]
-[ext_resource type="Script" uid="uid://bt4j10npx0c17" path="res://Levels/single/Tileset/area1/Area1.gd" id="1_script"]
+[ext_resource type="Script" path="res://Levels/single/spawn/spawn_room.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="2_hky4e"]
 [ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="3_vp7bn"]
-[ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player1/player.tscn" id="5_a0qy4"]
 [ext_resource type="TileSet" uid="uid://dwoae3wqtlmvi" path="res://Tileset/area1/tileset.tres" id="6_xsmd8"]
 [ext_resource type="PackedScene" uid="uid://bp3378g2hwpb3" path="res://Pickups/upgrade_pickup.tscn" id="7_rha31"]
 
@@ -830,7 +829,7 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_transition"]
 size = Vector2(40, 52)
 
-[node name="Area1" type="Node2D" unique_id=735856489]
+[node name="SpawnRoom" type="Node2D" unique_id=735856489]
 script = ExtResource("1_script")
 
 [node name="ParallaxBackground2" parent="." unique_id=1688677264 instance=ExtResource("1_hky4e")]
@@ -861,21 +860,8 @@ tile_map_data = PackedByteArray("AAAIAAMAAgAKAAYAAAAIAAQAAgAKAAcAAAAIAAUAAgAKAAg
 tile_set = SubResource("TileSet_0tjov")
 collision_enabled = false
 
-[node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("5_a0qy4")]
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1444006201]
 position = Vector2(180, -36)
-
-[node name="Camera2D2" type="Camera2D" parent="Player1" unique_id=1397476047]
-visible = false
-limit_left = 0
-limit_right = 1632
-position_smoothing_enabled = true
-position_smoothing_speed = 7.0
-drag_horizontal_enabled = true
-drag_vertical_enabled = true
-drag_left_margin = 0.1
-drag_top_margin = 0.1
-drag_right_margin = 0.1
-drag_bottom_margin = 0.1
 
 [node name="TransitionLayer" type="CanvasLayer" parent="." unique_id=1917748371]
 

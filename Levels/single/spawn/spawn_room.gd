@@ -4,8 +4,9 @@ extends Node2D
 @onready var animation_player: AnimationPlayer = $TransitionLayer/AnimationPlayer
 @onready var parallax_bg: ParallaxBackground = $ParallaxBackground2
 @onready var parallax_bg3: ParallaxBackground = $ParallaxBackground3
-@onready var player: Node2D = get_node_or_null("Player1") as Node2D
-@onready var player2: Node2D = get_node_or_null("Player2") as Node2D
+@onready var _spawn_marker: Marker2D = get_node_or_null("PlayerSpawn") as Marker2D
+var player: Node2D = null
+var player2: Node2D = null
 
 const LIMIT_LEFT: int = 0
 const LIMIT_TOP: int = -384
@@ -21,6 +22,20 @@ const GAMEPLAY_HUD_SCENE: PackedScene = preload("res://UI/scenes/gameplay_hud.ts
 const PAUSE_MENU_SCENE: PackedScene = preload("res://UI/scenes/pause_menu.tscn")
 const FADE_WAIT_SECONDS: float = 0.55
 
+const ENEMY_POOL: Array[PackedScene] = [
+	preload("res://Enemies/basic/enemy_bat.tscn"),
+	preload("res://Enemies/basic/enemy_ghost.tscn"),
+	preload("res://Enemies/basic/enemy_skeleton_sword_white.tscn"),
+	preload("res://Enemies/basic/enemy_mutant_toad.tscn"),
+	preload("res://Enemies/basic/enemy_crab.tscn"),
+]
+const ENEMY_SPAWN_POINTS: Array[Vector2] = [
+	Vector2(320, -36),
+	Vector2(700, 100),
+	Vector2(1500, -60),
+]
+const ENEMY_SEED_OFFSET: int = 101
+
 const MAP_MIN: Vector2 = Vector2(LIMIT_LEFT, LIMIT_TOP)
 const MAP_MAX: Vector2 = Vector2(LIMIT_RIGHT, LIMIT_BOTTOM)
 
@@ -31,9 +46,13 @@ func _ready() -> void:
 	transition_rect.color.a = 0
 	_prepare_transition_rect()
 	_configure_single_player()
+	_spawn_random_enemies()
 	$TransitionTrigger.body_entered.connect(_on_transition_trigger_entered)
 	call_deferred("_apply_area_limits")
 	call_deferred("_apply_pending_transition_positions")
+
+func _spawn_random_enemies() -> void:
+	EnemyEncounterPool.populate(self, ENEMY_SPAWN_POINTS, ENEMY_POOL, GameManager.get_world_seed_for_generation() + ENEMY_SEED_OFFSET)
 
 func _process(_delta: float) -> void:
 	_refresh_players()
@@ -131,17 +150,12 @@ func _refresh_players() -> void:
 		player2 = get_node_or_null("Player2") as Node2D
 
 func _configure_single_player() -> void:
-	_refresh_players()
-	var spawn_position := player.global_position if player != null else Vector2(1400, 152)
+	var spawn_position := _spawn_marker.global_position if _spawn_marker != null else Vector2(1400, 152)
 	if GameManager.selected_single_player == "player2":
-		if player != null and player != player2 and is_instance_valid(player):
-			remove_child(player)
-			player.queue_free()
-		if player2 == null or not is_instance_valid(player2):
-			player2 = PLAYER2_SCENE.instantiate() as Node2D
-			player2.name = "Player2"
-			add_child(player2)
+		player2 = PLAYER2_SCENE.instantiate() as Node2D
+		player2.name = "Player2"
 		player2.global_position = spawn_position
+		add_child(player2)
 		player = player2
 		_configure_active_player(player2)
 		GameManager.register_player1(null)
@@ -150,14 +164,10 @@ func _configure_single_player() -> void:
 		_ensure_pause_menu(player2)
 		return
 
-	if player == null or not is_instance_valid(player):
-		player = PLAYER1_SCENE.instantiate() as Node2D
-		player.name = "Player1"
-		player.global_position = spawn_position
-		add_child(player)
-	if player2 != null and is_instance_valid(player2):
-		remove_child(player2)
-		player2.queue_free()
+	player = PLAYER1_SCENE.instantiate() as Node2D
+	player.name = "Player1"
+	player.global_position = spawn_position
+	add_child(player)
 	player2 = null
 	_configure_active_player(player)
 	GameManager.register_player1(player)

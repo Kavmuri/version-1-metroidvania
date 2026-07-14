@@ -4,8 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="2_dbhdx"]
 [ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="3_6hnu3"]
 [ext_resource type="Texture2D" uid="uid://bleys7bgpee68" path="res://Background/blue-stars.png" id="4_dbhdx"]
-[ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player1/player.tscn" id="5_6hnu3"]
-[ext_resource type="Script" uid="uid://cm5oillprst8u" path="res://Tileset/area1/area_1_2.gd" id="6_script"]
+[ext_resource type="Script" path="res://Levels/single/Tileset/area1/area_1_2.gd" id="6_script"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tkpsf"]
 texture = ExtResource("1_c7as5")
@@ -947,22 +946,8 @@ tile_map_data = PackedByteArray("AACMAAwAAQACAAIAAACLAAwAAQACAAIAAACLAAsAAQACAAI
 tile_set = SubResource("TileSet_nlise")
 collision_enabled = false
 
-[node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("5_6hnu3")]
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1444006201]
 position = Vector2(2732, -43)
-
-[node name="Camera2D2" type="Camera2D" parent="Player1" unique_id=1004154836]
-limit_left = 0
-limit_top = -640
-limit_right = 3904
-limit_bottom = 512
-position_smoothing_enabled = true
-position_smoothing_speed = 7.0
-drag_horizontal_enabled = true
-drag_vertical_enabled = true
-drag_left_margin = 0.1
-drag_top_margin = 0.1
-drag_right_margin = 0.1
-drag_bottom_margin = 0.1
 
 [node name="areadetransicionFINAL1_2" type="CanvasLayer" parent="." unique_id=1917748371]
 

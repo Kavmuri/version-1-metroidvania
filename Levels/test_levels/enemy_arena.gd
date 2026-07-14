@@ -29,7 +29,7 @@ const ENEMY_CATALOG := [
 	{"name": "Dragon", "scene": preload("res://Enemies/basic/enemy_dragon.tscn")},
 	{"name": "Hell Beast Fire", "scene": preload("res://Enemies/basic/enemy_hell_beast_fire.tscn")},
 	{"name": "Demon Boss", "scene": preload("res://Enemies/basic/enemy_demon_boss.tscn")},
-	{"name": "Agis", "scene": preload("res://Enemies/boss/enemy_agis.tscn")},
+	{"name": "Agis", "scene": preload("res://Enemies/boss/agis sprites/enemy_agis.tscn")},
 	{"name": "BossCinderDemon", "scene": preload("res://Enemies/boss/enemy_boss_cinder_demon.tscn")},
 ]
 

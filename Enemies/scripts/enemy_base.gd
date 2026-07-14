@@ -109,11 +109,16 @@ func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> voi
 	if is_dying:
 		return
 	health -= amount
+	JuiceManager.flash_sprite(sprite, Color(1.0, 0.35, 0.35))
+	JuiceManager.spawn_hit_particles(global_position + Vector2(0, -12), Color(1.0, 0.85, 0.3), 6)
+	JuiceManager.hit_stop(0.04, 0.05)
 	if health <= 0:
 		AudioManager.play_sfx(&"enemy_death")
+		JuiceManager.screen_shake(7.0, 0.22)
 		die()
 	else:
 		AudioManager.play_sfx(&"enemy_hit")
+		JuiceManager.screen_shake(2.5, 0.12)
 
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
 	receive_damage(cantidad, fuente_pos)
@@ -127,6 +132,7 @@ func die() -> void:
 	is_dying = true
 	_disable_damage_areas()
 	_spawn_death_effect()
+	JuiceManager.spawn_hit_particles(global_position + Vector2(0, -12), Color(1.0, 0.5, 0.5), 14)
 	if sprite.sprite_frames != null and sprite.sprite_frames.has_animation(&"death"):
 		play_anim("death")
 		await sprite.animation_finished

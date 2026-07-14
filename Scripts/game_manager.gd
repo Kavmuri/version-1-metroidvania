@@ -2,7 +2,7 @@ extends Node
 
 const MAIN_MENU_SCENE := "res://UI/scenes/main_menu.tscn"
 const WORLD_SCENE := "res://Tileset/area1/Area1.tscn"
-const SINGLE_WORLD_SCENE := "res://Levels/single/Tileset/area1/Area1.tscn"
+const SINGLE_WORLD_SCENE := "res://Levels/single/spawn/SpawnRoom.tscn"
 const ENEMY_ARENA_SCENE := "res://Levels/test_levels/enemy_arena.tscn"
 const DEATH_SCREEN_SCENE := preload("res://UI/Interfaz/menuMuerte/MenuMuerte.tscn")
 const SAVE_PATH := "user://save_game.cfg"
