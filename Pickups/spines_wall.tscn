@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://yq1wpjhe5wpm"]
+
+[ext_resource type="Script" uid="uid://dpvlm4h02blqp" path="res://Pickups/spines_wall.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bhlkopbeelm5w" path="res://Assets/Fx/light_glow.png" id="2_glow_texture"]
+[ext_resource type="Texture2D" uid="uid://c8c8orai51xoa" path="res://Pickups/power-up.png" id="3_orb_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_detect"]
+size = Vector2(160, 340)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_solid"]
+size = Vector2(32, 340)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prompt"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.65)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orb_icon"]
+atlas = ExtResource("3_orb_texture")
+region = Rect2(0, 0, 23, 21)
+
+[node name="SpinesWall" type="Area2D" unique_id=121889486]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=798874130]
+shape = SubResource("RectangleShape2D_detect")
+
+[node name="SolidBody" type="StaticBody2D" parent="." unique_id=158903643]
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SolidBody" unique_id=1097844096]
+shape = SubResource("RectangleShape2D_solid")
+
+[node name="BlinkLight" type="PointLight2D" parent="." unique_id=872552498]
+position = Vector2(8, -8)
+color = Color(1, 0.35, 0.4, 1)
+energy = 0.0
+texture = ExtResource("2_glow_texture")
+texture_scale = 2.2
+
+[node name="PromptPanel" type="PanelContainer" parent="." unique_id=907572167]
+offset_left = -248.0
+offset_top = -16.0
+offset_right = -96.0
+offset_bottom = 13.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_prompt")
+
+[node name="Row" type="HBoxContainer" parent="PromptPanel" unique_id=225387331]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="OrbIcon" type="TextureRect" parent="PromptPanel/Row" unique_id=1053052186]
+custom_minimum_size = Vector2(32, 29)
+layout_mode = 2
+texture = SubResource("AtlasTexture_orb_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CountLabel" type="Label" parent="PromptPanel/Row" unique_id=1108684839]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "0/2"
+vertical_alignment = 1

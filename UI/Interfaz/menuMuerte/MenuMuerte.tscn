@@ -4,14 +4,8 @@
 [ext_resource type="Script" uid="uid://byfdam0eu08c7" path="res://UI/Interfaz/MenuInicio/gradient_overlay.gd" id="2_bvfts"]
 [ext_resource type="Script" uid="uid://bnfmmspnacvlx" path="res://UI/Interfaz/menuMuerte/menu_muerte.gd" id="3_muerte"]
 
-[node name="MenuMuerte" type="Control" unique_id=1481478698]
-custom_minimum_size = Vector2(0, 19)
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="MenuMuerte" type="CanvasLayer" unique_id=1481478698]
+layer = 50
 script = ExtResource("3_muerte")
 
 [node name="PantallaDeDied" type="Sprite2D" parent="." unique_id=630906100]

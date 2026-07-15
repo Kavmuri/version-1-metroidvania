@@ -11,6 +11,9 @@
 [ext_resource type="Texture2D" uid="uid://8aykfgsu2qf5" path="res://Tileset/area1/cavecrystal/Stones.png" id="9_ydtjj"]
 [ext_resource type="Texture2D" uid="uid://bebcsbu10r2k5" path="res://Tileset/area1/cavecrystal/mushroom caps.png" id="10_inmv4"]
 [ext_resource type="Texture2D" uid="uid://cjruuqlv5ixja" path="res://Tileset/area1/cavecrystal/foreground .png" id="11_qmud5"]
+[ext_resource type="PackedScene" path="res://Pickups/Kaizen/kaizen_power_pickup.tscn" id="12_3dle7"]
+[ext_resource type="PackedScene" path="res://Pickups/save_point.tscn" id="13_savepoint"]
+[ext_resource type="PackedScene" path="res://Pickups/Eldric/eldric_power_pickup.tscn" id="14_inmv4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_20fqv"]
 texture = ExtResource("1_f7hv5")
@@ -1776,7 +1779,7 @@ transform = Transform2D(1, 0, 0, 1, 0, 250)
 
 [node name="cofres" type="TileMapLayer" parent="." unique_id=940862932]
 z_index = 1
-tile_map_data = PackedByteArray("AAAAAPz/AgAGAAIAAAAAAP3/AgAGAAMAAAABAPv/AgAHAAEAAAABAPz/AgAHAAIAAAABAP3/AgAHAAMAAAACAPv/AgAIAAEAAAACAPz/AgAIAAIAAAACAP3/AgAIAAMAAAA9APr/AAAVAAYAAAA+APn/AAAVAAgAAAA+APr/AAAVAAkAAAA/APn/AAAWAAgAAAA/APr/AAAWAAkAAABAAPr/AAAVAAYAAABTAPj/AAASAAcAAABTAPn/AAASAAgAAABTAPr/AAASAAkAAABTAPv/AAASAAoAAABUAPj/AAATAAcAAABUAPn/AAATAAgAAABUAPr/AAATAAkAAABUAPv/AAATAAoAAABVAPr/AAAOAAYAAABVAPv/AAAOAAcAAABWAPr/AAAPAAYAAABWAPv/AAAPAAcAAABXAPr/AAAKAAYAAABXAPv/AAAKAAcAAABYAPr/AAALAAYAAABYAPv/AAALAAcAAABZAPr/AAAKAAYAAABZAPv/AAAKAAcAAABaAPr/AAALAAYAAABaAPv/AAALAAcAAABbAPr/AAAKAAYAAABbAPv/AAAKAAcAAABcAPr/AAALAAYAAABcAPv/AAALAAcAAABdAPr/AAAKAAYAAABdAPv/AAAKAAcAAABeAPr/AAALAAYAAABeAPv/AAALAAcAAAA=")
+tile_map_data = PackedByteArray("AAAAAPz/AgAGAAIAAAAAAP3/AgAGAAMAAAABAPv/AgAHAAEAAAABAPz/AgAHAAIAAAABAP3/AgAHAAMAAAACAPv/AgAIAAEAAAACAPz/AgAIAAIAAAACAP3/AgAIAAMAAAA9APr/AAAVAAYAAAA+APn/AAAVAAgAAAA+APr/AAAVAAkAAAA/APn/AAAWAAgAAAA/APr/AAAWAAkAAABAAPr/AAAVAAYAAABVAPv/AAAOAAcAAABWAPr/AAAPAAYAAABWAPv/AAAPAAcAAABXAPr/AAAKAAYAAABXAPv/AAAKAAcAAABYAPr/AAALAAYAAABYAPv/AAALAAcAAABZAPr/AAAKAAYAAABZAPv/AAAKAAcAAABaAPr/AAALAAYAAABaAPv/AAALAAcAAABbAPr/AAAKAAYAAABbAPv/AAAKAAcAAABcAPr/AAALAAYAAABcAPv/AAALAAcAAABdAPr/AAAKAAYAAABdAPv/AAAKAAcAAABeAPr/AAALAAYAAABeAPv/AAALAAcAAABVAPr/AAAOAAYAAAA=")
 tile_set = SubResource("TileSet_afuuw")
 
 [node name="estantes" type="TileMapLayer" parent="." unique_id=745932971]
@@ -1795,7 +1798,7 @@ tile_set = SubResource("TileSet_0tjov")
 collision_enabled = false
 
 [node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("5_a0qy4")]
-position = Vector2(1400, 152)
+position = Vector2(80, -48)
 
 [node name="Camera2D2" type="Camera2D" parent="Player1" unique_id=1397476047]
 limit_left = 0
@@ -1836,3 +1839,14 @@ debug_color = Color(0, 0, 0, 0.41960785)
 [node name="detalles" type="TileMapLayer" parent="." unique_id=457854979]
 z_index = -1
 tile_set = SubResource("TileSet_bwu65")
+
+[node name="KaizenPowerPickup" parent="." unique_id=1258196916 instance=ExtResource("12_3dle7")]
+position = Vector2(80, 136)
+upgrade_type = "double_jump"
+
+[node name="SavePoint" parent="." unique_id=1340536888 instance=ExtResource("13_savepoint")]
+position = Vector2(1344, -96)
+priority = 2
+
+[node name="EldricPowerPickup" parent="." unique_id=1195702088 instance=ExtResource("14_inmv4")]
+position = Vector2(1560, -112)

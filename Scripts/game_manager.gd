@@ -51,11 +51,14 @@ const BLOCKED_GAMEPLAY_KEYS := {
 var current_world: Node2D = null
 var current_player1: Node2D = null
 var current_player2: Node2D = null
+var player1_upgrade_state: Dictionary = {}
+var player2_upgrade_state: Dictionary = {}
+var completed_areas: Dictionary = {}
 var current_world_seed: int = 0
 var current_game_mode: String = "single"
 var selected_single_player: String = "player1"
 var pending_load_data: Dictionary = {}
-var _death_screen: Control = null
+var _death_screen: CanvasLayer = null
 var _is_restoring_save := false
 
 func _ready() -> void:
@@ -66,6 +69,8 @@ func _ready() -> void:
 func start_new_game(mode: String = "single", selected_player: String = "player1") -> void:
 	get_tree().paused = false
 	pending_load_data.clear()
+	player1_upgrade_state.clear()
+	player2_upgrade_state.clear()
 	_is_restoring_save = false
 	current_game_mode = mode
 	selected_single_player = selected_player if selected_player in ["player1", "player2"] else "player1"
@@ -87,6 +92,9 @@ func continue_game() -> bool:
 	current_game_mode = str(data.get("game_mode", "coop" if bool(data.get("player2_exists", false)) else "single"))
 	selected_single_player = str(data.get("selected_single_player", "player1"))
 	current_world_seed = int(data.get("world_seed", _make_seed()))
+	completed_areas = data.get("completed_areas", {}) as Dictionary
+	player1_upgrade_state = data.get("player1_upgrade_state", {}) as Dictionary
+	player2_upgrade_state = data.get("player2_upgrade_state", {}) as Dictionary
 	current_world = null
 	current_player1 = null
 	current_player2 = null
@@ -125,6 +133,11 @@ func save_game() -> bool:
 	if active_player == null:
 		return false
 
+	if player1 != null and player1.has_method("get_upgrade_state"):
+		player1_upgrade_state = player1.get_upgrade_state()
+	if player2 != null and player2.has_method("get_upgrade_state"):
+		player2_upgrade_state = player2.get_upgrade_state()
+
 	var is_coop_save := current_game_mode == "coop" and player2 != null
 	var cfg = ConfigFile.new()
 	cfg.set_value("game", "scene", _current_scene_path())
@@ -135,7 +148,16 @@ func save_game() -> bool:
 	cfg.set_value("game", "player2_exists", player2 != null)
 	if player2 != null:
 		cfg.set_value("game", "player2_position", player2.global_position)
+	cfg.set_value("game", "completed_areas", completed_areas)
+	cfg.set_value("game", "player1_upgrade_state", player1_upgrade_state)
+	cfg.set_value("game", "player2_upgrade_state", player2_upgrade_state)
 	return cfg.save(SAVE_PATH) == OK
+
+func mark_area_completed(area_id: String) -> void:
+	completed_areas[area_id] = true
+
+func is_area_completed(area_id: String) -> bool:
+	return bool(completed_areas.get(area_id, false))
 
 func save_initial_spawn_if_needed() -> void:
 	if _is_restoring_save:
@@ -184,6 +206,9 @@ func should_restore_player2() -> bool:
 	return current_game_mode == "coop"
 
 func apply_pending_positions(player1: Node2D, player2: Node2D = null) -> void:
+	_restore_upgrade_state(player1, player1_upgrade_state)
+	_restore_upgrade_state(player2, player2_upgrade_state)
+
 	if pending_load_data.is_empty():
 		return
 
@@ -192,6 +217,18 @@ func apply_pending_positions(player1: Node2D, player2: Node2D = null) -> void:
 	if player2 != null and pending_load_data.has("player2_position"):
 		player2.global_position = pending_load_data["player2_position"]
 	pending_load_data.clear()
+
+func save_player_upgrade_state(player: Node) -> void:
+	if player == null or not player.has_method("get_upgrade_state"):
+		return
+	if player.name == "Player2":
+		player2_upgrade_state = player.get_upgrade_state()
+	else:
+		player1_upgrade_state = player.get_upgrade_state()
+
+func _restore_upgrade_state(player: Node, state: Dictionary) -> void:
+	if player != null and not state.is_empty() and player.has_method("apply_upgrade_state"):
+		player.apply_upgrade_state(state)
 
 func _clear_death_screen() -> void:
 	if _death_screen != null and is_instance_valid(_death_screen):
@@ -279,7 +316,10 @@ func _read_save_data() -> Dictionary:
 		"world_seed": cfg.get_value("game", "world_seed", 0),
 		"player1_position": cfg.get_value("game", "player1_position", Vector2.ZERO),
 		"player2_exists": cfg.get_value("game", "player2_exists", false),
-		"player2_position": cfg.get_value("game", "player2_position", Vector2.ZERO)
+		"player2_position": cfg.get_value("game", "player2_position", Vector2.ZERO),
+		"completed_areas": cfg.get_value("game", "completed_areas", {}),
+		"player1_upgrade_state": cfg.get_value("game", "player1_upgrade_state", {}),
+		"player2_upgrade_state": cfg.get_value("game", "player2_upgrade_state", {})
 	}
 
 func _resolve_player1() -> Node2D:

@@ -51,6 +51,11 @@ const FALLING_PARTICLES_SCALE_MAX: float = 2.1
 @export var wide_camera_limit_right: int = 3904
 @export var wide_camera_limit_bottom: int = 512
 
+const COOP_CAMERA_CLOSE_DISTANCE: float = 140.0
+const COOP_CAMERA_FAR_DISTANCE: float = 420.0
+const COOP_CAMERA_FOLLOW_SPEED: float = 4.0
+const COOP_CAMERA_ZOOM_SPEED: float = 2.5
+
 var player_camera: Camera2D = null
 var _is_transitioning: bool = false
 var _wide_camera_active: bool = false
@@ -144,8 +149,32 @@ func _process(delta: float) -> void:
 		_apply_area_limits()
 
 	_clamp_players_to_area()
-	_update_camera_zoom(delta)
+
+	if _is_coop_camera_active():
+		player_camera.top_level = true
+		_update_coop_camera(delta)
+	else:
+		if player_camera.top_level:
+			player_camera.top_level = false
+		_update_camera_zoom(delta)
+
 	_remember_player_positions()
+
+func _is_coop_camera_active() -> bool:
+	return GameManager.current_game_mode == "coop" and player2 != null and is_instance_valid(player2)
+
+func _update_coop_camera(delta: float) -> void:
+	var target_position: Vector2 = (player.global_position + player2.global_position) * 0.5
+	var distance: float = player.global_position.distance_to(player2.global_position)
+	var t: float = clampf(inverse_lerp(COOP_CAMERA_CLOSE_DISTANCE, COOP_CAMERA_FAR_DISTANCE, distance), 0.0, 1.0)
+	var target_zoom: Vector2 = close_zoom.lerp(wide_camera_zoom, t)
+	if _wide_camera_active and target_zoom.x > wide_camera_zoom.x:
+		target_zoom = wide_camera_zoom
+
+	var pos_weight: float = 1.0 - exp(-COOP_CAMERA_FOLLOW_SPEED * delta)
+	var zoom_weight: float = 1.0 - exp(-COOP_CAMERA_ZOOM_SPEED * delta)
+	player_camera.global_position = player_camera.global_position.lerp(target_position, pos_weight)
+	player_camera.zoom = player_camera.zoom.lerp(target_zoom, zoom_weight)
 
 func _update_glow_pulse(delta: float) -> void:
 	if _glow_lights.is_empty():
@@ -360,6 +389,8 @@ func _refresh_players() -> void:
 func _ensure_player2() -> void:
 	_refresh_players()
 	if player2 != null:
+		return
+	if GameManager.current_game_mode != "coop":
 		return
 
 	var new_player: Node = PLAYER2_SCENE.instantiate()

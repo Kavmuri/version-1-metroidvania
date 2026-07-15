@@ -328,6 +328,7 @@ animations = [{
 height = 46.0
 
 [node name="Player2" type="CharacterBody2D" unique_id=1067720570]
+collision_layer = 2
 script = ExtResource("1_60omm")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1798349468]

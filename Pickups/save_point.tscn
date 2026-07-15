@@ -1,0 +1,63 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Pickups/save_point.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="2_texture"]
+[ext_resource type="Shader" path="res://Pickups/save_point_glow.gdshader" id="4_glow_shader"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_savepoint"]
+size = Vector2(96, 96)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_solid"]
+size = Vector2(26, 62)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_glow"]
+shader = ExtResource("4_glow_shader")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prompt"]
+bg_color = Color(0, 0, 0, 0.65)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+content_margin_left = 6.0
+content_margin_right = 6.0
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+
+[node name="SavePoint" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_glow")
+texture = ExtResource("2_texture")
+region_enabled = true
+region_rect = Rect2(288, 112, 32, 64)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_savepoint")
+
+[node name="SolidBody" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SolidBody"]
+shape = SubResource("RectangleShape2D_solid")
+
+[node name="PromptPanel" type="PanelContainer" parent="."]
+offset_left = -66.0
+offset_top = -58.0
+offset_right = 66.0
+offset_bottom = -34.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_prompt")
+
+[node name="PromptLabel" type="Label" parent="PromptPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "F para interactuar"

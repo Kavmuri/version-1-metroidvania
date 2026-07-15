@@ -14,6 +14,7 @@ const GLOW_TEXTURE := preload("res://Assets/Fx/light_glow.png")
 
 @onready var _contact_area: Area2D = get_node_or_null("ContactArea") as Area2D
 @onready var _sprite: Sprite2D = get_node_or_null("Sprite2D") as Sprite2D
+@onready var _particles: CPUParticles2D = get_node_or_null("DisappearParticles") as CPUParticles2D
 
 var _landed: bool = false
 var _elapsed: float = 0.0
@@ -49,6 +50,8 @@ func _physics_process(delta: float) -> void:
 		_play_glow_and_disappear()
 
 func _play_glow_and_disappear() -> void:
+	if _particles != null:
+		_particles.emitting = true
 	if _sprite == null:
 		queue_free()
 		return

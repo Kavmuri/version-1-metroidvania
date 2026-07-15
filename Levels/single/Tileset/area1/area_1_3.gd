@@ -11,12 +11,12 @@ const LIMIT_RIGHT: int = 4352
 const LIMIT_BOTTOM: int = 512
 const FIRST_SECTION_CAMERA_LIMIT_NAME: String = "first_section"
 const FIRST_SECTION_CAMERA_LIMIT_LEFT: int = 160
-const FIRST_SECTION_CAMERA_LIMIT_TOP: int = -256
+const FIRST_SECTION_CAMERA_LIMIT_TOP: int = -384
 const FIRST_SECTION_CAMERA_LIMIT_RIGHT: int = 2048
 const FIRST_SECTION_CAMERA_LIMIT_BOTTOM: int = 320
 const SECOND_SECTION_CAMERA_LIMIT_NAME: String = "second_section"
 const SECOND_SECTION_CAMERA_LIMIT_LEFT: int = 2112
-const SECOND_SECTION_CAMERA_LIMIT_TOP: int = -320
+const SECOND_SECTION_CAMERA_LIMIT_TOP: int = -384
 const SECOND_SECTION_CAMERA_LIMIT_RIGHT: int = 4352
 const SECOND_SECTION_CAMERA_LIMIT_BOTTOM: int = 320
 const SECOND_SECTION_START_X: float = 2112.0
@@ -53,6 +53,11 @@ const CAMERA_ZOOM_HOLD_SECONDS: float = 6.0
 const CAMERA_ZOOM_SMOOTH_SPEED: float = 0.9
 const PLATFORM_PROXIMITY_RADIUS: float = 260.0
 const PLATFORM_PROXIMITY_EXIT_RADIUS: float = 340.0
+
+const COOP_CAMERA_CLOSE_DISTANCE: float = 140.0
+const COOP_CAMERA_FAR_DISTANCE: float = 420.0
+const COOP_CAMERA_FOLLOW_SPEED: float = 4.0
+const COOP_CAMERA_ZOOM_SPEED: float = 2.5
 
 var _near_platform_state: bool = false
 
@@ -196,8 +201,32 @@ func _process(delta: float) -> void:
 		_apply_area_limits()
 
 	_update_active_camera_limit()
-	_update_camera_zoom(delta)
+
+	if _is_coop_camera_active():
+		player_camera.top_level = true
+		_update_coop_camera(delta)
+	else:
+		if player_camera.top_level:
+			player_camera.top_level = false
+		_update_camera_zoom(delta)
+
 	_clamp_players_to_area()
+
+func _is_coop_camera_active() -> bool:
+	return GameManager.current_game_mode == "coop" and player2 != null and is_instance_valid(player2)
+
+func _update_coop_camera(delta: float) -> void:
+	var target_position: Vector2 = (player.global_position + player2.global_position) * 0.5
+	var distance: float = player.global_position.distance_to(player2.global_position)
+	var t: float = clampf(inverse_lerp(COOP_CAMERA_CLOSE_DISTANCE, COOP_CAMERA_FAR_DISTANCE, distance), 0.0, 1.0)
+	var target_zoom: Vector2 = CAMERA_CLOSE_ZOOM.lerp(CAMERA_FAR_ZOOM, t)
+	if _is_near_platform_mechanism() and target_zoom.x > CAMERA_PLATFORM_WIDE_ZOOM.x:
+		target_zoom = CAMERA_PLATFORM_WIDE_ZOOM
+
+	var pos_weight: float = 1.0 - exp(-COOP_CAMERA_FOLLOW_SPEED * delta)
+	var zoom_weight: float = 1.0 - exp(-COOP_CAMERA_ZOOM_SPEED * delta)
+	player_camera.global_position = player_camera.global_position.lerp(target_position, pos_weight)
+	player_camera.zoom = player_camera.zoom.lerp(target_zoom, zoom_weight)
 
 func _on_section_1_enter_transition_entered(body: Node2D) -> void:
 	if _is_transitioning:
@@ -393,6 +422,8 @@ func _refresh_players() -> void:
 func _ensure_player2() -> void:
 	_refresh_players()
 	if player2 != null:
+		return
+	if GameManager.current_game_mode != "coop":
 		return
 
 	var new_player: Node = PLAYER2_SCENE.instantiate()

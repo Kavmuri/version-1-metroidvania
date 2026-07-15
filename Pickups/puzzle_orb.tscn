@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://Pickups/puzzle_orb.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://c8c8orai51xoa" path="res://Pickups/power-up.png" id="2_texture"]
+[ext_resource type="Shader" path="res://Pickups/puzzle_orb_glow.gdshader" id="3_glow_shader"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frame_0"]
 atlas = ExtResource("2_texture")
@@ -63,12 +64,19 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_pickup"]
 radius = 11.045361
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_orb_glow"]
+shader = ExtResource("3_glow_shader")
+shader_parameter/glow_strength = 0.25
+shader_parameter/base_glow = 0.6
+shader_parameter/speed = 1.0
+
 [node name="PuzzleOrb" type="Area2D"]
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("1_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_orb_glow")
 scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_pickup")
 animation = &"idle"
