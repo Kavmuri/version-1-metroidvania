@@ -74,7 +74,7 @@ const KAIZEN_PROJECTILE_UPGRADES := [
 @export var invulnerability_time: float = 1.2
 @export var projectile_scene: PackedScene
 @export var attack_cooldown: float = 0.45
-@export var attack_damage: int = 100
+@export var attack_damage: int = 10
 @export var projectile_spawn_offset: Vector2 = Vector2(32, -24)
 @export_enum("keyboard", "gamepad", "both") var input_mode: String = "both"
 

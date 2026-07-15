@@ -11,6 +11,8 @@ var _heart_one_third_texture: Texture2D
 var _heart_empty_texture: Texture2D
 var _upgrade_message_label: Label
 var _upgrade_message_timer := 0.0
+var _narration_label: Label
+var _narration_timer := 0.0
 
 @onready var _p1_container = _find_required_node(["TopBar/Player1Container", "TopBar/HBox/Player1Container"]) as VBoxContainer
 @onready var _p1_name = _find_required_node(["TopBar/Player1Container/Player1Header/Player1Name", "TopBar/HBox/Player1Container/Player1Header/Player1Name", "TopBar/HBox/Player1Container/Player1Name"]) as Label
@@ -34,12 +36,14 @@ func _ready() -> void:
 	visible = false
 	_ensure_player1_hud_nodes()
 	_ensure_upgrade_message_label()
+	_ensure_narration_label()
 	_setup_heart_textures()
 
 func _process(delta: float) -> void:
 	_update_players()
 	_update_boss()
 	_update_upgrade_message(delta)
+	_update_narration(delta)
 
 func setup(p1: Node2D = null, p2: Node2D = null, p1_name: String = "", p2_name: String = "") -> void:
 	player1 = p1
@@ -131,6 +135,47 @@ func show_upgrade_text(text: String) -> void:
 	_upgrade_message_label.text = text
 	_upgrade_message_label.visible = true
 	_upgrade_message_timer = 2.5
+
+func show_narration(text: String, duration: float = 3.5) -> void:
+	_ensure_narration_label()
+	if _narration_label == null:
+		return
+	_narration_label.text = "\"" + text + "\""
+	_narration_label.visible = true
+	_narration_label.modulate.a = 1.0
+	_narration_timer = duration
+
+func _update_narration(delta: float) -> void:
+	if _narration_timer <= 0.0:
+		return
+	_narration_timer = max(_narration_timer - delta, 0.0)
+	if _narration_label == null:
+		return
+	if _narration_timer <= 0.5:
+		_narration_label.modulate.a = _narration_timer / 0.5
+	if _narration_timer <= 0.0:
+		_narration_label.visible = false
+
+func _ensure_narration_label() -> void:
+	if _narration_label != null and is_instance_valid(_narration_label):
+		return
+	_narration_label = Label.new()
+	_narration_label.name = "NarrationLabel"
+	_narration_label.visible = false
+	_narration_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_narration_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_narration_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_narration_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	_narration_label.offset_left = 24
+	_narration_label.offset_right = -24
+	_narration_label.offset_top = -64
+	_narration_label.offset_bottom = -24
+	_narration_label.add_theme_font_size_override("font_size", 16)
+	_narration_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.95, 1.0))
+	_narration_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.9))
+	_narration_label.add_theme_constant_override("shadow_offset_x", 2)
+	_narration_label.add_theme_constant_override("shadow_offset_y", 2)
+	add_child(_narration_label)
 
 func _update_upgrade_message(delta: float) -> void:
 	if _upgrade_message_timer <= 0.0:

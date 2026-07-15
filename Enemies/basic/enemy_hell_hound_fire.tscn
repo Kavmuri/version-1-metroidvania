@@ -244,7 +244,7 @@ collision_layer = 4
 script = ExtResource("1_script")
 always_run_on_ground = true
 max_consecutive_jumps = 2
-max_health = 5
+max_health = 20
 contact_damage = 10
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1227114172]

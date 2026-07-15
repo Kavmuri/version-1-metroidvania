@@ -60,6 +60,59 @@ func flash_sprite(sprite: CanvasItem, flash_color: Color = Color(1, 1, 1), durat
 	var tween := create_tween()
 	tween.tween_property(sprite, "modulate", original_modulate, duration)
 
+func show_speech_bubble(target: Node2D, text: String, duration: float = 2.4) -> void:
+	if target == null or not is_instance_valid(target):
+		return
+	var existing := target.get_node_or_null("SpeechBubble")
+	if existing != null:
+		existing.queue_free()
+
+	var bubble := PanelContainer.new()
+	bubble.name = "SpeechBubble"
+	bubble.z_index = 500
+	bubble.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(1, 1, 1, 0.95)
+	style.border_color = Color(0, 0, 0, 0.85)
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 1
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_left = 6
+	style.corner_radius_bottom_right = 6
+	style.content_margin_left = 8
+	style.content_margin_right = 8
+	style.content_margin_top = 4
+	style.content_margin_bottom = 4
+	bubble.add_theme_stylebox_override("panel", style)
+
+	var label := Label.new()
+	label.text = text
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	var arial_font := SystemFont.new()
+	arial_font.font_names = ["Arial"]
+	label.add_theme_font_override("font", arial_font)
+	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.custom_minimum_size = Vector2(140, 0)
+	bubble.add_child(label)
+
+	target.add_child(bubble)
+	bubble.position = Vector2(-70, -92)
+	bubble.modulate.a = 0.0
+
+	var tween := create_tween()
+	tween.tween_property(bubble, "modulate:a", 1.0, 0.15)
+	tween.tween_interval(duration)
+	tween.tween_property(bubble, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(bubble.queue_free)
+
 func spawn_hit_particles(global_pos: Vector2, color: Color = Color(1, 1, 1), amount: int = 10) -> void:
 	var scene_root := get_tree().current_scene
 	if scene_root == null:

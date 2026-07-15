@@ -33,13 +33,15 @@ const ENEMY_POOL: Array[PackedScene] = [
 	preload("res://Enemies/basic/enemy_bat.tscn"),
 	preload("res://Enemies/basic/enemy_ghost.tscn"),
 	preload("res://Enemies/basic/enemy_skeleton_sword_white.tscn"),
+	preload("res://Enemies/basic/enemy_skeleton_sword_yellow.tscn"),
 	preload("res://Enemies/basic/enemy_mutant_toad.tscn"),
 	preload("res://Enemies/basic/enemy_crab.tscn"),
-]
-const ENEMY_SPAWN_POINTS: Array[Vector2] = [
-	Vector2(296, 56),
-	Vector2(1888, 56),
-	Vector2(2208, 56),
+	preload("res://Enemies/basic/enemy_flying_eye_demon.tscn"),
+	preload("res://Enemies/basic/enemy_dragon.tscn"),
+	preload("res://Enemies/basic/enemy_hell_beast_fire.tscn"),
+	preload("res://Enemies/basic/enemy_hell_hound_fire.tscn"),
+	preload("res://Enemies/basic/enemy_nightmare.tscn"),
+	preload("res://Enemies/basic/enemy_demon_boss.tscn"),
 ]
 const ENEMY_SEED_OFFSET: int = 103
 
@@ -106,6 +108,7 @@ func _transition_to_previous_area() -> void:
 		"game_mode": GameManager.current_game_mode,
 		"selected_single_player": GameManager.selected_single_player
 	}
+	GameManager.capture_player_progress(player)
 	get_tree().change_scene_to_file(PREVIOUS_AREA_SCENE)
 
 func _transition_to_section_2() -> void:
@@ -297,7 +300,15 @@ func _configure_single_player() -> void:
 	_ensure_pause_menu(player)
 
 func _spawn_random_enemies() -> void:
-	EnemyEncounterPool.populate(self, ENEMY_SPAWN_POINTS, ENEMY_POOL, GameManager.get_world_seed_for_generation() + ENEMY_SEED_OFFSET)
+	var spawn_points: Array[Vector2] = _find_enemy_spawn_points()
+	EnemyEncounterPool.populate(self, spawn_points, ENEMY_POOL, GameManager.get_world_seed_for_generation() + ENEMY_SEED_OFFSET)
+
+func _find_enemy_spawn_points() -> Array[Vector2]:
+	var points: Array[Vector2] = []
+	for child in get_children():
+		if child is Marker2D and child.name.begins_with("EnemySpawn"):
+			points.append((child as Marker2D).global_position)
+	return points
 
 func _configure_active_player(active_player: Node2D) -> void:
 	if active_player == null:
@@ -308,6 +319,7 @@ func _configure_active_player(active_player: Node2D) -> void:
 		var collision_player := active_player as CollisionObject2D
 		collision_player.collision_layer = 2
 		collision_player.collision_mask = max(collision_player.collision_mask, 1)
+	GameManager.apply_player_progress(active_player)
 	_ensure_player_camera(active_player)
 
 func _ensure_player_camera(active_player: Node2D) -> void:

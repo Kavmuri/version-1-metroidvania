@@ -949,6 +949,15 @@ collision_enabled = false
 [node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1444006201]
 position = Vector2(2732, -43)
 
+[node name="EnemySpawn1" type="Marker2D" parent="."]
+position = Vector2(97, -94)
+
+[node name="EnemySpawn2" type="Marker2D" parent="."]
+position = Vector2(2732, -43)
+
+[node name="EnemySpawn3" type="Marker2D" parent="."]
+position = Vector2(3710, -94)
+
 [node name="areadetransicionFINAL1_2" type="CanvasLayer" parent="." unique_id=1917748371]
 
 [node name="ColorRect" type="ColorRect" parent="areadetransicionFINAL1_2" unique_id=143482808]

@@ -22,13 +22,15 @@ const ENEMY_POOL: Array[PackedScene] = [
 	preload("res://Enemies/basic/enemy_bat.tscn"),
 	preload("res://Enemies/basic/enemy_ghost.tscn"),
 	preload("res://Enemies/basic/enemy_skeleton_sword_white.tscn"),
+	preload("res://Enemies/basic/enemy_skeleton_sword_yellow.tscn"),
 	preload("res://Enemies/basic/enemy_mutant_toad.tscn"),
 	preload("res://Enemies/basic/enemy_crab.tscn"),
-]
-const ENEMY_SPAWN_POINTS: Array[Vector2] = [
-	Vector2(97, -94),
-	Vector2(2732, -43),
-	Vector2(3710, -94),
+	preload("res://Enemies/basic/enemy_flying_eye_demon.tscn"),
+	preload("res://Enemies/basic/enemy_dragon.tscn"),
+	preload("res://Enemies/basic/enemy_hell_beast_fire.tscn"),
+	preload("res://Enemies/basic/enemy_hell_hound_fire.tscn"),
+	preload("res://Enemies/basic/enemy_nightmare.tscn"),
+	preload("res://Enemies/basic/enemy_demon_boss.tscn"),
 ]
 const ENEMY_SEED_OFFSET: int = 102
 
@@ -51,6 +53,7 @@ const FADE_WAIT_SECONDS: float = 0.55
 var player_camera: Camera2D = null
 var _is_transitioning: bool = false
 var _wide_camera_active: bool = false
+var _wide_view_narration_shown: bool = false
 var _last_player_x: Dictionary = {}
 
 func _ready() -> void:
@@ -92,6 +95,7 @@ func _transition_to_area(scene_path: String, player1_position: Vector2, player2_
 		"game_mode": GameManager.current_game_mode,
 		"selected_single_player": GameManager.selected_single_player
 	}
+	GameManager.capture_player_progress(player)
 	get_tree().change_scene_to_file(scene_path)
 
 func _prepare_transition_rect() -> void:
@@ -133,6 +137,9 @@ func _on_camera_enter_transition(body: Node2D) -> void:
 
 	if _get_player_direction_x(body) >= 0.0:
 		_set_wide_camera_active(true)
+		if not _wide_view_narration_shown:
+			_wide_view_narration_shown = true
+			_show_hud_narration("Debo llegar hasta alla arriba...")
 	else:
 		_set_wide_camera_active(false)
 
@@ -300,7 +307,15 @@ func _configure_single_player() -> void:
 	_ensure_pause_menu(player)
 
 func _spawn_random_enemies() -> void:
-	EnemyEncounterPool.populate(self, ENEMY_SPAWN_POINTS, ENEMY_POOL, GameManager.get_world_seed_for_generation() + ENEMY_SEED_OFFSET)
+	var spawn_points: Array[Vector2] = _find_enemy_spawn_points()
+	EnemyEncounterPool.populate(self, spawn_points, ENEMY_POOL, GameManager.get_world_seed_for_generation() + ENEMY_SEED_OFFSET)
+
+func _find_enemy_spawn_points() -> Array[Vector2]:
+	var points: Array[Vector2] = []
+	for child in get_children():
+		if child is Marker2D and child.name.begins_with("EnemySpawn"):
+			points.append((child as Marker2D).global_position)
+	return points
 
 func _configure_active_player(active_player: Node2D) -> void:
 	if active_player == null:
@@ -311,6 +326,7 @@ func _configure_active_player(active_player: Node2D) -> void:
 		var collision_player := active_player as CollisionObject2D
 		collision_player.collision_layer = 2
 		collision_player.collision_mask = max(collision_player.collision_mask, 1)
+	GameManager.apply_player_progress(active_player)
 	_ensure_player_camera(active_player)
 
 func _ensure_player_camera(active_player: Node2D) -> void:
@@ -342,6 +358,11 @@ func _ensure_gameplay_hud(player1_node: Node2D, player2_node: Node2D) -> void:
 			hud.setup(player1_node, null, "Kaizen", "")
 	if hud.has_method("show_combat_hud"):
 		hud.show_combat_hud()
+
+func _show_hud_narration(text: String) -> void:
+	var hud := get_node_or_null("GameplayHUD")
+	if hud != null and hud.has_method("show_narration"):
+		hud.show_narration(text)
 
 func _ensure_pause_menu(active_player: Node2D) -> void:
 	var pause_menu := get_node_or_null("PauseMenu")
