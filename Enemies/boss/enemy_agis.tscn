@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://cqessp2vvin1v"]
+[gd_scene format=3 uid="uid://dklsadboq4fan"]
 
 [ext_resource type="Script" path="res://Enemies/scripts/boss_agis.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://bhjf0684cjva7" path="res://Enemies/assets/agis/agis.png" id="2_texture"]

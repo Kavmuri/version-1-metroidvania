@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://c0e36uxfvd1jr"]
+[gd_scene format=4 uid="uid://csod3b5ct1th5"]
 
 [ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="1_c7as5"]
 [ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="2_dbhdx"]

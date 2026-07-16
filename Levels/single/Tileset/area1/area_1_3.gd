@@ -41,13 +41,9 @@ const ENEMY_POOL: Array[PackedScene] = [
 	preload("res://Enemies/basic/enemy_hell_beast_fire.tscn"),
 	preload("res://Enemies/basic/enemy_hell_hound_fire.tscn"),
 	preload("res://Enemies/basic/enemy_nightmare.tscn"),
-	preload("res://Enemies/basic/enemy_demon_boss.tscn"),
 ]
 const ENEMY_SEED_OFFSET: int = 103
 
-const PREVIOUS_AREA_SCENE: String = "res://Levels/single/Tileset/area1/area_1_2.tscn"
-const PREVIOUS_AREA_PLAYER1_POSITION: Vector2 = Vector2(3710, -94)
-const PREVIOUS_AREA_PLAYER2_POSITION: Vector2 = Vector2(3662, -94)
 const SECTION_1_PLAYER1_POSITION: Vector2 = Vector2(1888, 56)
 const SECTION_1_PLAYER2_POSITION: Vector2 = Vector2(1840, 56)
 const SECTION_2_PLAYER1_POSITION: Vector2 = Vector2(2208, 56)
@@ -94,6 +90,7 @@ func _ready() -> void:
 	_connect_transition_area("transicionarea1_3ENTER2seccion1", _on_section_1_enter_transition_entered)
 	_connect_transition_area("transicionarea1_3OUTseccion1_22", _on_section_1_out_transition_entered)
 	_connect_transition_area("transicionarea1_3ENTER2seccion2", _on_section_2_enter_transition_entered)
+	_ensure_single_exit_trigger()
 	_apply_darkness_effect()
 	_add_floating_particles()
 	_add_falling_particles()
@@ -253,7 +250,7 @@ func _on_section_1_enter_transition_entered(body: Node2D) -> void:
 	if _is_transitioning:
 		return
 	if _is_player_body(body):
-		_transition_to_previous_area()
+		_transition_to_next_room()
 
 func _on_section_1_out_transition_entered(body: Node2D) -> void:
 	if _is_transitioning:
@@ -267,20 +264,41 @@ func _on_section_2_enter_transition_entered(body: Node2D) -> void:
 	if _is_player_body(body):
 		_transition_to_section_1()
 
-func _transition_to_previous_area() -> void:
+func _on_single_exit_entered(body: Node2D) -> void:
+	if _is_transitioning:
+		return
+	if _is_player_body(body):
+		_transition_to_next_room()
+
+func _transition_to_next_room() -> void:
 	_is_transitioning = true
-	await _play_fade_to_black("transicionarea1_3ENTERseccion1")
+	await _play_fade_to_black()
 
 	var player2_exists: bool = GameManager.current_game_mode != "single" and player2 != null and is_instance_valid(player2)
 	GameManager.pending_load_data = {
-		"player1_position": PREVIOUS_AREA_PLAYER1_POSITION,
 		"player2_exists": player2_exists,
-		"player2_position": PREVIOUS_AREA_PLAYER2_POSITION,
 		"game_mode": GameManager.current_game_mode,
 		"selected_single_player": GameManager.selected_single_player
 	}
 	GameManager.save_player_upgrade_state(player)
-	get_tree().change_scene_to_file(PREVIOUS_AREA_SCENE)
+	var next_room := GameManager.get_next_single_room(scene_file_path)
+	get_tree().change_scene_to_file(next_room)
+
+func _ensure_single_exit_trigger() -> void:
+	if has_node("SingleExitTrigger"):
+		return
+	var exit_area := Area2D.new()
+	exit_area.name = "SingleExitTrigger"
+	exit_area.position = Vector2(LIMIT_RIGHT - 32, (LIMIT_TOP + LIMIT_BOTTOM) * 0.5)
+	exit_area.collision_layer = 0
+	exit_area.collision_mask = 2
+	var collision := CollisionShape2D.new()
+	var shape := RectangleShape2D.new()
+	shape.size = Vector2(64, LIMIT_BOTTOM - LIMIT_TOP)
+	collision.shape = shape
+	exit_area.add_child(collision)
+	add_child(exit_area)
+	exit_area.body_entered.connect(_on_single_exit_entered)
 
 func _transition_to_section_2() -> void:
 	_is_transitioning = true
@@ -460,8 +478,6 @@ func _configure_single_player() -> void:
 		_ensure_gameplay_hud(null, player2)
 		_ensure_pause_menu(player2)
 		return
-	if GameManager.current_game_mode != "coop":
-		return
 
 	player = PLAYER1_SCENE.instantiate() as Node2D
 	player.name = "Player1"
@@ -476,7 +492,12 @@ func _configure_single_player() -> void:
 
 func _spawn_random_enemies() -> void:
 	var spawn_points: Array[Vector2] = _find_enemy_spawn_points()
-	EnemyEncounterPool.populate(self, spawn_points, ENEMY_POOL, GameManager.get_world_seed_for_generation() + ENEMY_SEED_OFFSET)
+	if spawn_points.is_empty():
+		return
+	var visit_index := maxi(GameManager.get_single_visit_index() - 1, 0)
+	var enemy_count := 1 + (visit_index % spawn_points.size())
+	var encounter_seed := GameManager.get_single_encounter_seed(scene_file_path) + ENEMY_SEED_OFFSET
+	EnemyEncounterPool.populate_random_count(self, spawn_points, ENEMY_POOL, encounter_seed, enemy_count, enemy_count)
 
 func _find_enemy_spawn_points() -> Array[Vector2]:
 	var points: Array[Vector2] = []
@@ -593,4 +614,3 @@ func _clamp_player_to_area(player_node: Node2D) -> void:
 		clampf(player_node.global_position.x, MAP_MIN.x, MAP_MAX.x),
 		clampf(player_node.global_position.y, MAP_MIN.y, MAP_MAX.y)
 	)
-

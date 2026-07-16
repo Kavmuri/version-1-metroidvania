@@ -13,6 +13,7 @@ var _upgrade_message_label: Label
 var _upgrade_message_timer := 0.0
 var _narration_label: Label
 var _narration_timer := 0.0
+var _single_timer_label: Label
 
 @onready var _p1_container = _find_required_node(["TopBar/Player1Container", "TopBar/HBox/Player1Container"]) as VBoxContainer
 @onready var _p1_name = _find_required_node(["TopBar/Player1Container/Player1Header/Player1Name", "TopBar/HBox/Player1Container/Player1Header/Player1Name", "TopBar/HBox/Player1Container/Player1Name"]) as Label
@@ -37,6 +38,7 @@ func _ready() -> void:
 	_ensure_player1_hud_nodes()
 	_ensure_upgrade_message_label()
 	_ensure_narration_label()
+	_ensure_single_timer_label()
 	_setup_heart_textures()
 
 func _process(delta: float) -> void:
@@ -44,6 +46,7 @@ func _process(delta: float) -> void:
 	_update_boss()
 	_update_upgrade_message(delta)
 	_update_narration(delta)
+	_update_single_timer()
 
 func setup(p1: Node2D = null, p2: Node2D = null, p1_name: String = "", p2_name: String = "") -> void:
 	player1 = p1
@@ -176,6 +179,37 @@ func _ensure_narration_label() -> void:
 	_narration_label.add_theme_constant_override("shadow_offset_x", 2)
 	_narration_label.add_theme_constant_override("shadow_offset_y", 2)
 	add_child(_narration_label)
+
+func _ensure_single_timer_label() -> void:
+	if _single_timer_label != null and is_instance_valid(_single_timer_label):
+		return
+	_single_timer_label = Label.new()
+	_single_timer_label.name = "SingleRunTimer"
+	_single_timer_label.visible = false
+	_single_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_single_timer_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_single_timer_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_single_timer_label.offset_top = 12.0
+	_single_timer_label.offset_bottom = 48.0
+	_single_timer_label.add_theme_font_size_override("font_size", 24)
+	_single_timer_label.add_theme_color_override("font_color", Color.WHITE)
+	_single_timer_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.9))
+	_single_timer_label.add_theme_constant_override("shadow_offset_x", 2)
+	_single_timer_label.add_theme_constant_override("shadow_offset_y", 2)
+	add_child(_single_timer_label)
+
+func _update_single_timer() -> void:
+	_ensure_single_timer_label()
+	var should_show := GameManager.current_game_mode == "single" and GameManager.is_single_run_active()
+	_single_timer_label.visible = should_show
+	if not should_show:
+		return
+	var remaining_seconds := GameManager.get_single_remaining_seconds()
+	var minutes := floori(remaining_seconds / 60.0)
+	var seconds := remaining_seconds % 60
+	_single_timer_label.text = "%02d:%02d" % [minutes, seconds]
+	var timer_color := Color(1.0, 0.32, 0.28, 1.0) if remaining_seconds <= 10 else Color.WHITE
+	_single_timer_label.add_theme_color_override("font_color", timer_color)
 
 func _update_upgrade_message(delta: float) -> void:
 	if _upgrade_message_timer <= 0.0:
