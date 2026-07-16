@@ -43,29 +43,29 @@ script = ExtResource("1_script")
 [node name="TopBar" type="Control" parent="." unique_id=676033738]
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 118.0
+offset_bottom = 92.0
 grow_horizontal = 2
 
 [node name="Player1Container" type="VBoxContainer" parent="TopBar" unique_id=872556638]
-custom_minimum_size = Vector2(180, 0)
+custom_minimum_size = Vector2(148, 0)
 layout_mode = 1
-offset_left = 12.0
-offset_top = 12.0
-offset_right = 192.0
-offset_bottom = 118.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 158.0
+offset_bottom = 92.0
 size_flags_horizontal = 0
-theme_override_constants/separation = 5
+theme_override_constants/separation = 4
 
 [node name="Player1Header" type="HBoxContainer" parent="TopBar/Player1Container" unique_id=1887966050]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="Player1Name" type="Label" parent="TopBar/Player1Container/Player1Header" unique_id=638615622]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 20
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 16
 text = "Kaizen"
 
 [node name="Player1Hearts" type="HBoxContainer" parent="TopBar/Player1Container" unique_id=1685765482]
@@ -73,31 +73,31 @@ layout_mode = 2
 theme_override_constants/separation = 2
 
 [node name="Heart1" type="TextureRect" parent="TopBar/Player1Container/Player1Hearts" unique_id=1268610183]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 texture = SubResource("AtlasTexture_heart_full")
 stretch_mode = 5
 
 [node name="Heart2" type="TextureRect" parent="TopBar/Player1Container/Player1Hearts" unique_id=1725353547]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 texture = SubResource("AtlasTexture_heart_full")
 stretch_mode = 5
 
 [node name="Heart3" type="TextureRect" parent="TopBar/Player1Container/Player1Hearts" unique_id=2116461706]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 texture = SubResource("AtlasTexture_heart_full")
 stretch_mode = 5
 
 [node name="Heart4" type="TextureRect" parent="TopBar/Player1Container/Player1Hearts" unique_id=397927039]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 texture = SubResource("AtlasTexture_heart_full")
 stretch_mode = 5
 
 [node name="Player1Health" type="TextureProgressBar" parent="TopBar/Player1Container" unique_id=1518436027]
-custom_minimum_size = Vector2(138, 21)
+custom_minimum_size = Vector2(110, 17)
 layout_mode = 2
 size_flags_horizontal = 0
 step = 10.0
@@ -111,7 +111,7 @@ texture_under = SubResource("AtlasTexture_health_under")
 texture_progress = SubResource("AtlasTexture_health_progress")
 
 [node name="PowerupSlot" type="Control" parent="TopBar/Player1Container" unique_id=1977634659]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
 
@@ -120,10 +120,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -25.0
-offset_top = -17.0
-offset_right = 26.0
-offset_bottom = 16.0
+offset_left = -20.0
+offset_top = -14.0
+offset_right = 21.0
+offset_bottom = 13.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("AtlasTexture_power_slot")
@@ -134,35 +134,35 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 6.0
-offset_top = 5.0
-offset_right = -5.0
-offset_bottom = -7.0
+offset_left = 5.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -6.0
 grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
 
 [node name="Player2Container" type="VBoxContainer" parent="TopBar" unique_id=458315903]
-custom_minimum_size = Vector2(180, 0)
+custom_minimum_size = Vector2(148, 0)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -192.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = 118.0
+offset_left = -158.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 92.0
 grow_horizontal = 0
 size_flags_horizontal = 0
-theme_override_constants/separation = 5
+theme_override_constants/separation = 4
 
 [node name="Player2Name" type="Label" parent="TopBar/Player2Container" unique_id=1261825239]
 layout_mode = 2
 size_flags_horizontal = 8
 horizontal_alignment = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 20
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 16
 text = "Eldric"
 
 [node name="Player2Hearts" type="HBoxContainer" parent="TopBar/Player2Container" unique_id=778288332]
@@ -172,25 +172,25 @@ alignment = 2
 theme_override_constants/separation = 2
 
 [node name="Heart1" type="TextureRect" parent="TopBar/Player2Container/Player2Hearts" unique_id=25853706]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 texture = SubResource("AtlasTexture_heart_full")
 stretch_mode = 5
 
 [node name="Heart2" type="TextureRect" parent="TopBar/Player2Container/Player2Hearts" unique_id=1647506335]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 texture = SubResource("AtlasTexture_heart_full")
 stretch_mode = 5
 
 [node name="Heart3" type="TextureRect" parent="TopBar/Player2Container/Player2Hearts" unique_id=1387241423]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 texture = SubResource("AtlasTexture_heart_full")
 stretch_mode = 5
 
 [node name="Player2Health" type="TextureProgressBar" parent="TopBar/Player2Container" unique_id=1395754447]
-custom_minimum_size = Vector2(138, 21)
+custom_minimum_size = Vector2(110, 17)
 layout_mode = 2
 size_flags_horizontal = 8
 step = 10.0
@@ -209,23 +209,23 @@ visible = false
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -200.0
-offset_top = 64.0
-offset_right = 200.0
-offset_bottom = 106.0
+offset_left = -160.0
+offset_top = 56.0
+offset_right = 160.0
+offset_bottom = 92.0
 grow_horizontal = 2
 size_flags_horizontal = 4
 
 [node name="BossName" type="Label" parent="BossContainer" unique_id=1064254046]
 layout_mode = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 18
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 15
 text = "Agis"
 horizontal_alignment = 1
 
 [node name="BossHealth" type="ProgressBar" parent="BossContainer" unique_id=311474959]
-custom_minimum_size = Vector2(400, 16)
+custom_minimum_size = Vector2(320, 14)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/background = SubResource("StyleBoxTexture_health_bg")

@@ -2,8 +2,9 @@ extends Node2D
 
 @onready var transition_rect: ColorRect = _find_transition_rect()
 @onready var animation_player: AnimationPlayer = _find_transition_animation_player()
-@onready var player: Node2D = get_node_or_null("Player1") as Node2D
-@onready var player2: Node2D = get_node_or_null("Player2") as Node2D
+@onready var _spawn_marker: Marker2D = get_node_or_null("PlayerSpawn") as Marker2D
+var player: Node2D = null
+var player2: Node2D = null
 
 const LIMIT_LEFT: int = 0
 const LIMIT_TOP: int = -640
@@ -12,12 +13,28 @@ const LIMIT_BOTTOM: int = 512
 
 const MAP_MIN: Vector2 = Vector2(LIMIT_LEFT, LIMIT_TOP)
 const MAP_MAX: Vector2 = Vector2(LIMIT_RIGHT, LIMIT_BOTTOM)
-const START_PLAYER2_POSITION: Vector2 = Vector2(145, -94)
+const PLAYER1_SCENE: PackedScene = preload("res://Player1/player.tscn")
 const PLAYER2_SCENE: PackedScene = preload("res://Player2/player_2.tscn")
-const PREVIOUS_AREA_SCENE: String = "res://Tileset/area1/Area1.tscn"
-const NEXT_AREA_SCENE: String = "res://Tileset/area1/area_1_3.tscn"
-const PREVIOUS_PLAYER1_POSITION: Vector2 = Vector2(1500, 122)
-const PREVIOUS_PLAYER2_POSITION: Vector2 = Vector2(1548, 122)
+const GAMEPLAY_HUD_SCENE: PackedScene = preload("res://UI/scenes/gameplay_hud.tscn")
+const PAUSE_MENU_SCENE: PackedScene = preload("res://UI/scenes/pause_menu.tscn")
+
+const ENEMY_POOL: Array[PackedScene] = [
+	preload("res://Enemies/basic/enemy_bat.tscn"),
+	preload("res://Enemies/basic/enemy_ghost.tscn"),
+	preload("res://Enemies/basic/enemy_skeleton_sword_white.tscn"),
+	preload("res://Enemies/basic/enemy_skeleton_sword_yellow.tscn"),
+	preload("res://Enemies/basic/enemy_mutant_toad.tscn"),
+	preload("res://Enemies/basic/enemy_crab.tscn"),
+	preload("res://Enemies/basic/enemy_flying_eye_demon.tscn"),
+	preload("res://Enemies/basic/enemy_dragon.tscn"),
+	preload("res://Enemies/basic/enemy_hell_beast_fire.tscn"),
+	preload("res://Enemies/basic/enemy_hell_hound_fire.tscn"),
+	preload("res://Enemies/basic/enemy_nightmare.tscn"),
+	preload("res://Enemies/basic/enemy_demon_boss.tscn"),
+]
+const ENEMY_SEED_OFFSET: int = 102
+
+const NEXT_AREA_SCENE: String = "res://Levels/single/Tileset/area1/area_1_3.tscn"
 const NEXT_PLAYER1_POSITION: Vector2 = Vector2(296, 56)
 const NEXT_PLAYER2_POSITION: Vector2 = Vector2(344, 56)
 const FADE_WAIT_SECONDS: float = 0.55
@@ -59,14 +76,15 @@ const COOP_CAMERA_ZOOM_SPEED: float = 2.5
 var player_camera: Camera2D = null
 var _is_transitioning: bool = false
 var _wide_camera_active: bool = false
+var _wide_view_narration_shown: bool = false
 var _last_player_x: Dictionary = {}
 var _glow_lights: Array[PointLight2D] = []
 var _glow_pulse_time: float = 0.0
 
 func _ready() -> void:
 	_prepare_transition_rect()
-	_ensure_player2()
-	_connect_transition_area("areadetransicionINICIO1_2", _on_start_transition_entered, ["areadetransicionINICIO1_5"])
+	_configure_single_player()
+	_spawn_random_enemies()
 	_connect_transition_area("areadetransicionFINAL1_2", _on_final_transition_entered, ["areadetransicionFINAL1_3", "TransitionTrigger"])
 	_connect_camera_transition_area("transicioncamaraENTER", _on_camera_enter_transition)
 	_connect_camera_transition_area("transicioncamaraOUT", _on_camera_out_transition)
@@ -186,12 +204,6 @@ func _update_glow_pulse(delta: float) -> void:
 		if is_instance_valid(light):
 			light.energy = GLOW_LIGHT_ENERGY * factor
 
-func _on_start_transition_entered(body: Node2D) -> void:
-	if _is_transitioning:
-		return
-	if _is_player_body(body):
-		_transition_to_area(PREVIOUS_AREA_SCENE, PREVIOUS_PLAYER1_POSITION, PREVIOUS_PLAYER2_POSITION)
-
 func _on_final_transition_entered(body: Node2D) -> void:
 	if _is_transitioning:
 		return
@@ -202,14 +214,15 @@ func _transition_to_area(scene_path: String, player1_position: Vector2, player2_
 	_is_transitioning = true
 	await _play_fade_to_black()
 
-	var player2_exists: bool = player2 != null and is_instance_valid(player2)
+	var player2_exists: bool = GameManager.current_game_mode != "single" and player2 != null and is_instance_valid(player2)
 	GameManager.pending_load_data = {
 		"player1_position": player1_position,
 		"player2_exists": player2_exists,
 		"player2_position": player2_position,
-		"game_mode": "coop" if player2_exists else GameManager.current_game_mode
+		"game_mode": GameManager.current_game_mode,
+		"selected_single_player": GameManager.selected_single_player
 	}
-	GameManager.current_game_mode = "coop" if player2_exists else GameManager.current_game_mode
+	GameManager.save_player_upgrade_state(player)
 	get_tree().change_scene_to_file(scene_path)
 
 func _prepare_transition_rect() -> void:
@@ -251,6 +264,9 @@ func _on_camera_enter_transition(body: Node2D) -> void:
 
 	if _get_player_direction_x(body) >= 0.0:
 		_set_wide_camera_active(true)
+		if not _wide_view_narration_shown:
+			_wide_view_narration_shown = true
+			_show_hud_narration("Debo llegar hasta alla arriba...")
 	else:
 		_set_wide_camera_active(false)
 
@@ -381,24 +397,109 @@ func _apply_pending_transition_positions() -> void:
 	_clamp_players_to_area()
 
 func _refresh_players() -> void:
+	if GameManager.current_game_mode == "single" and GameManager.selected_single_player == "player2":
+		if player2 == null or not is_instance_valid(player2):
+			player2 = get_node_or_null("Player2") as Node2D
+		player = player2
+		return
 	if player == null or not is_instance_valid(player):
 		player = get_node_or_null("Player1") as Node2D
 	if player2 == null or not is_instance_valid(player2):
 		player2 = get_node_or_null("Player2") as Node2D
 
-func _ensure_player2() -> void:
-	_refresh_players()
-	if player2 != null:
+func _configure_single_player() -> void:
+	var spawn_position := _spawn_marker.global_position if _spawn_marker != null else Vector2.ZERO
+	if GameManager.selected_single_player == "player2":
+		player2 = PLAYER2_SCENE.instantiate() as Node2D
+		player2.name = "Player2"
+		player2.global_position = spawn_position
+		add_child(player2)
+		player = player2
+		_configure_active_player(player2)
+		GameManager.register_player1(null)
+		GameManager.register_player2(player2)
+		_ensure_gameplay_hud(null, player2)
+		_ensure_pause_menu(player2)
 		return
 	if GameManager.current_game_mode != "coop":
 		return
 
-	var new_player: Node = PLAYER2_SCENE.instantiate()
-	if new_player is Node2D:
-		player2 = new_player as Node2D
-		player2.name = "Player2"
-		player2.global_position = START_PLAYER2_POSITION
-		add_child(player2)
+	player = PLAYER1_SCENE.instantiate() as Node2D
+	player.name = "Player1"
+	player.global_position = spawn_position
+	add_child(player)
+	player2 = null
+	_configure_active_player(player)
+	GameManager.register_player1(player)
+	GameManager.register_player2(null)
+	_ensure_gameplay_hud(player, null)
+	_ensure_pause_menu(player)
+
+func _spawn_random_enemies() -> void:
+	var spawn_points: Array[Vector2] = _find_enemy_spawn_points()
+	EnemyEncounterPool.populate(self, spawn_points, ENEMY_POOL, GameManager.get_world_seed_for_generation() + ENEMY_SEED_OFFSET)
+
+func _find_enemy_spawn_points() -> Array[Vector2]:
+	var points: Array[Vector2] = []
+	for child in get_children():
+		if child is Marker2D and child.name.begins_with("EnemySpawn"):
+			points.append((child as Marker2D).global_position)
+	return points
+
+func _configure_active_player(active_player: Node2D) -> void:
+	if active_player == null:
+		return
+	if "input_mode" in active_player:
+		active_player.set("input_mode", "both")
+	if active_player is CollisionObject2D:
+		var collision_player := active_player as CollisionObject2D
+		collision_player.collision_layer = 2
+		collision_player.collision_mask = max(collision_player.collision_mask, 1)
+	_ensure_player_camera(active_player)
+
+func _ensure_player_camera(active_player: Node2D) -> void:
+	var camera := active_player.get_node_or_null("Camera2D") as Camera2D
+	if camera == null:
+		for child in active_player.get_children():
+			if child is Camera2D:
+				camera = child as Camera2D
+				break
+	if camera == null:
+		camera = Camera2D.new()
+		camera.name = "Camera2D"
+		camera.position = Vector2(0, -21)
+		camera.zoom = close_zoom
+		active_player.add_child(camera)
+	_configure_camera_limits(camera)
+	camera.call_deferred("make_current")
+
+func _ensure_gameplay_hud(player1_node: Node2D, player2_node: Node2D) -> void:
+	var hud := get_node_or_null("GameplayHUD")
+	if hud == null:
+		hud = GAMEPLAY_HUD_SCENE.instantiate()
+		hud.name = "GameplayHUD"
+		add_child(hud)
+	if hud.has_method("setup"):
+		if player2_node != null:
+			hud.setup(null, player2_node, "", "Eldric")
+		else:
+			hud.setup(player1_node, null, "Kaizen", "")
+	if hud.has_method("show_combat_hud"):
+		hud.show_combat_hud()
+
+func _show_hud_narration(text: String) -> void:
+	var hud := get_node_or_null("GameplayHUD")
+	if hud != null and hud.has_method("show_narration"):
+		hud.show_narration(text)
+
+func _ensure_pause_menu(active_player: Node2D) -> void:
+	var pause_menu := get_node_or_null("PauseMenu")
+	if pause_menu == null:
+		pause_menu = PAUSE_MENU_SCENE.instantiate()
+		pause_menu.name = "PauseMenu"
+		add_child(pause_menu)
+	if pause_menu.has_method("setup"):
+		pause_menu.setup(active_player)
 
 func _find_player_camera() -> Camera2D:
 	var named_camera: Camera2D = player.get_node_or_null("Camera2D") as Camera2D

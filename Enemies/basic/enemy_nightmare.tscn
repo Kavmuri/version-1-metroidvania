@@ -108,7 +108,7 @@ radius = 165.04848
 [node name="Nightmare" type="CharacterBody2D" unique_id=1505951088 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_script")
-max_health = 5
+max_health = 50
 contact_damage = 10
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2080658009]

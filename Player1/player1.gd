@@ -74,7 +74,7 @@ const KAIZEN_PROJECTILE_UPGRADES := [
 @export var invulnerability_time: float = 1.2
 @export var projectile_scene: PackedScene
 @export var attack_cooldown: float = 0.45
-@export var attack_damage: int = 100
+@export var attack_damage: int = 10
 @export var projectile_spawn_offset: Vector2 = Vector2(32, -24)
 @export_enum("keyboard", "gamepad", "both") var input_mode: String = "both"
 
@@ -439,6 +439,8 @@ func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> voi
 
 	health = max(health - cantidad, 0)
 	AudioManager.play_sfx(&"player_hurt")
+	JuiceManager.screen_shake(4.0, 0.15)
+	JuiceManager.hit_stop(0.05, 0.05)
 	invulnerability_timer = invulnerability_time
 	hurt_timer = HURT_ANIMATION_TIME
 	if health <= 0:
@@ -466,6 +468,7 @@ func _die() -> void:
 	is_dead = true
 	velocity = Vector2.ZERO
 	animated_sprite_2d.modulate = Color.WHITE
+	JuiceManager.screen_shake(10.0, 0.3)
 	GameManager.show_death_screen()
 
 func _update_invulnerability_blink() -> void:

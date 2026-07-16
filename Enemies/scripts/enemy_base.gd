@@ -50,7 +50,7 @@ func _find_player() -> void:
 		if not candidates.is_empty():
 			player = candidates[0] as Node2D
 	if player == null:
-		player = _find_node_by_name(get_tree().current_scene, ["Player1", "Player", "Player2"])
+		player = _find_node_by_name(get_tree().current_scene, ["Player1", "Player", "Player2", "Kaizen", "Eldric"])
 
 func _find_node_by_name(root: Node, names: Array[String]) -> Node2D:
 	if root == null:
@@ -109,11 +109,16 @@ func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> voi
 	if is_dying:
 		return
 	health -= amount
+	JuiceManager.flash_sprite(sprite, Color(1.0, 0.35, 0.35))
+	JuiceManager.spawn_hit_particles(global_position + Vector2(0, -12), Color(1.0, 0.85, 0.3), 6)
+	JuiceManager.hit_stop(0.04, 0.05)
 	if health <= 0:
 		AudioManager.play_sfx(&"enemy_death")
+		JuiceManager.screen_shake(7.0, 0.22)
 		die()
 	else:
 		AudioManager.play_sfx(&"enemy_hit")
+		JuiceManager.screen_shake(2.5, 0.12)
 
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
 	receive_damage(cantidad, fuente_pos)
@@ -121,16 +126,39 @@ func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> voi
 func get_hurtbox_damage_receiver() -> Node2D:
 	return self
 
+const KILL_QUOTE_CHANCE := 0.22
+const DEBUG_ARENA_SCENE_NAME := "EnemyArena"
+
 func die() -> void:
 	if is_dying:
 		return
 	is_dying = true
 	_disable_damage_areas()
 	_spawn_death_effect()
+	JuiceManager.spawn_hit_particles(global_position + Vector2(0, -12), Color(1.0, 0.5, 0.5), 14)
+	_maybe_show_kill_quote()
 	if sprite.sprite_frames != null and sprite.sprite_frames.has_animation(&"death"):
 		play_anim("death")
 		await sprite.animation_finished
 	queue_free()
+
+func _maybe_show_kill_quote() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	var chance: float = 1.0 if _is_debug_arena() else KILL_QUOTE_CHANCE
+	if randf() > chance:
+		return
+	var quote: String = KillQuotes.random_eldric_quote() if _is_eldric(player) else KillQuotes.random_kaizen_quote()
+	JuiceManager.show_speech_bubble(player, quote)
+
+func _is_debug_arena() -> bool:
+	var current_scene := get_tree().current_scene
+	return current_scene != null and current_scene.name == DEBUG_ARENA_SCENE_NAME
+
+func _is_eldric(body: Node2D) -> bool:
+	var script := body.get_script() as Script
+	var script_path := script.resource_path if script != null else ""
+	return body.name == "Eldric" or body.name == "Player2" or script_path == "res://Player2/player2.gd"
 
 func _disable_damage_areas() -> void:
 	set_physics_process(false)

@@ -1506,12 +1506,12 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
-radius = 144.0
-height = 288.0
+radius = 25.0
+height = 290.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_contact"]
-radius = 160.0
-height = 320.0
+radius = 33.0
+height = 304.0
 
 [sub_resource type="CircleShape2D" id="StateMachineAttackArea2DShape"]
 radius = 378.00528

@@ -28,6 +28,7 @@ extends Node2D
 @export var next_area_player1_position: Vector2 = Vector2(3032, 32)
 @export var next_area_player2_position: Vector2 = Vector2(3080, 32)
 
+const PLAYER1_SCENE: PackedScene = preload("res://Player1/player.tscn")
 const PLAYER2_SCENE: PackedScene = preload("res://Player2/player_2.tscn")
 const SECTION_1_PLAYER1_POSITION: Vector2 = Vector2(96, 176)
 const SECTION_1_PLAYER2_POSITION: Vector2 = Vector2(144, 176)
@@ -53,7 +54,10 @@ var _cached_gate_centers: Array[Vector2] = []
 func _ready() -> void:
 	if boss_scene:
 		active_section_name = SECTION_2_NAME
-	_ensure_player2_from_pending()
+	if GameManager.current_game_mode == "single":
+		_configure_single_player()
+	else:
+		_ensure_player2_from_pending()
 	_prepare_transition_rect()
 	call_deferred("_register_scene_players")
 	call_deferred("_apply_pending_transition_positions")
@@ -87,22 +91,33 @@ func _apply_global_limits() -> void:
 func _register_scene_players() -> void:
 	var p1: Node2D = get_node_or_null("Player1") as Node2D
 	if p1 != null:
-		GameManager.register_player1(p1)
+		GameManager.register_player1(p1 if GameManager.current_game_mode != "single" or GameManager.selected_single_player != "player2" else null)
+		if GameManager.current_game_mode == "single" and GameManager.selected_single_player == "player2":
+			GameManager.register_player2(p1)
 		if "input_mode" in p1:
-			p1.set("input_mode", "keyboard")
+			p1.set("input_mode", "keyboard" if GameManager.current_game_mode == "coop" else "both")
 		var camera: Camera2D = p1.get_node_or_null("Camera2D") as Camera2D
 		if camera != null:
 			camera.make_current()
 
 	var p2: Node2D = get_node_or_null("Player2") as Node2D
-	if p2 != null:
+	if p2 != null and GameManager.current_game_mode != "single":
 		GameManager.register_player2(p2)
 
 	var hud: Node = get_node_or_null("GameplayHUD")
 	if hud != null:
 		hud.visible = false
 		if hud.has_method("setup"):
-			hud.setup(p1, p2)
+			if GameManager.current_game_mode == "single":
+				_setup_single_hud(hud, p1)
+			else:
+				hud.setup(p1, p2)
+
+func _setup_single_hud(hud: Node, active_player: Node2D) -> void:
+	if GameManager.selected_single_player == "player2":
+		hud.setup(null, active_player, "", "Eldric")
+	else:
+		hud.setup(active_player, null, "Kaizen", "")
 
 func _apply_pending_transition_positions() -> void:
 	var p1: Node2D = get_node_or_null("Player1") as Node2D
@@ -111,6 +126,41 @@ func _apply_pending_transition_positions() -> void:
 	_update_active_section_from_players()
 	_apply_section_camera_limits()
 	_start_camera_focus()
+
+func _configure_single_player() -> void:
+	if get_node_or_null("Player1") != null:
+		return
+	var spawn_marker: Marker2D = get_node_or_null("PlayerSpawn") as Marker2D
+	var spawn_position: Vector2 = spawn_marker.global_position if spawn_marker != null else Vector2.ZERO
+	var player_scene: PackedScene = PLAYER2_SCENE if GameManager.selected_single_player == "player2" else PLAYER1_SCENE
+	var player: Node2D = player_scene.instantiate() as Node2D
+	if player == null:
+		return
+	player.name = "Player1"
+	player.global_position = spawn_position
+	add_child(player)
+	if "input_mode" in player:
+		player.set("input_mode", "both")
+	if player is CollisionObject2D:
+		var collision_player := player as CollisionObject2D
+		collision_player.collision_layer = 2
+		collision_player.collision_mask = max(collision_player.collision_mask, 1)
+	_ensure_player_camera(player)
+
+func _ensure_player_camera(active_player: Node2D) -> void:
+	var camera := active_player.get_node_or_null("Camera2D") as Camera2D
+	if camera == null:
+		for child in active_player.get_children():
+			if child is Camera2D:
+				camera = child as Camera2D
+				break
+	if camera == null:
+		camera = Camera2D.new()
+		camera.name = "Camera2D"
+		camera.position = Vector2(0, -21)
+		camera.zoom = section_normal_zoom
+		active_player.add_child(camera)
+	camera.call_deferred("make_current")
 
 func _ensure_player2_from_pending() -> void:
 	if get_node_or_null("Player2") != null:
@@ -152,33 +202,43 @@ func _on_area14_section_2_enter_transition_entered(body: Node2D) -> void:
 		_transition_to_section_1()
 
 func _transition_to_previous_area() -> void:
+	if previous_area_scene.is_empty():
+		return
 	_area_transitioning = true
 	await _play_fade_to_black("transicionarea14ENTER1")
 
+	var p1: Node2D = get_node_or_null("Player1") as Node2D
 	var p2: Node2D = get_node_or_null("Player2") as Node2D
 	var player2_exists: bool = p2 != null and is_instance_valid(p2)
 	GameManager.pending_load_data = {
 		"player1_position": previous_area_player1_position,
 		"player2_exists": player2_exists,
 		"player2_position": previous_area_player2_position,
-		"game_mode": "coop" if player2_exists else GameManager.current_game_mode
+		"game_mode": "coop" if player2_exists else GameManager.current_game_mode,
+		"selected_single_player": GameManager.selected_single_player
 	}
 	GameManager.current_game_mode = "coop" if player2_exists else GameManager.current_game_mode
+	GameManager.save_player_upgrade_state(p1)
 	get_tree().change_scene_to_file(previous_area_scene)
 
 func _transition_to_next_area() -> void:
+	if next_area_scene.is_empty():
+		return
 	_area_transitioning = true
 	await _play_fade_to_black("transicionarea14OUT1")
 
+	var p1: Node2D = get_node_or_null("Player1") as Node2D
 	var p2: Node2D = get_node_or_null("Player2") as Node2D
 	var player2_exists: bool = p2 != null and is_instance_valid(p2)
 	GameManager.pending_load_data = {
 		"player1_position": next_area_player1_position,
 		"player2_exists": player2_exists,
 		"player2_position": next_area_player2_position,
-		"game_mode": "coop" if player2_exists else GameManager.current_game_mode
+		"game_mode": "coop" if player2_exists else GameManager.current_game_mode,
+		"selected_single_player": GameManager.selected_single_player
 	}
 	GameManager.current_game_mode = "coop" if player2_exists else GameManager.current_game_mode
+	GameManager.save_player_upgrade_state(p1)
 	get_tree().change_scene_to_file(next_area_scene)
 
 func _transition_to_section_1() -> void:
@@ -402,7 +462,11 @@ func _show_combat_hud(agis: Node2D) -> void:
 	if hud == null:
 		return
 	if hud.has_method("setup"):
-		hud.setup(GameManager.current_player1, GameManager.current_player2)
+		if GameManager.current_game_mode == "single":
+			var p1: Node2D = get_node_or_null("Player1") as Node2D
+			_setup_single_hud(hud, p1)
+		else:
+			hud.setup(GameManager.current_player1, GameManager.current_player2)
 	if agis != null and hud.has_method("set_boss"):
 		hud.set_boss(agis)
 	if hud.has_method("show_combat_hud"):
