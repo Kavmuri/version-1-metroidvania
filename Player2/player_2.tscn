@@ -11,6 +11,13 @@
 [ext_resource type="Texture2D" uid="uid://c7rx13l8q8lu1" path="res://Player2/idle/spritesheet.png" id="9_mpsyn"]
 [ext_resource type="Texture2D" uid="uid://dfeox6nlfki2f" path="res://Player2/jump/jump.png" id="10_2eaqi"]
 [ext_resource type="Texture2D" uid="uid://b5nirw4c27cx2" path="res://Player2/walk/walk.png" id="11_1uqvu"]
+[ext_resource type="Shader" uid="uid://cp82ygkb2wbvq" path="res://Player2/shaders/eldric_shield.gdshader" id="12_shield"]
+[ext_resource type="Shader" uid="uid://bw6umdr121gkj" path="res://Player2/shaders/eldric_attack_palette.gdshader" id="13_palette"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_attack_palette"]
+shader = ExtResource("13_palette")
+shader_parameter/replacement_color = Color(0.1, 0.85, 1, 1)
+shader_parameter/effect_strength = 0.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_i7qkv"]
 atlas = ExtResource("2_0r3wo")
@@ -324,6 +331,16 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_shield"]
+shader = ExtResource("12_shield")
+shader_parameter/shield_color = Color(0.18, 0.75, 1, 0.7)
+shader_parameter/radius = 0.43
+shader_parameter/thickness = 0.05
+shader_parameter/softness = 0.01
+shader_parameter/pulse_speed = 2.5
+shader_parameter/strength = 1.0
+shader_parameter/hit_flash = 0.0
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gx4q7"]
 height = 46.0
 
@@ -332,10 +349,22 @@ collision_layer = 2
 script = ExtResource("1_60omm")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1798349468]
+material = SubResource("ShaderMaterial_attack_palette")
 sprite_frames = SubResource("SpriteFrames_mpsyn")
 animation = &"golpeagachadoP2"
 autoplay = "idleP2"
 frame_progress = 0.35288367
+
+[node name="ShieldVisual" type="ColorRect" parent="." unique_id=1565251637]
+visible = false
+show_behind_parent = true
+z_index = -1
+material = SubResource("ShaderMaterial_shield")
+offset_left = -52.0
+offset_top = -52.0
+offset_right = 52.0
+offset_bottom = 52.0
+mouse_filter = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=85145004]
 position = Vector2(1, 7)

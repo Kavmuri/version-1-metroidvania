@@ -13,9 +13,6 @@ const LIMIT_TOP: int = -384
 const LIMIT_RIGHT: int = 1664
 const LIMIT_BOTTOM: int = 192
 const MAP_END_X: int = LIMIT_RIGHT
-const NEXT_AREA_SCENE: String = "res://Levels/single/Tileset/area1/area_1_2.tscn"
-const NEXT_PLAYER1_POSITION: Vector2 = Vector2(97, -94)
-const NEXT_PLAYER2_POSITION: Vector2 = Vector2(145, -94)
 const PLAYER1_SCENE: PackedScene = preload("res://Player1/player.tscn")
 const PLAYER2_SCENE: PackedScene = preload("res://Player2/player_2.tscn")
 const GAMEPLAY_HUD_SCENE: PackedScene = preload("res://UI/scenes/gameplay_hud.tscn")
@@ -34,7 +31,6 @@ const ENEMY_POOL: Array[PackedScene] = [
 	preload("res://Enemies/basic/enemy_hell_beast_fire.tscn"),
 	preload("res://Enemies/basic/enemy_hell_hound_fire.tscn"),
 	preload("res://Enemies/basic/enemy_nightmare.tscn"),
-	preload("res://Enemies/basic/enemy_demon_boss.tscn"),
 ]
 const ENEMY_SEED_OFFSET: int = 101
 
@@ -55,7 +51,7 @@ func _ready() -> void:
 
 func _spawn_random_enemies() -> void:
 	var spawn_points: Array[Vector2] = _find_enemy_spawn_points()
-	EnemyEncounterPool.populate(self, spawn_points, ENEMY_POOL, GameManager.get_world_seed_for_generation() + ENEMY_SEED_OFFSET)
+	EnemyEncounterPool.populate_random_count(self, spawn_points, ENEMY_POOL, GameManager.get_world_seed_for_generation() + ENEMY_SEED_OFFSET, 2, 4)
 
 func _find_enemy_spawn_points() -> Array[Vector2]:
 	var points: Array[Vector2] = []
@@ -86,14 +82,14 @@ func _transition_to_next_area() -> void:
 
 	var player2_exists: bool = player2 != null and is_instance_valid(player2)
 	GameManager.pending_load_data = {
-		"player1_position": NEXT_PLAYER1_POSITION,
 		"player2_exists": player2_exists,
-		"player2_position": NEXT_PLAYER2_POSITION,
 		"game_mode": GameManager.current_game_mode,
 		"selected_single_player": GameManager.selected_single_player
 	}
 	GameManager.save_player_upgrade_state(player)
-	get_tree().change_scene_to_file(NEXT_AREA_SCENE)
+	GameManager.begin_single_run()
+	var next_room := GameManager.get_next_single_room()
+	get_tree().change_scene_to_file(next_room)
 
 func _prepare_transition_rect() -> void:
 	transition_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -148,6 +144,7 @@ func _apply_area_limits() -> void:
 func _apply_pending_transition_positions() -> void:
 	_refresh_players()
 	GameManager.apply_pending_positions(player, player2)
+	GameManager.save_initial_spawn_if_needed()
 	_clamp_players_to_area()
 
 func _refresh_players() -> void:

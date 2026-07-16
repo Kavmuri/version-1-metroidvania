@@ -30,13 +30,9 @@ const ENEMY_POOL: Array[PackedScene] = [
 	preload("res://Enemies/basic/enemy_hell_beast_fire.tscn"),
 	preload("res://Enemies/basic/enemy_hell_hound_fire.tscn"),
 	preload("res://Enemies/basic/enemy_nightmare.tscn"),
-	preload("res://Enemies/basic/enemy_demon_boss.tscn"),
 ]
 const ENEMY_SEED_OFFSET: int = 102
 
-const NEXT_AREA_SCENE: String = "res://Levels/single/Tileset/area1/area_1_3.tscn"
-const NEXT_PLAYER1_POSITION: Vector2 = Vector2(296, 56)
-const NEXT_PLAYER2_POSITION: Vector2 = Vector2(344, 56)
 const FADE_WAIT_SECONDS: float = 0.55
 
 const GLOW_TEXTURE: Texture2D = preload("res://Assets/Fx/light_glow.png")
@@ -208,22 +204,21 @@ func _on_final_transition_entered(body: Node2D) -> void:
 	if _is_transitioning:
 		return
 	if _is_player_body(body):
-		_transition_to_area(NEXT_AREA_SCENE, NEXT_PLAYER1_POSITION, NEXT_PLAYER2_POSITION)
+		_transition_to_next_room()
 
-func _transition_to_area(scene_path: String, player1_position: Vector2, player2_position: Vector2) -> void:
+func _transition_to_next_room() -> void:
 	_is_transitioning = true
 	await _play_fade_to_black()
 
 	var player2_exists: bool = GameManager.current_game_mode != "single" and player2 != null and is_instance_valid(player2)
 	GameManager.pending_load_data = {
-		"player1_position": player1_position,
 		"player2_exists": player2_exists,
-		"player2_position": player2_position,
 		"game_mode": GameManager.current_game_mode,
 		"selected_single_player": GameManager.selected_single_player
 	}
 	GameManager.save_player_upgrade_state(player)
-	get_tree().change_scene_to_file(scene_path)
+	var next_room := GameManager.get_next_single_room(scene_file_path)
+	get_tree().change_scene_to_file(next_room)
 
 func _prepare_transition_rect() -> void:
 	if transition_rect == null:
@@ -421,8 +416,6 @@ func _configure_single_player() -> void:
 		_ensure_gameplay_hud(null, player2)
 		_ensure_pause_menu(player2)
 		return
-	if GameManager.current_game_mode != "coop":
-		return
 
 	player = PLAYER1_SCENE.instantiate() as Node2D
 	player.name = "Player1"
@@ -437,7 +430,12 @@ func _configure_single_player() -> void:
 
 func _spawn_random_enemies() -> void:
 	var spawn_points: Array[Vector2] = _find_enemy_spawn_points()
-	EnemyEncounterPool.populate(self, spawn_points, ENEMY_POOL, GameManager.get_world_seed_for_generation() + ENEMY_SEED_OFFSET)
+	if spawn_points.is_empty():
+		return
+	var visit_index := maxi(GameManager.get_single_visit_index() - 1, 0)
+	var enemy_count := 1 + (visit_index % spawn_points.size())
+	var encounter_seed := GameManager.get_single_encounter_seed(scene_file_path) + ENEMY_SEED_OFFSET
+	EnemyEncounterPool.populate_random_count(self, spawn_points, ENEMY_POOL, encounter_seed, enemy_count, enemy_count)
 
 func _find_enemy_spawn_points() -> Array[Vector2]:
 	var points: Array[Vector2] = []
