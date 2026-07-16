@@ -1,0 +1,319 @@
+[gd_scene format=3 uid="uid://c74u3a51ml654"]
+
+[ext_resource type="Script" uid="uid://q12vc4w0ea48" path="res://Scripts/crumbling_platform_raiz.gd" id="1_raiz"]
+[ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="2_u3th7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(32, 84)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_j8boh"]
+radius = 16.0
+height = 96.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_top_detector"]
+size = Vector2(40, 124)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_detector_branch"]
+size = Vector2(48, 140)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_detector_safety"]
+size = Vector2(96, 180)
+
+[node name="CrumblingPlatform" type="AnimatableBody2D" unique_id=123275325]
+script = ExtResource("1_raiz")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=172259308]
+position = Vector2(88, 40)
+texture = ExtResource("2_u3th7")
+flip_v = true
+region_enabled = true
+region_rect = Rect2(46.815075, 142.83612, 18.365467, 33.39177)
+
+[node name="Sprite2D2" type="Sprite2D" parent="Sprite2D" unique_id=1408432059]
+position = Vector2(16, 0)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(46.815075, 142.83612, 18.365467, 33.39177)
+
+[node name="Sprite2D3" type="Sprite2D" parent="Sprite2D" unique_id=19816325]
+position = Vector2(8, -16)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D4" type="Sprite2D" parent="Sprite2D" unique_id=1245430766]
+position = Vector2(8, -25)
+texture = ExtResource("2_u3th7")
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D6" type="Sprite2D" parent="Sprite2D" unique_id=2085781786]
+position = Vector2(-24, -72)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D11" type="Sprite2D" parent="Sprite2D" unique_id=1032608700]
+position = Vector2(-24, -80)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D12" type="Sprite2D" parent="Sprite2D" unique_id=448899502]
+position = Vector2(-24, -88)
+texture = ExtResource("2_u3th7")
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D13" type="Sprite2D" parent="Sprite2D" unique_id=1694507136]
+position = Vector2(-24, -96)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D14" type="Sprite2D" parent="Sprite2D" unique_id=1723835990]
+position = Vector2(-24, -104)
+texture = ExtResource("2_u3th7")
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D15" type="Sprite2D" parent="Sprite2D" unique_id=1478561740]
+position = Vector2(-24, -112)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D16" type="Sprite2D" parent="Sprite2D" unique_id=899043023]
+position = Vector2(-24, -120)
+texture = ExtResource("2_u3th7")
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D18" type="Sprite2D" parent="Sprite2D" unique_id=1449373681]
+position = Vector2(-24, -128)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D19" type="Sprite2D" parent="Sprite2D" unique_id=2126001355]
+position = Vector2(-56, -128)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D20" type="Sprite2D" parent="Sprite2D" unique_id=1346750292]
+position = Vector2(-56, -137)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D21" type="Sprite2D" parent="Sprite2D" unique_id=942607195]
+position = Vector2(-56, -146)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D22" type="Sprite2D" parent="Sprite2D" unique_id=556942981]
+position = Vector2(-56, -155)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D23" type="Sprite2D" parent="Sprite2D" unique_id=501584237]
+position = Vector2(-56, -164)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D5" type="Sprite2D" parent="Sprite2D" unique_id=1123956099]
+position = Vector2(8, -34)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.89341, 166.32985, 32.43206, 9.819931)
+
+[node name="Sprite2D7" type="Sprite2D" parent="Sprite2D" unique_id=63275655]
+position = Vector2(0, -55)
+texture = ExtResource("2_u3th7")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(47.279747, 142.46645, 17.263542, 34.159775)
+
+[node name="Sprite2D8" type="Sprite2D" parent="Sprite2D" unique_id=316992593]
+position = Vector2(16, -72)
+texture = ExtResource("2_u3th7")
+region_enabled = true
+region_rect = Rect2(48.04207, 142.46645, 15.83017, 33.3459)
+
+[node name="Sprite2D9" type="Sprite2D" parent="Sprite2D" unique_id=651310745]
+position = Vector2(16, -47)
+texture = ExtResource("2_u3th7")
+region_enabled = true
+region_rect = Rect2(127.61362, 158.25824, 16.63823, 17.84111)
+
+[node name="Sprite2D10" type="Sprite2D" parent="Sprite2D" unique_id=875315386]
+position = Vector2(-24, -56)
+texture = ExtResource("2_u3th7")
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.93004, 143.61403, 32.321808, 32.48532)
+
+[node name="Sprite2D17" type="Sprite2D" parent="Sprite2D" unique_id=397320900]
+position = Vector2(-56, -112)
+texture = ExtResource("2_u3th7")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(111.93004, 143.61403, 32.321808, 32.48532)
+
+[node name="Sprite2D24" type="Sprite2D" parent="Sprite2D" unique_id=873850011]
+position = Vector2(-56, -184)
+texture = ExtResource("2_u3th7")
+region_enabled = true
+region_rect = Rect2(111.93004, 143.61403, 32.321808, 32.48532)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1528702338]
+position = Vector2(64, -50)
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="." unique_id=694267601]
+position = Vector2(32, -104)
+shape = SubResource("CapsuleShape2D_j8boh")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="." unique_id=71524140]
+position = Vector2(32, -104)
+shape = SubResource("CapsuleShape2D_j8boh")
+
+[node name="TopDetector" type="Area2D" parent="." unique_id=1889563041]
+visible = false
+position = Vector2(0, -32)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopDetector" unique_id=889458414]
+position = Vector2(64, -18)
+shape = SubResource("RectangleShape2D_top_detector")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="TopDetector" unique_id=1122472831]
+position = Vector2(32, -46)
+shape = SubResource("RectangleShape2D_detector_branch")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="TopDetector" unique_id=2034299694]
+position = Vector2(48, -30)
+shape = SubResource("RectangleShape2D_detector_safety")
+
+[node name="WobbleParticles" type="CPUParticles2D" parent="." unique_id=1561272315]
+position = Vector2(64, -8)
+emitting = false
+amount = 10
+lifetime = 0.5
+direction = Vector2(0, 1)
+spread = 40.0
+gravity = Vector2(0, 80)
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+scale_amount_min = 0.8
+scale_amount_max = 1.4
+color = Color(0.5, 0.45, 0.4, 0.7)
+
+[node name="WobbleParticles2" type="CPUParticles2D" parent="." unique_id=1905530797]
+position = Vector2(32, -56)
+emitting = false
+amount = 10
+lifetime = 0.5
+direction = Vector2(0, 1)
+spread = 40.0
+gravity = Vector2(0, 80)
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+scale_amount_min = 0.8
+scale_amount_max = 1.4
+color = Color(0.5, 0.45, 0.4, 0.7)
+
+[node name="WobbleParticles3" type="CPUParticles2D" parent="." unique_id=924161041]
+position = Vector2(96, 56)
+emitting = false
+amount = 10
+lifetime = 0.5
+direction = Vector2(0, 1)
+spread = 40.0
+gravity = Vector2(0, 80)
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+scale_amount_min = 0.8
+scale_amount_max = 1.4
+color = Color(0.5, 0.45, 0.4, 0.7)
+
+[node name="CollapseParticles" type="CPUParticles2D" parent="." unique_id=2145526338]
+position = Vector2(64, -8)
+emitting = false
+amount = 22
+lifetime = 0.7
+one_shot = true
+explosiveness = 0.9
+direction = Vector2(0, -1)
+spread = 90.0
+gravity = Vector2(0, 200)
+initial_velocity_min = 40.0
+initial_velocity_max = 110.0
+scale_amount_max = 2.0
+color = Color(0.55, 0.5, 0.55, 0.9)
+
+[node name="CollapseParticles4" type="CPUParticles2D" parent="." unique_id=1162054748]
+position = Vector2(32, -56)
+emitting = false
+amount = 22
+lifetime = 0.7
+one_shot = true
+explosiveness = 0.9
+direction = Vector2(0, -1)
+spread = 90.0
+gravity = Vector2(0, 200)
+initial_velocity_min = 40.0
+initial_velocity_max = 110.0
+scale_amount_max = 2.0
+color = Color(0.55, 0.5, 0.55, 0.9)
+
+[node name="CollapseParticles2" type="CPUParticles2D" parent="." unique_id=2141295335]
+position = Vector2(96, 56)
+emitting = false
+amount = 22
+lifetime = 0.7
+one_shot = true
+explosiveness = 0.9
+direction = Vector2(0, -1)
+spread = 90.0
+gravity = Vector2(0, 200)
+initial_velocity_min = 40.0
+initial_velocity_max = 110.0
+scale_amount_max = 2.0
+color = Color(0.55, 0.5, 0.55, 0.9)

@@ -6,7 +6,7 @@ extends Node2D
 @onready var player2: Node2D = get_node_or_null("Player2") as Node2D
 
 const LIMIT_LEFT: int = 0
-const LIMIT_TOP: int = -384
+const LIMIT_TOP: int = -640
 const LIMIT_RIGHT: int = 4352
 const LIMIT_BOTTOM: int = 512
 const FIRST_SECTION_CAMERA_LIMIT_NAME: String = "first_section"
@@ -16,7 +16,7 @@ const FIRST_SECTION_CAMERA_LIMIT_RIGHT: int = 2048
 const FIRST_SECTION_CAMERA_LIMIT_BOTTOM: int = 320
 const SECOND_SECTION_CAMERA_LIMIT_NAME: String = "second_section"
 const SECOND_SECTION_CAMERA_LIMIT_LEFT: int = 2112
-const SECOND_SECTION_CAMERA_LIMIT_TOP: int = -384
+const SECOND_SECTION_CAMERA_LIMIT_TOP: int = -640
 const SECOND_SECTION_CAMERA_LIMIT_RIGHT: int = 4352
 const SECOND_SECTION_CAMERA_LIMIT_BOTTOM: int = 320
 const SECOND_SECTION_START_X: float = 2112.0
@@ -50,6 +50,7 @@ const FALLING_PARTICLES_AMOUNT: int = 26
 const FALLING_PARTICLES_LIFETIME: float = 10.0
 
 var player_camera: Camera2D = null
+var _camera_local_position: Vector2 = Vector2.ZERO
 var active_camera_limit_name: String = FIRST_SECTION_CAMERA_LIMIT_NAME
 var _is_transitioning: bool = false
 var normal_camera_zoom: Vector2 = Vector2(0.78, 0.78)
@@ -69,9 +70,16 @@ const COOP_CAMERA_FAR_DISTANCE: float = 420.0
 const COOP_CAMERA_FOLLOW_SPEED: float = 4.0
 const COOP_CAMERA_ZOOM_SPEED: float = 2.5
 
+const CAMERA_EVENT_FOCUS_ZOOM: Vector2 = Vector2(0.7, 0.7)
+const CAMERA_EVENT_PAN_SPEED: float = 1.6
+
 var _zoom_timer: float = 0.0
 var _camera_focus_nodes: Array[Node2D] = []
 var _near_platform_state: bool = false
+
+var _camera_event_active: bool = false
+var _camera_event_target: Vector2 = Vector2.ZERO
+var _camera_event_timer: float = 0.0
 
 func _ready() -> void:
 	_prepare_transition_rect()
@@ -195,18 +203,47 @@ func _process(delta: float) -> void:
 
 	_update_active_camera_limit()
 
-	if _is_coop_camera_active():
-		player_camera.top_level = true
+	if _camera_event_active:
+		_ensure_camera_top_level()
+		_update_camera_event(delta)
+	elif _is_coop_camera_active():
+		_ensure_camera_top_level()
 		_update_coop_camera(delta)
 	else:
-		if player_camera.top_level:
-			player_camera.top_level = false
+		_release_camera_top_level()
 		_update_camera_zoom(delta)
+
+func _release_camera_top_level() -> void:
+	if not player_camera.top_level:
+		return
+	player_camera.top_level = false
+	player_camera.position = _camera_local_position
+
+func _ensure_camera_top_level() -> void:
+	if player_camera.top_level:
+		return
+	var current_global: Vector2 = player_camera.global_position
+	player_camera.top_level = true
+	player_camera.global_position = current_global
 
 	_clamp_players_to_area()
 
 func _is_coop_camera_active() -> bool:
 	return GameManager.current_game_mode == "coop" and player2 != null and is_instance_valid(player2)
+
+func focus_camera_on_point(target_position: Vector2, hold_duration: float = 3.0) -> void:
+	_camera_event_target = target_position
+	_camera_event_timer = hold_duration
+	_camera_event_active = true
+
+func _update_camera_event(delta: float) -> void:
+	var pos_weight: float = 1.0 - exp(-CAMERA_EVENT_PAN_SPEED * delta)
+	player_camera.global_position = player_camera.global_position.lerp(_camera_event_target, pos_weight)
+	player_camera.zoom = player_camera.zoom.lerp(CAMERA_EVENT_FOCUS_ZOOM, pos_weight)
+
+	_camera_event_timer -= delta
+	if _camera_event_timer <= 0.0:
+		_camera_event_active = false
 
 func _update_coop_camera(delta: float) -> void:
 	var target_position: Vector2 = (player.global_position + player2.global_position) * 0.5
@@ -419,6 +456,8 @@ func _apply_area_limits() -> void:
 			_configure_camera_limits(child as Camera2D)
 
 	if player_camera != null:
+		if not player_camera.top_level:
+			_camera_local_position = player_camera.position
 		player_camera.zoom = normal_camera_zoom
 		player_camera.call_deferred("make_current")
 

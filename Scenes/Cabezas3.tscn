@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://d1dvhxm5alvky"]
+
+[ext_resource type="Script" path="res://Scripts/rising_head.gd" id="1_r1sh1"]
+[ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="2_kwsj6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bdt4q"]
+radius = 25.298222
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yj7y3"]
+radius = 24.0
+height = 48.0
+
+[node name="RisingHead" type="AnimatableBody2D" unique_id=123275325]
+script = ExtResource("1_r1sh1")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=172259308]
+texture = ExtResource("2_kwsj6")
+region_enabled = true
+region_rect = Rect2(38.297813, 95.440186, 45.333336, 52.148148)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1528702338]
+rotation = 1.5707964
+shape = SubResource("CircleShape2D_bdt4q")
+
+[node name="ContactArea" type="Area2D" parent="." unique_id=1889563041]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ContactArea" unique_id=889458414]
+shape = SubResource("CapsuleShape2D_yj7y3")

@@ -22,6 +22,7 @@ func _ready() -> void:
 	_no_button.focus_neighbor_left = _yes_button.get_path()
 
 func open_dialog() -> void:
+	GameManager.dialogue_open = true
 	_status_label.text = "Guardar progreso?"
 	_yes_button.disabled = false
 	_no_button.disabled = false
@@ -39,6 +40,7 @@ func _setup_positions() -> void:
 	_hidden_y = viewport_size.y + 12.0
 
 func close_dialog() -> void:
+	GameManager.dialogue_open = false
 	var tween := create_tween()
 	tween.tween_property(_panel, "position:y", _hidden_y, SLIDE_DURATION)
 	tween.tween_callback(queue_free)

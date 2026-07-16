@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://d28tu3t4aqdf8"]
+
+[ext_resource type="Script" uid="uid://b51vcg4emltly" path="res://Scripts/cabezon.gd" id="1_nebk2"]
+[ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="2_oyejx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(40, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_proximity"]
+size = Vector2(100, 90)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8fbwi"]
+content_margin_left = 6.0
+content_margin_top = 3.0
+content_margin_right = 6.0
+content_margin_bottom = 3.0
+bg_color = Color(0, 0, 0, 0.65)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="CABEZON" type="AnimatableBody2D" unique_id=123275325]
+script = ExtResource("1_nebk2")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=172259308]
+texture = ExtResource("2_oyejx")
+region_enabled = true
+region_rect = Rect2(36.88978, 96.777336, 45.777786, 49.77778)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1528702338]
+position = Vector2(4, 0)
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ProximityArea" type="Area2D" parent="." unique_id=1889563041]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ProximityArea" unique_id=889458414]
+position = Vector2(4, 0)
+shape = SubResource("RectangleShape2D_proximity")
+
+[node name="PromptPanel" type="PanelContainer" parent="." unique_id=1554831934]
+offset_left = -89.0
+offset_top = -8.0
+offset_right = -22.0
+offset_bottom = 11.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_8fbwi")
+
+[node name="PromptLabel" type="Label" parent="PromptPanel" unique_id=953341129]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.60933006, 0.6093301, 0.60933006, 1)
+theme_override_constants/line_spacing = 0
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 10
+text = "f para hablar"
+horizontal_alignment = 1
+vertical_alignment = 1
