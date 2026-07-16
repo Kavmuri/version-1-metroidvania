@@ -6,7 +6,6 @@ var _open := false
 @onready var _button_continuar: Button = $ButtonContinuar
 @onready var _button_controles: Button = $ButtonControles
 @onready var _button_salir: Button = $ButtonSalir
-@onready var _overlay: ColorRect = $Overlay
 @onready var _controls_menu: CanvasLayer = get_node_or_null("ControlsMenu") as CanvasLayer
 
 func _ready() -> void:

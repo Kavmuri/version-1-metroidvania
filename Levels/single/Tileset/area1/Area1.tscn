@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player1/player.tscn" id="5_a0qy4"]
 [ext_resource type="TileSet" uid="uid://dwoae3wqtlmvi" path="res://Tileset/area1/tileset.tres" id="6_xsmd8"]
 [ext_resource type="PackedScene" uid="uid://bp3378g2hwpb3" path="res://Pickups/upgrade_pickup.tscn" id="7_rha31"]
+[ext_resource type="PackedScene" path="res://Pickups/save_point.tscn" id="8_savepoint"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_20fqv"]
 texture = ExtResource("1_f7hv5")
@@ -903,3 +904,7 @@ debug_color = Color(0, 0, 0, 0.41960785)
 
 [node name="UpgradePickup" parent="." unique_id=1069957860 instance=ExtResource("7_rha31")]
 position = Vector2(108, 144)
+
+[node name="SavePoint" parent="." instance=ExtResource("8_savepoint")]
+position = Vector2(250, 0)
+area_id = "area1"

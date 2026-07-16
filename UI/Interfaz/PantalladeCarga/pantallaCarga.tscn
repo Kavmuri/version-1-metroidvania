@@ -259,13 +259,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="PantallaCarga" type="Control" unique_id=388025840]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="PantallaCarga" type="CanvasLayer" unique_id=388025840]
+layer = 60
 script = ExtResource("2_loading")
 
 [node name="PantallaDeCarga" type="Sprite2D" parent="." unique_id=426929680]

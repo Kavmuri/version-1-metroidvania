@@ -54,14 +54,14 @@ func _input(event: InputEvent) -> void:
 		match event.physical_keycode:
 			KEY_UP, KEY_W:
 				_navigate_up()
-				get_tree().root.set_input_as_handled()
+				get_viewport().set_input_as_handled()
 			KEY_DOWN, KEY_S:
 				_navigate_down()
-				get_tree().root.set_input_as_handled()
+				get_viewport().set_input_as_handled()
 			KEY_ENTER, KEY_SPACE:
 				if buttons.size() > 0 and buttons[current_focus_index].has_focus():
+					get_viewport().set_input_as_handled()
 					buttons[current_focus_index].emit_signal("pressed")
-					get_tree().root.set_input_as_handled()
 
 func _navigate_up() -> void:
 	if buttons.is_empty():

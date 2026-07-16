@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bhkwbbm13gx4f"
-path="res://.godot/imported/crystal_cave_background_by_fellfeline_dektmf0-fullview.jpg-537f2f22416e33efc0374bbece778cc2.ctex"
+uid="uid://82pbfhv3xhyv"
+path="res://.godot/imported/spr_dialogue_box_button.png-ff958e0b03f27ba3bbddc07678734ea5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Tileset/area1/crystal_cave_background_by_fellfeline_dektmf0-fullview.jpg"
-dest_files=["res://.godot/imported/crystal_cave_background_by_fellfeline_dektmf0-fullview.jpg-537f2f22416e33efc0374bbece778cc2.ctex"]
+source_file="res://UI/Interfaz/DialogUI/spr_dialogue_box_button.png"
+dest_files=["res://.godot/imported/spr_dialogue_box_button.png-ff958e0b03f27ba3bbddc07678734ea5.ctex"]
 
 [params]
 
