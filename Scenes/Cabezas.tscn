@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://cbstus3gl21gy"]
+
+[ext_resource type="Script" uid="uid://civju6m37w6nv" path="res://Scripts/falling_head.gd" id="1_kkpg0"]
+[ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="2_kkpg0"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bdt4q"]
+radius = 25.298222
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yj7y3"]
+radius = 24.0
+height = 48.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(47, 208.5)
+
+[node name="FallingHead" type="CharacterBody2D" unique_id=123275325]
+script = ExtResource("1_kkpg0")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=172259308]
+texture = ExtResource("2_kkpg0")
+region_enabled = true
+region_rect = Rect2(38.297813, 95.440186, 45.333336, 52.148148)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1528702338]
+rotation = 1.5707964
+shape = SubResource("CircleShape2D_bdt4q")
+
+[node name="ContactArea" type="Area2D" parent="." unique_id=1889563041]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ContactArea" unique_id=889458414]
+shape = SubResource("CapsuleShape2D_yj7y3")
+
+[node name="TriggerArea" type="Area2D" parent="." unique_id=38722922]
+position = Vector2(0, 90)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea" unique_id=331517872]
+position = Vector2(0.5, 37.75)
+shape = SubResource("RectangleShape2D_trigger")
+
+[node name="ImpactParticles" type="CPUParticles2D" parent="."]
+emitting = false
+one_shot = true
+amount = 20
+lifetime = 1.2
+explosiveness = 0.85
+direction = Vector2(0, -1)
+spread = 180.0
+gravity = Vector2(0, 220)
+initial_velocity_min = 50.0
+initial_velocity_max = 130.0
+scale_amount_min = 1.2
+scale_amount_max = 2.2
+color = Color(0.45, 0.35, 0.55, 0.9)

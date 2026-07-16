@@ -1047,7 +1047,6 @@ _data = {
 }
 
 [node name="Area15" type="Node2D" unique_id=1445941126]
-position = Vector2(-2968, -24)
 script = ExtResource("9_agis_ctrl")
 boss_scene = true
 previous_area_scene = "res://Tileset/area1/area_1_4.tscn"

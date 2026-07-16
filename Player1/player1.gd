@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name Player
 
+signal jumped
+
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var muzzle: Marker2D = $Muzzle
 @onready var muzzle_up: Marker2D = $MuzzleUp
@@ -114,13 +116,18 @@ func _configure_input_mode_for_coop() -> void:
 		input_mode = "keyboard"
 
 func _input(event: InputEvent) -> void:
-	if is_dead:
+	if is_dead or GameManager.dialogue_open:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		cycle_projectile_upgrade()
 
 func _physics_process(delta: float):
 	if is_dead:
+		velocity = Vector2.ZERO
+		update_animations()
+		return
+
+	if GameManager.dialogue_open:
 		velocity = Vector2.ZERO
 		update_animations()
 		return
@@ -143,6 +150,9 @@ func _physics_process(delta: float):
 
 	move_and_slide()
 
+	if tiene_salto_infinito and not is_on_floor() and is_on_wall():
+		_air_jump_available = true
+
 	update_state()
 	update_animations()
 
@@ -164,6 +174,7 @@ func handle_jump():
 	if is_on_floor():
 		AudioManager.play_sfx(&"player_jump")
 		velocity.y = JUMP_VELOCITY
+		jumped.emit()
 		if tiene_salto_infinito:
 			_air_jump_available = true
 	elif tiene_salto_infinito and _air_jump_available:

@@ -58,6 +58,7 @@ var current_world_seed: int = 0
 var current_game_mode: String = "single"
 var selected_single_player: String = "player1"
 var pending_load_data: Dictionary = {}
+var dialogue_open: bool = false
 var _death_screen: CanvasLayer = null
 var _is_restoring_save := false
 

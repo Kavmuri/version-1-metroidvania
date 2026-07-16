@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://dq5p82s6w7ird"]
+
+[ext_resource type="Script" uid="uid://c44cbwethlo6c" path="res://Scripts/rising_platform.gd" id="1_mjcbc"]
+[ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="2_xllv1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(64, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_top_detector"]
+size = Vector2(64, 94)
+
+[node name="RisingPlatform" type="AnimatableBody2D" unique_id=123275325]
+script = ExtResource("1_mjcbc")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=172259308]
+texture = ExtResource("2_xllv1")
+region_enabled = true
+region_rect = Rect2(204.44458, 106.88845, 72, 79.11111)
+
+[node name="Sprite2D2" type="Sprite2D" parent="Sprite2D" unique_id=1121587147]
+position = Vector2(8, -32)
+texture = ExtResource("2_xllv1")
+region_enabled = true
+region_rect = Rect2(48.666664, 97.44444, 32.44445, 30.666672)
+
+[node name="Sprite2D3" type="Sprite2D" parent="Sprite2D" unique_id=22420905]
+position = Vector2(7, -2)
+texture = ExtResource("2_xllv1")
+region_enabled = true
+region_rect = Rect2(80.00012, 49.110672, 28.444443, 30.222221)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1528702338]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="TopDetector" type="Area2D" parent="." unique_id=1889563041]
+position = Vector2(0, -32)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopDetector" unique_id=889458414]
+position = Vector2(0, 32)
+shape = SubResource("RectangleShape2D_top_detector")

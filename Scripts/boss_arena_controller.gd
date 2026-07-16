@@ -4,16 +4,16 @@ extends Node2D
 @export var arena_rect: Rect2 = Rect2(3008, -48, 2496, 688)
 @export var global_limits: Rect2 = Rect2(0, -320, 6500, 960)
 @export var zoom_level: Vector2 = Vector2(0.8, 0.8)
-@export var camera_offset: Vector2 = Vector2.ZERO
+@export var camera_offset: Vector2 = Vector2(0, -70)
 @export var arena_wall_top: float = -48.0
 @export var arena_wall_bottom: float = 640.0
 @export var zombie_spawn_margin: float = 180.0
 @export var clamp_players_during_fight: bool = true
 @export var extra_limit_rect: Rect2 = Rect2(2272, -320, 176, 928)
-@export var area14_first_section_camera_limits: Rect2 = Rect2(0, -64, 2496, 672)
-@export var section_2_camera_limits: Rect2 = Rect2(3008, -48, 2496, 688)
+@export var area14_first_section_camera_limits: Rect2 = Rect2(0, -320, 2496, 928)
+@export var section_2_camera_limits: Rect2 = Rect2(3008, -304, 2496, 944)
 @export var section_2_start_x: float = 2800.0
-@export var section_normal_zoom: Vector2 = Vector2(0.78, 0.78)
+@export var section_normal_zoom: Vector2 = Vector2(0.9, 0.9)
 @export var section_gate_zoom: Vector2 = Vector2(0.96, 0.96)
 @export var transition_focus_zoom: Vector2 = Vector2(1.02, 1.02)
 @export var transition_focus_seconds: float = 5.0
@@ -69,6 +69,22 @@ func _ready() -> void:
 	if create_extra_limit_walls_enabled:
 		call_deferred("_create_extra_limit_walls")
 	call_deferred("_cache_transition_gate_centers")
+	_hide_parallax_until_camera_ready()
+
+func _hide_parallax_until_camera_ready() -> void:
+	var layers: Array[Node] = []
+	for child in get_children():
+		if child is ParallaxBackground:
+			child.visible = false
+			layers.append(child)
+	_reveal_parallax_after_delay(layers)
+
+func _reveal_parallax_after_delay(layers: Array[Node]) -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	for layer in layers:
+		if is_instance_valid(layer):
+			layer.visible = true
 
 func _process(delta: float) -> void:
 	if active and clamp_players_during_fight:

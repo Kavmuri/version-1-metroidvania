@@ -4,6 +4,8 @@ extends Area2D
 @export var blink_speed: float = 1.5
 @export var blink_energy: float = 1.4
 @export var branch_pieces: Array[NodePath] = []
+@export var camera_focus_delay: float = 1.2
+@export var camera_focus_hold_duration: float = 3.5
 
 @onready var _prompt_panel: Control = get_node_or_null("PromptPanel") as Control
 @onready var _count_label: Label = get_node_or_null("PromptPanel/Row/CountLabel") as Label
@@ -68,6 +70,14 @@ func _open_wall() -> void:
 	if _prompt_panel != null:
 		_prompt_panel.visible = false
 	set_deferred("monitoring", false)
+
+	var area := get_parent()
+	if area != null and area.has_method("focus_camera_on_point"):
+		area.focus_camera_on_point(global_position, camera_focus_hold_duration)
+
+	if camera_focus_delay > 0.0:
+		await get_tree().create_timer(camera_focus_delay).timeout
+
 	if _solid_body != null:
 		_solid_body.set_deferred("collision_layer", 0)
 	if _blink_light != null:

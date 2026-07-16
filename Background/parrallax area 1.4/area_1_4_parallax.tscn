@@ -6,8 +6,11 @@
 [ext_resource type="Texture2D" uid="uid://sxmdbmollgmi" path="res://Background/parrallax area 1.4/background hollowcaves (4).png" id="4_layer4"]
 
 [node name="Area14Parallax" type="ParallaxBackground" unique_id=1636300784]
+scale = Vector2(0.4, 0.4)
+transform = Transform2D(0.4, 0, 0, 0.4, 0, 0)
 
 [node name="BackCaveLayer" type="ParallaxLayer" parent="." unique_id=1611278453]
+modulate = Color(0.08, 0.08, 0.12, 1)
 motion_scale = Vector2(0.35, 1)
 motion_mirroring = Vector2(1250, 0)
 
@@ -18,6 +21,7 @@ texture = ExtResource("1_layer1")
 centered = false
 
 [node name="MidCaveLayer" type="ParallaxLayer" parent="." unique_id=1793449129]
+modulate = Color(0.22, 0.22, 0.3, 1)
 motion_scale = Vector2(0.55, 1)
 motion_mirroring = Vector2(1250, 0)
 
@@ -28,6 +32,7 @@ texture = ExtResource("2_layer2")
 centered = false
 
 [node name="FrontCaveLayer" type="ParallaxLayer" parent="." unique_id=352227941]
+modulate = Color(0.4, 0.4, 0.5, 1)
 motion_scale = Vector2(0.75, 1)
 motion_mirroring = Vector2(1250, 0)
 
@@ -38,6 +43,7 @@ texture = ExtResource("3_layer3")
 centered = false
 
 [node name="NearCaveLayer" type="ParallaxLayer" parent="." unique_id=892070205]
+modulate = Color(0.62, 0.62, 0.72, 1)
 motion_scale = Vector2(0.9, 1)
 motion_mirroring = Vector2(1250, 0)
 
@@ -46,48 +52,3 @@ position = Vector2(0, -90)
 scale = Vector2(1.25, 1.25)
 texture = ExtResource("4_layer4")
 centered = false
-
-[node name="BackCaveLayer2" type="ParallaxLayer" parent="." unique_id=396426874]
-position = Vector2(0, 640)
-motion_scale = Vector2(0.35, 1)
-motion_mirroring = Vector2(1250, 0)
-
-[node name="Sprite2D" type="Sprite2D" parent="BackCaveLayer2" unique_id=2027413118]
-position = Vector2(0, -90)
-scale = Vector2(1.25, 1.25)
-texture = ExtResource("1_layer1")
-centered = false
-
-[node name="MidCaveLayer2" type="ParallaxLayer" parent="." unique_id=66668913]
-position = Vector2(0, 640)
-motion_scale = Vector2(0.55, 1)
-motion_mirroring = Vector2(1250, 0)
-
-[node name="Sprite2D" type="Sprite2D" parent="MidCaveLayer2" unique_id=415165495]
-position = Vector2(0, -90)
-scale = Vector2(1.25, 1.25)
-texture = ExtResource("2_layer2")
-centered = false
-
-[node name="FrontCaveLayer2" type="ParallaxLayer" parent="." unique_id=488692026]
-position = Vector2(0, 640)
-motion_scale = Vector2(0.75, 1)
-motion_mirroring = Vector2(1250, 0)
-
-[node name="Sprite2D" type="Sprite2D" parent="FrontCaveLayer2" unique_id=1067727836]
-position = Vector2(0, -90)
-scale = Vector2(1.25, 1.25)
-texture = ExtResource("3_layer3")
-centered = false
-
-[node name="NearCaveLayer2" type="ParallaxLayer" parent="." unique_id=52868838]
-position = Vector2(0, 640)
-motion_scale = Vector2(0.9, 1)
-motion_mirroring = Vector2(1250, 0)
-
-[node name="Sprite2D" type="Sprite2D" parent="NearCaveLayer2" unique_id=1307022586]
-position = Vector2(0, -90)
-scale = Vector2(1.25, 1.25)
-texture = ExtResource("4_layer4")
-centered = false
-offset = Vector2(0, -17)

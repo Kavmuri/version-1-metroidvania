@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://boiuleo08yujw"]
+
+[ext_resource type="Texture2D" uid="uid://bebcsbu10r2k5" path="res://Tileset/area1/cavecrystal/mushroom caps.png" id="2_bnc3f"]
+[ext_resource type="Script" uid="uid://bxajijlk5i8jy" path="res://Scripts/pressed_hongo.gd" id="3_hongo"]
+[ext_resource type="Texture2D" uid="uid://bhlkopbeelm5w" path="res://Assets/Fx/light_glow.png" id="4_glow_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jenni"]
+size = Vector2(64, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_top_detector"]
+size = Vector2(64, 36)
+
+[node name="PressedHongo" type="AnimatableBody2D" unique_id=123275325]
+script = ExtResource("3_hongo")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=172259308]
+position = Vector2(-24, 16.5)
+texture = ExtResource("2_bnc3f")
+region_enabled = true
+region_rect = Rect2(26.837793, 12.742577, 72.164604, 19.09465)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1528702338]
+position = Vector2(-24, 16.5)
+shape = SubResource("RectangleShape2D_jenni")
+
+[node name="TopDetector" type="Area2D" parent="." unique_id=1889563041]
+position = Vector2(-24, 8.5)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopDetector" unique_id=889458414]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_top_detector")
+
+[node name="WobbleParticles" type="CPUParticles2D" parent="." unique_id=1561272315]
+position = Vector2(-24, 6)
+emitting = false
+amount = 18
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.85
+direction = Vector2(0, -1)
+spread = 100.0
+gravity = Vector2(0, 60)
+initial_velocity_min = 30.0
+initial_velocity_max = 80.0
+scale_amount_max = 2.0
+color = Color(0.75, 0.95, 1, 0.95)
+
+[node name="GlowLight" type="PointLight2D" parent="." unique_id=1513962162]
+position = Vector2(-16.000002, 16)
+scale = Vector2(0.17857145, 0.07003348)
+color = Color(0.7, 0.85, 1, 1)
+energy = 0.85
+texture = ExtResource("4_glow_texture")
+texture_scale = 1.4

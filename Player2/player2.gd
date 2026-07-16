@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+signal jumped
+
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
 # Movement constants
@@ -50,6 +52,11 @@ func _physics_process(delta: float):
 		update_animations()
 		return
 
+	if GameManager.dialogue_open:
+		velocity = Vector2.ZERO
+		update_animations()
+		return
+
 	invulnerability_timer = max(invulnerability_timer - delta, 0.0)
 	hurt_timer = max(hurt_timer - delta, 0.0)
 	attack_timer = max(attack_timer - delta, 0.0)
@@ -66,6 +73,9 @@ func _physics_process(delta: float):
 
 	move_and_slide()
 
+	if tiene_salto_infinito and not is_on_floor() and is_on_wall():
+		_air_jump_available = true
+
 	update_state()
 	update_animations()
 
@@ -80,6 +90,7 @@ func handle_jump():
 	if is_on_floor():
 		AudioManager.play_sfx(&"player_jump")
 		velocity.y = JUMP_VELOCITY
+		jumped.emit()
 		if tiene_salto_infinito:
 			_air_jump_available = true
 	elif tiene_salto_infinito and _air_jump_available:

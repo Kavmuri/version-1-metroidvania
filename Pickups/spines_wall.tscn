@@ -47,10 +47,10 @@ texture = ExtResource("2_glow_texture")
 texture_scale = 2.2
 
 [node name="PromptPanel" type="PanelContainer" parent="." unique_id=907572167]
-offset_left = -248.0
+offset_left = -256.0
 offset_top = -16.0
 offset_right = -96.0
-offset_bottom = 13.0
+offset_bottom = 32.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_prompt")
 
 [node name="Row" type="HBoxContainer" parent="PromptPanel" unique_id=225387331]

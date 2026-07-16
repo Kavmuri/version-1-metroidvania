@@ -8,7 +8,7 @@ extends Node2D
 @onready var player2: Node2D = get_node_or_null("Player2") as Node2D
 
 const LIMIT_LEFT: int = 0
-const LIMIT_TOP: int = -384
+const LIMIT_TOP: int = -200
 const LIMIT_RIGHT: int = 1664
 const LIMIT_BOTTOM: int = 192
 const MAP_END_X: int = LIMIT_RIGHT
@@ -32,14 +32,31 @@ const COOP_CAMERA_ZOOM_SPEED: float = 2.5
 var _parallax_stopped = false
 var _is_transitioning: bool = false
 var player_camera: Camera2D = null
+var _camera_local_position: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	transition_rect.color.a = 0
 	_prepare_transition_rect()
 	_ensure_player2()
 	$TransitionTrigger.body_entered.connect(_on_transition_trigger_entered)
+	_hide_parallax_until_camera_ready()
 	call_deferred("_apply_area_limits")
 	call_deferred("_apply_pending_transition_positions")
+
+func _hide_parallax_until_camera_ready() -> void:
+	if parallax_bg != null:
+		parallax_bg.visible = false
+	if parallax_bg3 != null:
+		parallax_bg3.visible = false
+	_reveal_parallax_after_delay()
+
+func _reveal_parallax_after_delay() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if parallax_bg != null:
+		parallax_bg.visible = true
+	if parallax_bg3 != null:
+		parallax_bg3.visible = true
 
 func _process(delta: float) -> void:
 	_refresh_players()
@@ -51,10 +68,23 @@ func _process(delta: float) -> void:
 		return
 
 	if _is_coop_camera_active():
-		player_camera.top_level = true
+		_ensure_camera_top_level()
 		_update_coop_camera(delta)
-	elif player_camera.top_level:
-		player_camera.top_level = false
+	else:
+		_release_camera_top_level()
+
+func _ensure_camera_top_level() -> void:
+	if player_camera.top_level:
+		return
+	var current_global: Vector2 = player_camera.global_position
+	player_camera.top_level = true
+	player_camera.global_position = current_global
+
+func _release_camera_top_level() -> void:
+	if not player_camera.top_level:
+		return
+	player_camera.top_level = false
+	player_camera.position = _camera_local_position
 
 func _is_coop_camera_active() -> bool:
 	return GameManager.current_game_mode == "coop" and player2 != null and is_instance_valid(player2)
@@ -141,6 +171,8 @@ func _apply_area_limits() -> void:
 			_configure_camera_limits(child as Camera2D)
 
 	if player_camera != null:
+		if not player_camera.top_level:
+			_camera_local_position = player_camera.position
 		player_camera.call_deferred("make_current")
 
 func _find_player_camera() -> Camera2D:
