@@ -42,6 +42,7 @@ func _ready() -> void:
 	hearts = max_hearts
 	add_to_group(&"Player")
 	add_to_group(&"player")
+	input_mode = "gamepad"
 
 func _physics_process(delta: float):
 	if is_dead:
@@ -169,6 +170,23 @@ func set_salto_infinito_activo(activo: bool) -> void:
 	tiene_salto_infinito = activo
 	if not activo:
 		_air_jump_available = false
+
+func get_upgrade_state() -> Dictionary:
+	return {
+		"max_health": max_health,
+		"attack_damage": attack_damage,
+		"attack_cooldown": attack_cooldown,
+		"tiene_salto_infinito": tiene_salto_infinito,
+	}
+
+func apply_upgrade_state(state: Dictionary) -> void:
+	if state.is_empty():
+		return
+	max_health = int(state.get("max_health", max_health))
+	health = max_health
+	attack_damage = int(state.get("attack_damage", attack_damage))
+	attack_cooldown = float(state.get("attack_cooldown", attack_cooldown))
+	tiene_salto_infinito = bool(state.get("tiene_salto_infinito", tiene_salto_infinito))
 
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
 	if invulnerability_timer > 0.0 or hearts <= 0:

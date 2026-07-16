@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="3_vp7bn"]
 [ext_resource type="TileSet" uid="uid://dwoae3wqtlmvi" path="res://Tileset/area1/tileset.tres" id="6_xsmd8"]
 [ext_resource type="PackedScene" uid="uid://bp3378g2hwpb3" path="res://Pickups/upgrade_pickup.tscn" id="7_rha31"]
+[ext_resource type="PackedScene" path="res://Pickups/save_point.tscn" id="8_savepoint"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_20fqv"]
 texture = ExtResource("1_f7hv5")
@@ -912,3 +913,7 @@ position = Vector2(108, 144)
 
 [node name="UpgradePickup2" parent="." unique_id=2132425333 instance=ExtResource("7_rha31")]
 position = Vector2(671, -179)
+
+[node name="SavePoint" parent="." instance=ExtResource("8_savepoint")]
+position = Vector2(250, 0)
+area_id = "area1"

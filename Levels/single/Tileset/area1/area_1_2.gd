@@ -39,6 +39,24 @@ const NEXT_PLAYER1_POSITION: Vector2 = Vector2(296, 56)
 const NEXT_PLAYER2_POSITION: Vector2 = Vector2(344, 56)
 const FADE_WAIT_SECONDS: float = 0.55
 
+const GLOW_TEXTURE: Texture2D = preload("res://Assets/Fx/light_glow.png")
+const DARKNESS_COLOR: Color = Color(0.08, 0.08, 0.12, 1.0)
+const PLAYER_LIGHT_COLOR: Color = Color(1.0, 0.96, 0.85, 1.0)
+const PLAYER_LIGHT_ENERGY: float = 1.3
+const PLAYER_LIGHT_SCALE: float = 0.7
+const PLAYER_LIGHT_OFFSET: Vector2 = Vector2(0.0, -20.0)
+const GLOW_LAYER_NAMES: Array[String] = ["estantes", "detalles", "detalles2"]
+const GLOW_LIGHT_ENERGY: float = 0.5
+const GLOW_LIGHT_SCALE: float = 3.0
+const GLOW_LIGHT_X_RATIOS: Array[float] = [0.2, 0.5, 0.8]
+const GLOW_PULSE_MIN_RATIO: float = 0.4
+const GLOW_PULSE_SPEED: float = 1.5
+
+const FALLING_PARTICLES_AMOUNT: int = 28
+const FALLING_PARTICLES_LIFETIME: float = 10.0
+const FALLING_PARTICLES_SCALE_MIN: float = 1.0
+const FALLING_PARTICLES_SCALE_MAX: float = 2.1
+
 @export var close_zoom: Vector2 = Vector2(0.85, 0.85)
 @export var far_zoom: Vector2 = Vector2(0.74, 0.74)
 @export var zoom_start_x: float = 256.0
@@ -50,11 +68,18 @@ const FADE_WAIT_SECONDS: float = 0.55
 @export var wide_camera_limit_right: int = 3904
 @export var wide_camera_limit_bottom: int = 512
 
+const COOP_CAMERA_CLOSE_DISTANCE: float = 140.0
+const COOP_CAMERA_FAR_DISTANCE: float = 420.0
+const COOP_CAMERA_FOLLOW_SPEED: float = 4.0
+const COOP_CAMERA_ZOOM_SPEED: float = 2.5
+
 var player_camera: Camera2D = null
 var _is_transitioning: bool = false
 var _wide_camera_active: bool = false
 var _wide_view_narration_shown: bool = false
 var _last_player_x: Dictionary = {}
+var _glow_lights: Array[PointLight2D] = []
+var _glow_pulse_time: float = 0.0
 
 func _ready() -> void:
 	_prepare_transition_rect()
@@ -63,10 +88,78 @@ func _ready() -> void:
 	_connect_transition_area("areadetransicionFINAL1_2", _on_final_transition_entered, ["areadetransicionFINAL1_3", "TransitionTrigger"])
 	_connect_camera_transition_area("transicioncamaraENTER", _on_camera_enter_transition)
 	_connect_camera_transition_area("transicioncamaraOUT", _on_camera_out_transition)
+	_apply_darkness_effect()
 	call_deferred("_apply_area_limits")
 	call_deferred("_apply_pending_transition_positions")
 
+func _apply_darkness_effect() -> void:
+	var darkness := CanvasModulate.new()
+	darkness.name = "Darkness"
+	darkness.color = DARKNESS_COLOR
+	add_child(darkness)
+
+	_add_player_light(player)
+	_add_player_light(player2)
+
+	for layer_name in GLOW_LAYER_NAMES:
+		var layer: Node = get_node_or_null(layer_name)
+		if layer != null:
+			_add_glow_lights(layer)
+
+	_add_falling_particles()
+
+func _add_player_light(target: Node2D) -> void:
+	if target == null or target.has_node("PlayerLight"):
+		return
+	var light := PointLight2D.new()
+	light.name = "PlayerLight"
+	light.texture = GLOW_TEXTURE
+	light.color = PLAYER_LIGHT_COLOR
+	light.energy = PLAYER_LIGHT_ENERGY
+	light.texture_scale = PLAYER_LIGHT_SCALE
+	light.position = PLAYER_LIGHT_OFFSET
+	target.add_child(light)
+
+func _add_glow_lights(layer: Node) -> void:
+	if layer.has_node("GlowLight0"):
+		return
+	var mid_y: float = (LIMIT_TOP + LIMIT_BOTTOM) / 2.0
+	for i in GLOW_LIGHT_X_RATIOS.size():
+		var light := PointLight2D.new()
+		light.name = "GlowLight%d" % i
+		light.texture = GLOW_TEXTURE
+		light.color = Color(1.0, 1.0, 1.0, 1.0)
+		light.energy = GLOW_LIGHT_ENERGY
+		light.texture_scale = GLOW_LIGHT_SCALE
+		light.position = Vector2(lerpf(LIMIT_LEFT, LIMIT_RIGHT, GLOW_LIGHT_X_RATIOS[i]), mid_y)
+		layer.add_child(light)
+		_glow_lights.append(light)
+
+func _add_falling_particles() -> void:
+	if has_node("FallingParticles"):
+		return
+
+	var particles := CPUParticles2D.new()
+	particles.name = "FallingParticles"
+	particles.position = Vector2((LIMIT_LEFT + LIMIT_RIGHT) / 2.0, LIMIT_TOP - 40.0)
+	particles.amount = FALLING_PARTICLES_AMOUNT
+	particles.lifetime = FALLING_PARTICLES_LIFETIME
+	particles.preprocess = FALLING_PARTICLES_LIFETIME
+	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	particles.emission_rect_extents = Vector2((LIMIT_RIGHT - LIMIT_LEFT) / 2.0, 4.0)
+	particles.direction = Vector2(0.0, 1.0)
+	particles.spread = 4.0
+	particles.gravity = Vector2(0.0, 25.0)
+	particles.initial_velocity_min = 50.0
+	particles.initial_velocity_max = 90.0
+	particles.scale_amount_min = FALLING_PARTICLES_SCALE_MIN
+	particles.scale_amount_max = FALLING_PARTICLES_SCALE_MAX
+	particles.color = Color(1.0, 1.0, 1.0, 0.75)
+	add_child(particles)
+
 func _process(delta: float) -> void:
+	_update_glow_pulse(delta)
+
 	_refresh_players()
 	if player == null:
 		return
@@ -74,8 +167,42 @@ func _process(delta: float) -> void:
 		_apply_area_limits()
 
 	_clamp_players_to_area()
-	_update_camera_zoom(delta)
+
+	if _is_coop_camera_active():
+		player_camera.top_level = true
+		_update_coop_camera(delta)
+	else:
+		if player_camera.top_level:
+			player_camera.top_level = false
+		_update_camera_zoom(delta)
+
 	_remember_player_positions()
+
+func _is_coop_camera_active() -> bool:
+	return GameManager.current_game_mode == "coop" and player2 != null and is_instance_valid(player2)
+
+func _update_coop_camera(delta: float) -> void:
+	var target_position: Vector2 = (player.global_position + player2.global_position) * 0.5
+	var distance: float = player.global_position.distance_to(player2.global_position)
+	var t: float = clampf(inverse_lerp(COOP_CAMERA_CLOSE_DISTANCE, COOP_CAMERA_FAR_DISTANCE, distance), 0.0, 1.0)
+	var target_zoom: Vector2 = close_zoom.lerp(wide_camera_zoom, t)
+	if _wide_camera_active and target_zoom.x > wide_camera_zoom.x:
+		target_zoom = wide_camera_zoom
+
+	var pos_weight: float = 1.0 - exp(-COOP_CAMERA_FOLLOW_SPEED * delta)
+	var zoom_weight: float = 1.0 - exp(-COOP_CAMERA_ZOOM_SPEED * delta)
+	player_camera.global_position = player_camera.global_position.lerp(target_position, pos_weight)
+	player_camera.zoom = player_camera.zoom.lerp(target_zoom, zoom_weight)
+
+func _update_glow_pulse(delta: float) -> void:
+	if _glow_lights.is_empty():
+		return
+	_glow_pulse_time += delta
+	var pulse: float = (sin(_glow_pulse_time * GLOW_PULSE_SPEED) * 0.5) + 0.5
+	var factor: float = lerpf(GLOW_PULSE_MIN_RATIO, 1.0, pulse)
+	for light in _glow_lights:
+		if is_instance_valid(light):
+			light.energy = GLOW_LIGHT_ENERGY * factor
 
 func _on_final_transition_entered(body: Node2D) -> void:
 	if _is_transitioning:
@@ -95,7 +222,7 @@ func _transition_to_area(scene_path: String, player1_position: Vector2, player2_
 		"game_mode": GameManager.current_game_mode,
 		"selected_single_player": GameManager.selected_single_player
 	}
-	GameManager.capture_player_progress(player)
+	GameManager.save_player_upgrade_state(player)
 	get_tree().change_scene_to_file(scene_path)
 
 func _prepare_transition_rect() -> void:
@@ -294,6 +421,8 @@ func _configure_single_player() -> void:
 		_ensure_gameplay_hud(null, player2)
 		_ensure_pause_menu(player2)
 		return
+	if GameManager.current_game_mode != "coop":
+		return
 
 	player = PLAYER1_SCENE.instantiate() as Node2D
 	player.name = "Player1"
@@ -326,7 +455,6 @@ func _configure_active_player(active_player: Node2D) -> void:
 		var collision_player := active_player as CollisionObject2D
 		collision_player.collision_layer = 2
 		collision_player.collision_mask = max(collision_player.collision_mask, 1)
-	GameManager.apply_player_progress(active_player)
 	_ensure_player_camera(active_player)
 
 func _ensure_player_camera(active_player: Node2D) -> void:

@@ -22,6 +22,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 	_collected = true
 	_show_upgrade_feedback(body, upgrade_result)
+	GameManager.save_player_upgrade_state(body)
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager != null and audio_manager.has_method("play_sfx"):
 		audio_manager.play_sfx(&"ui_confirm")

@@ -1,4 +1,4 @@
-extends Control
+extends CanvasLayer
 
 signal loading_finished
 
@@ -8,6 +8,7 @@ const FADE_DURATION := 0.4
 @onready var _fade: ColorRect = $FadeOverlay
 
 var _reload_current_scene := false
+var _continue_from_save := false
 var _next_scene_path := ""
 
 func _ready() -> void:
@@ -19,6 +20,9 @@ func _ready() -> void:
 
 func configure_reload_current_scene() -> void:
 	_reload_current_scene = true
+
+func configure_continue_from_save() -> void:
+	_continue_from_save = true
 
 func configure_target_scene(scene_path: String) -> void:
 	_next_scene_path = scene_path
@@ -34,7 +38,9 @@ func _on_bar_finished() -> void:
 
 func _do_scene_change() -> void:
 	get_tree().paused = false
-	if _reload_current_scene:
+	if _continue_from_save:
+		GameManager.continue_game()
+	elif _reload_current_scene:
 		var current_scene = get_tree().current_scene
 		if current_scene != null:
 			var scene_path = current_scene.scene_file_path

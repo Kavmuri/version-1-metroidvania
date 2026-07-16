@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dr68w0vw6upp3" path="res://UI/Interfaz/MenuInicio/logo png.png" id="1_g7r2y"]
 [ext_resource type="Script" uid="uid://es46ek7f8voi" path="res://UI/Interfaz/MenuInicio/menu_inicio_juego.gd" id="3_menu_script"]
 [ext_resource type="Script" uid="uid://byfdam0eu08c7" path="res://UI/Interfaz/MenuInicio/gradient_overlay.gd" id="4_gradient"]
-[ext_resource type="FontFile" uid="uid://c6e435u5sdah0" path="res://UI/DungeonFont.ttf" id="5_font"]
+[ext_resource type="FontFile" uid="uid://b4r8tw8nhijxg" path="res://UI/BoldPixels.otf" id="5_font"]
 
 [node name="MenuInicioJuego" type="Node2D" unique_id=62177402]
 script = ExtResource("3_menu_script")

@@ -12,12 +12,12 @@ const LIMIT_RIGHT: int = 4352
 const LIMIT_BOTTOM: int = 512
 const FIRST_SECTION_CAMERA_LIMIT_NAME: String = "first_section"
 const FIRST_SECTION_CAMERA_LIMIT_LEFT: int = 160
-const FIRST_SECTION_CAMERA_LIMIT_TOP: int = -256
+const FIRST_SECTION_CAMERA_LIMIT_TOP: int = -384
 const FIRST_SECTION_CAMERA_LIMIT_RIGHT: int = 2048
 const FIRST_SECTION_CAMERA_LIMIT_BOTTOM: int = 320
 const SECOND_SECTION_CAMERA_LIMIT_NAME: String = "second_section"
 const SECOND_SECTION_CAMERA_LIMIT_LEFT: int = 2112
-const SECOND_SECTION_CAMERA_LIMIT_TOP: int = -320
+const SECOND_SECTION_CAMERA_LIMIT_TOP: int = -384
 const SECOND_SECTION_CAMERA_LIMIT_RIGHT: int = 4352
 const SECOND_SECTION_CAMERA_LIMIT_BOTTOM: int = 320
 const SECOND_SECTION_START_X: float = 2112.0
@@ -54,9 +54,38 @@ const SECTION_2_PLAYER1_POSITION: Vector2 = Vector2(2208, 56)
 const SECTION_2_PLAYER2_POSITION: Vector2 = Vector2(2256, 56)
 const FADE_WAIT_SECONDS: float = 0.55
 
+const GLOW_TEXTURE: Texture2D = preload("res://Assets/Fx/light_glow.png")
+const DARKNESS_COLOR: Color = Color(0.08, 0.08, 0.12, 1.0)
+const PLAYER_LIGHT_COLOR: Color = Color(1.0, 0.96, 0.85, 1.0)
+const PLAYER_LIGHT_ENERGY: float = 1.3
+const PLAYER_LIGHT_SCALE: float = 0.7
+const PLAYER_LIGHT_OFFSET: Vector2 = Vector2(0.0, -20.0)
+
+const FLOATING_PARTICLES_AMOUNT: int = 18
+const FLOATING_PARTICLES_LIFETIME: float = 6.0
+const FALLING_PARTICLES_AMOUNT: int = 26
+const FALLING_PARTICLES_LIFETIME: float = 10.0
+
+const CAMERA_CLOSE_ZOOM: Vector2 = Vector2(0.95, 0.95)
+const CAMERA_FAR_ZOOM: Vector2 = Vector2(0.65, 0.65)
+const CAMERA_PLATFORM_WIDE_ZOOM: Vector2 = Vector2(0.48, 0.48)
+const CAMERA_ZOOM_HOLD_SECONDS: float = 6.0
+const CAMERA_ZOOM_SMOOTH_SPEED: float = 0.9
+const PLATFORM_PROXIMITY_RADIUS: float = 260.0
+const PLATFORM_PROXIMITY_EXIT_RADIUS: float = 340.0
+
+const COOP_CAMERA_CLOSE_DISTANCE: float = 140.0
+const COOP_CAMERA_FAR_DISTANCE: float = 420.0
+const COOP_CAMERA_FOLLOW_SPEED: float = 4.0
+const COOP_CAMERA_ZOOM_SPEED: float = 2.5
+
+var _near_platform_state: bool = false
+
 var player_camera: Camera2D = null
 var active_camera_limit_name: String = FIRST_SECTION_CAMERA_LIMIT_NAME
 var _is_transitioning: bool = false
+var _zoom_timer: float = 0.0
+var _camera_focus_nodes: Array[Node2D] = []
 
 func _ready() -> void:
 	_prepare_transition_rect()
@@ -65,10 +94,127 @@ func _ready() -> void:
 	_connect_transition_area("transicionarea1_3ENTER2seccion1", _on_section_1_enter_transition_entered)
 	_connect_transition_area("transicionarea1_3OUTseccion1_22", _on_section_1_out_transition_entered)
 	_connect_transition_area("transicionarea1_3ENTER2seccion2", _on_section_2_enter_transition_entered)
+	_apply_darkness_effect()
+	_add_floating_particles()
+	_add_falling_particles()
+	_zoom_timer = 0.0
 	call_deferred("_apply_area_limits")
 	call_deferred("_apply_pending_transition_positions")
+	call_deferred("_gather_camera_focus_nodes")
 
-func _process(_delta: float) -> void:
+func _gather_camera_focus_nodes() -> void:
+	_camera_focus_nodes.clear()
+	for child in get_children():
+		if child is Node2D and ("Plataforma" in child.name or "Platform" in child.name):
+			_camera_focus_nodes.append(child)
+
+func _is_near_platform_mechanism() -> bool:
+	var radius: float = PLATFORM_PROXIMITY_EXIT_RADIUS if _near_platform_state else PLATFORM_PROXIMITY_RADIUS
+	var found: bool = false
+	if not _camera_focus_nodes.is_empty():
+		for node in _camera_focus_nodes:
+			if not is_instance_valid(node):
+				continue
+			if player != null and player.global_position.distance_to(node.global_position) <= radius:
+				found = true
+				break
+			if player2 != null and is_instance_valid(player2) and player2.global_position.distance_to(node.global_position) <= radius:
+				found = true
+				break
+	_near_platform_state = found
+	return found
+
+func _update_camera_zoom(delta: float) -> void:
+	if player_camera == null or not is_instance_valid(player_camera):
+		return
+
+	_zoom_timer += delta
+	var target_zoom: Vector2 = CAMERA_FAR_ZOOM
+	if _is_near_platform_mechanism():
+		target_zoom = CAMERA_PLATFORM_WIDE_ZOOM
+	elif _zoom_timer < CAMERA_ZOOM_HOLD_SECONDS:
+		target_zoom = CAMERA_CLOSE_ZOOM
+
+	var weight: float = 1.0 - exp(-CAMERA_ZOOM_SMOOTH_SPEED * delta)
+	player_camera.zoom = player_camera.zoom.lerp(target_zoom, weight)
+
+func _apply_darkness_effect() -> void:
+	var darkness := CanvasModulate.new()
+	darkness.name = "Darkness"
+	darkness.color = DARKNESS_COLOR
+	add_child(darkness)
+
+	_add_player_light(player)
+	_add_player_light(player2)
+
+func _add_player_light(target: Node2D) -> void:
+	if target == null or target.has_node("PlayerLight"):
+		return
+	var light := PointLight2D.new()
+	light.name = "PlayerLight"
+	light.texture = GLOW_TEXTURE
+	light.color = PLAYER_LIGHT_COLOR
+	light.energy = PLAYER_LIGHT_ENERGY
+	light.texture_scale = PLAYER_LIGHT_SCALE
+	light.position = PLAYER_LIGHT_OFFSET
+	target.add_child(light)
+
+func _add_floating_particles() -> void:
+	if has_node("FloatingParticles"):
+		return
+
+	var particles := CPUParticles2D.new()
+	particles.name = "FloatingParticles"
+	particles.position = Vector2((LIMIT_LEFT + LIMIT_RIGHT) / 2.0, (LIMIT_TOP + LIMIT_BOTTOM) / 2.0)
+	particles.amount = FLOATING_PARTICLES_AMOUNT
+	particles.lifetime = FLOATING_PARTICLES_LIFETIME
+	particles.preprocess = FLOATING_PARTICLES_LIFETIME
+	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	particles.emission_rect_extents = Vector2((LIMIT_RIGHT - LIMIT_LEFT) / 2.0, (LIMIT_BOTTOM - LIMIT_TOP) / 2.0)
+	particles.direction = Vector2(0.0, -1.0)
+	particles.spread = 180.0
+	particles.gravity = Vector2.ZERO
+	particles.initial_velocity_min = 4.0
+	particles.initial_velocity_max = 12.0
+	particles.scale_amount_min = 1.6
+	particles.scale_amount_max = 3.0
+	particles.color = Color(1.0, 1.0, 1.0, 1.0)
+	particles.color_ramp = _build_fade_gradient()
+	add_child(particles)
+
+func _add_falling_particles() -> void:
+	if has_node("FallingParticles"):
+		return
+
+	var particles := CPUParticles2D.new()
+	particles.name = "FallingParticles"
+	particles.position = Vector2((LIMIT_LEFT + LIMIT_RIGHT) / 2.0, LIMIT_TOP - 40.0)
+	particles.amount = FALLING_PARTICLES_AMOUNT
+	particles.lifetime = FALLING_PARTICLES_LIFETIME
+	particles.preprocess = FALLING_PARTICLES_LIFETIME
+	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	particles.emission_rect_extents = Vector2((LIMIT_RIGHT - LIMIT_LEFT) / 2.0, 4.0)
+	particles.direction = Vector2(0.0, 1.0)
+	particles.spread = 4.0
+	particles.gravity = Vector2(0.0, 25.0)
+	particles.initial_velocity_min = 50.0
+	particles.initial_velocity_max = 90.0
+	particles.scale_amount_min = 2.0
+	particles.scale_amount_max = 4.0
+	particles.color = Color(1.0, 1.0, 1.0, 0.75)
+	add_child(particles)
+
+func _build_fade_gradient() -> Gradient:
+	var gradient := Gradient.new()
+	gradient.offsets = PackedFloat32Array([0.0, 0.5, 1.0])
+	gradient.colors = PackedColorArray([
+		Color(1.0, 1.0, 1.0, 0.0),
+		Color(1.0, 1.0, 1.0, 0.9),
+		Color(1.0, 1.0, 1.0, 0.0)
+	])
+	return gradient
+
+func _process(delta: float) -> void:
 	_refresh_players()
 	if player == null:
 		return
@@ -76,7 +222,32 @@ func _process(_delta: float) -> void:
 		_apply_area_limits()
 
 	_update_active_camera_limit()
+
+	if _is_coop_camera_active():
+		player_camera.top_level = true
+		_update_coop_camera(delta)
+	else:
+		if player_camera.top_level:
+			player_camera.top_level = false
+		_update_camera_zoom(delta)
+
 	_clamp_players_to_area()
+
+func _is_coop_camera_active() -> bool:
+	return GameManager.current_game_mode == "coop" and player2 != null and is_instance_valid(player2)
+
+func _update_coop_camera(delta: float) -> void:
+	var target_position: Vector2 = (player.global_position + player2.global_position) * 0.5
+	var distance: float = player.global_position.distance_to(player2.global_position)
+	var t: float = clampf(inverse_lerp(COOP_CAMERA_CLOSE_DISTANCE, COOP_CAMERA_FAR_DISTANCE, distance), 0.0, 1.0)
+	var target_zoom: Vector2 = CAMERA_CLOSE_ZOOM.lerp(CAMERA_FAR_ZOOM, t)
+	if _is_near_platform_mechanism() and target_zoom.x > CAMERA_PLATFORM_WIDE_ZOOM.x:
+		target_zoom = CAMERA_PLATFORM_WIDE_ZOOM
+
+	var pos_weight: float = 1.0 - exp(-COOP_CAMERA_FOLLOW_SPEED * delta)
+	var zoom_weight: float = 1.0 - exp(-COOP_CAMERA_ZOOM_SPEED * delta)
+	player_camera.global_position = player_camera.global_position.lerp(target_position, pos_weight)
+	player_camera.zoom = player_camera.zoom.lerp(target_zoom, zoom_weight)
 
 func _on_section_1_enter_transition_entered(body: Node2D) -> void:
 	if _is_transitioning:
@@ -108,7 +279,7 @@ func _transition_to_previous_area() -> void:
 		"game_mode": GameManager.current_game_mode,
 		"selected_single_player": GameManager.selected_single_player
 	}
-	GameManager.capture_player_progress(player)
+	GameManager.save_player_upgrade_state(player)
 	get_tree().change_scene_to_file(PREVIOUS_AREA_SCENE)
 
 func _transition_to_section_2() -> void:
@@ -118,6 +289,7 @@ func _transition_to_section_2() -> void:
 	active_camera_limit_name = SECOND_SECTION_CAMERA_LIMIT_NAME
 	if player_camera != null and is_instance_valid(player_camera):
 		_configure_camera_limits(player_camera)
+	_zoom_timer = 0.0
 	await _fade_from_black()
 	_is_transitioning = false
 
@@ -128,6 +300,7 @@ func _transition_to_section_1() -> void:
 	active_camera_limit_name = FIRST_SECTION_CAMERA_LIMIT_NAME
 	if player_camera != null and is_instance_valid(player_camera):
 		_configure_camera_limits(player_camera)
+	_zoom_timer = 0.0
 	await _fade_from_black()
 	_is_transitioning = false
 
@@ -287,6 +460,8 @@ func _configure_single_player() -> void:
 		_ensure_gameplay_hud(null, player2)
 		_ensure_pause_menu(player2)
 		return
+	if GameManager.current_game_mode != "coop":
+		return
 
 	player = PLAYER1_SCENE.instantiate() as Node2D
 	player.name = "Player1"
@@ -319,7 +494,6 @@ func _configure_active_player(active_player: Node2D) -> void:
 		var collision_player := active_player as CollisionObject2D
 		collision_player.collision_layer = 2
 		collision_player.collision_mask = max(collision_player.collision_mask, 1)
-	GameManager.apply_player_progress(active_player)
 	_ensure_player_camera(active_player)
 
 func _ensure_player_camera(active_player: Node2D) -> void:
@@ -419,3 +593,4 @@ func _clamp_player_to_area(player_node: Node2D) -> void:
 		clampf(player_node.global_position.x, MAP_MIN.x, MAP_MAX.x),
 		clampf(player_node.global_position.y, MAP_MIN.y, MAP_MAX.y)
 	)
+

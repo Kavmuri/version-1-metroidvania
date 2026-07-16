@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://cljq4t8adx7ju"]
 
-[ext_resource type="Texture2D" uid="uid://bhkwbbm13gx4f" path="res://Tileset/area1/crystal_cave_background_by_fellfeline_dektmf0-fullview.jpg" id="1_7vv7k"]
+[ext_resource type="Texture2D" uid="uid://bhkwbbm13gx4f" path="res://Tileset/area1/cavecrystal/crystal_cave_background_by_fellfeline_dektmf0-fullview.jpg" id="1_7vv7k"]
 [ext_resource type="TileSet" uid="uid://dwoae3wqtlmvi" path="res://Tileset/area1/tileset.tres" id="2_408fv"]
 [ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="3_s4gj5"]
 [ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="4_ou1hc"]
@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" path="res://Enemies/boss/agis sprites/enemy_agis.tscn" id="7_s4gj5"]
 [ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player1/player.tscn" id="8_ou1hc"]
 [ext_resource type="Script" uid="uid://d0qpgxi8m12su" path="res://Scripts/boss_arena_controller.gd" id="9_agis_ctrl"]
-[ext_resource type="PackedScene" path="res://UI/scenes/gameplay_hud.tscn" id="10_hud"]
+[ext_resource type="PackedScene" uid="uid://dcru6inw7g4ym" path="res://UI/scenes/gameplay_hud.tscn" id="10_hud"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_agis_floor"]
 size = Vector2(560, 24)

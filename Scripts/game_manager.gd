@@ -51,30 +51,15 @@ const BLOCKED_GAMEPLAY_KEYS := {
 var current_world: Node2D = null
 var current_player1: Node2D = null
 var current_player2: Node2D = null
+var player1_upgrade_state: Dictionary = {}
+var player2_upgrade_state: Dictionary = {}
+var completed_areas: Dictionary = {}
 var current_world_seed: int = 0
 var current_game_mode: String = "single"
 var selected_single_player: String = "player1"
 var pending_load_data: Dictionary = {}
-var _death_screen: Control = null
+var _death_screen: CanvasLayer = null
 var _is_restoring_save := false
-
-const DEFAULT_KAIZEN_PROGRESS := {
-	"tiene_dash": false,
-	"tiene_salto_infinito": false,
-	"unlocked_projectile_upgrades": [],
-	"max_health": 100,
-	"attack_damage": 10,
-	"attack_cooldown": 0.45,
-}
-const DEFAULT_ELDRIC_PROGRESS := {
-	"tiene_salto_infinito": false,
-	"max_health": 100,
-	"attack_damage": 10,
-	"attack_cooldown": 0.35,
-}
-
-var kaizen_progress: Dictionary = DEFAULT_KAIZEN_PROGRESS.duplicate(true)
-var eldric_progress: Dictionary = DEFAULT_ELDRIC_PROGRESS.duplicate(true)
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color(0.44, 0.12, 0.53, 1.00))
@@ -84,6 +69,8 @@ func _ready() -> void:
 func start_new_game(mode: String = "single", selected_player: String = "player1") -> void:
 	get_tree().paused = false
 	pending_load_data.clear()
+	player1_upgrade_state.clear()
+	player2_upgrade_state.clear()
 	_is_restoring_save = false
 	current_game_mode = mode
 	selected_single_player = selected_player if selected_player in ["player1", "player2"] else "player1"
@@ -91,8 +78,6 @@ func start_new_game(mode: String = "single", selected_player: String = "player1"
 	current_world = null
 	current_player1 = null
 	current_player2 = null
-	kaizen_progress = DEFAULT_KAIZEN_PROGRESS.duplicate(true)
-	eldric_progress = DEFAULT_ELDRIC_PROGRESS.duplicate(true)
 	get_tree().change_scene_to_file(_world_scene_for_mode(mode))
 
 func continue_game() -> bool:
@@ -107,13 +92,12 @@ func continue_game() -> bool:
 	current_game_mode = str(data.get("game_mode", "coop" if bool(data.get("player2_exists", false)) else "single"))
 	selected_single_player = str(data.get("selected_single_player", "player1"))
 	current_world_seed = int(data.get("world_seed", _make_seed()))
+	completed_areas = data.get("completed_areas", {}) as Dictionary
+	player1_upgrade_state = data.get("player1_upgrade_state", {}) as Dictionary
+	player2_upgrade_state = data.get("player2_upgrade_state", {}) as Dictionary
 	current_world = null
 	current_player1 = null
 	current_player2 = null
-	kaizen_progress = DEFAULT_KAIZEN_PROGRESS.duplicate(true)
-	kaizen_progress.merge(data.get("kaizen_progress", {}), true)
-	eldric_progress = DEFAULT_ELDRIC_PROGRESS.duplicate(true)
-	eldric_progress.merge(data.get("eldric_progress", {}), true)
 	var scene_path = str(data.get("scene", _world_scene_for_mode(current_game_mode)))
 	if scene_path.is_empty():
 		scene_path = _world_scene_for_mode(current_game_mode)
@@ -149,7 +133,10 @@ func save_game() -> bool:
 	if active_player == null:
 		return false
 
-	capture_player_progress(active_player)
+	if player1 != null and player1.has_method("get_upgrade_state"):
+		player1_upgrade_state = player1.get_upgrade_state()
+	if player2 != null and player2.has_method("get_upgrade_state"):
+		player2_upgrade_state = player2.get_upgrade_state()
 
 	var is_coop_save := current_game_mode == "coop" and player2 != null
 	var cfg = ConfigFile.new()
@@ -161,9 +148,16 @@ func save_game() -> bool:
 	cfg.set_value("game", "player2_exists", player2 != null)
 	if player2 != null:
 		cfg.set_value("game", "player2_position", player2.global_position)
-	cfg.set_value("game", "kaizen_progress", kaizen_progress)
-	cfg.set_value("game", "eldric_progress", eldric_progress)
+	cfg.set_value("game", "completed_areas", completed_areas)
+	cfg.set_value("game", "player1_upgrade_state", player1_upgrade_state)
+	cfg.set_value("game", "player2_upgrade_state", player2_upgrade_state)
 	return cfg.save(SAVE_PATH) == OK
+
+func mark_area_completed(area_id: String) -> void:
+	completed_areas[area_id] = true
+
+func is_area_completed(area_id: String) -> bool:
+	return bool(completed_areas.get(area_id, false))
 
 func save_initial_spawn_if_needed() -> void:
 	if _is_restoring_save:
@@ -197,60 +191,6 @@ func register_player1(player: Node2D) -> void:
 func register_player2(player: Node2D = null) -> void:
 	current_player2 = player
 
-func capture_player_progress(player: Node2D) -> void:
-	if player == null or not is_instance_valid(player):
-		return
-	if _is_eldric_node(player):
-		for key in eldric_progress.keys():
-			if key in player:
-				eldric_progress[key] = player.get(key)
-	else:
-		for key in kaizen_progress.keys():
-			if key in player:
-				kaizen_progress[key] = player.get(key)
-
-func apply_player_progress(player: Node2D) -> void:
-	if player == null or not is_instance_valid(player):
-		return
-	if _is_eldric_node(player):
-		_apply_eldric_progress(player)
-	else:
-		_apply_kaizen_progress(player)
-
-func _apply_kaizen_progress(player: Node2D) -> void:
-	if bool(kaizen_progress.get("tiene_dash", false)) and player.has_method("set_dash_activo"):
-		player.set_dash_activo(true)
-	if bool(kaizen_progress.get("tiene_salto_infinito", false)) and player.has_method("set_salto_infinito_activo"):
-		player.set_salto_infinito_activo(true)
-	if player.has_method("unlock_projectile_upgrade"):
-		for upgrade_index in kaizen_progress.get("unlocked_projectile_upgrades", []):
-			player.unlock_projectile_upgrade(int(upgrade_index))
-	if "max_health" in player:
-		player.max_health = int(kaizen_progress.get("max_health", player.max_health))
-		if "health" in player:
-			player.health = player.max_health
-	if "attack_damage" in player:
-		player.attack_damage = int(kaizen_progress.get("attack_damage", player.attack_damage))
-	if "attack_cooldown" in player:
-		player.attack_cooldown = float(kaizen_progress.get("attack_cooldown", player.attack_cooldown))
-
-func _apply_eldric_progress(player: Node2D) -> void:
-	if bool(eldric_progress.get("tiene_salto_infinito", false)) and player.has_method("set_salto_infinito_activo"):
-		player.set_salto_infinito_activo(true)
-	if "max_health" in player:
-		player.max_health = int(eldric_progress.get("max_health", player.max_health))
-		if "health" in player:
-			player.health = player.max_health
-	if "attack_damage" in player:
-		player.attack_damage = int(eldric_progress.get("attack_damage", player.attack_damage))
-	if "attack_cooldown" in player:
-		player.attack_cooldown = float(eldric_progress.get("attack_cooldown", player.attack_cooldown))
-
-func _is_eldric_node(player: Node2D) -> bool:
-	var script := player.get_script() as Script
-	var script_path := script.resource_path if script != null else ""
-	return player.name == "Eldric" or player.name == "Player2" or script_path == "res://Player2/player2.gd"
-
 func _world_scene_for_mode(mode: String) -> String:
 	return SINGLE_WORLD_SCENE if mode == "single" else WORLD_SCENE
 
@@ -266,6 +206,9 @@ func should_restore_player2() -> bool:
 	return current_game_mode == "coop"
 
 func apply_pending_positions(player1: Node2D, player2: Node2D = null) -> void:
+	_restore_upgrade_state(player1, player1_upgrade_state)
+	_restore_upgrade_state(player2, player2_upgrade_state)
+
 	if pending_load_data.is_empty():
 		return
 
@@ -274,6 +217,18 @@ func apply_pending_positions(player1: Node2D, player2: Node2D = null) -> void:
 	if player2 != null and pending_load_data.has("player2_position"):
 		player2.global_position = pending_load_data["player2_position"]
 	pending_load_data.clear()
+
+func save_player_upgrade_state(player: Node) -> void:
+	if player == null or not player.has_method("get_upgrade_state"):
+		return
+	if player.name == "Player2":
+		player2_upgrade_state = player.get_upgrade_state()
+	else:
+		player1_upgrade_state = player.get_upgrade_state()
+
+func _restore_upgrade_state(player: Node, state: Dictionary) -> void:
+	if player != null and not state.is_empty() and player.has_method("apply_upgrade_state"):
+		player.apply_upgrade_state(state)
 
 func _clear_death_screen() -> void:
 	if _death_screen != null and is_instance_valid(_death_screen):
@@ -362,8 +317,9 @@ func _read_save_data() -> Dictionary:
 		"player1_position": cfg.get_value("game", "player1_position", Vector2.ZERO),
 		"player2_exists": cfg.get_value("game", "player2_exists", false),
 		"player2_position": cfg.get_value("game", "player2_position", Vector2.ZERO),
-		"kaizen_progress": cfg.get_value("game", "kaizen_progress", {}),
-		"eldric_progress": cfg.get_value("game", "eldric_progress", {}),
+		"completed_areas": cfg.get_value("game", "completed_areas", {}),
+		"player1_upgrade_state": cfg.get_value("game", "player1_upgrade_state", {}),
+		"player2_upgrade_state": cfg.get_value("game", "player2_upgrade_state", {})
 	}
 
 func _resolve_player1() -> Node2D:

@@ -1,4 +1,4 @@
-extends Control
+extends CanvasLayer
 
 const LOADING_SCREEN := preload("res://UI/Interfaz/PantalladeCarga/pantallaCarga.tscn")
 
@@ -59,7 +59,10 @@ func _on_button_mouse_entered(button: Button) -> void:
 func _on_si_pressed() -> void:
 	AudioManager.play_sfx(&"ui_confirm")
 	var loading := LOADING_SCREEN.instantiate()
-	loading.configure_reload_current_scene()
+	if GameManager.has_save_game():
+		loading.configure_continue_from_save()
+	else:
+		loading.configure_reload_current_scene()
 	get_tree().root.add_child(loading)
 	queue_free()
 

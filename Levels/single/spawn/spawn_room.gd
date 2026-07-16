@@ -92,7 +92,7 @@ func _transition_to_next_area() -> void:
 		"game_mode": GameManager.current_game_mode,
 		"selected_single_player": GameManager.selected_single_player
 	}
-	GameManager.capture_player_progress(player)
+	GameManager.save_player_upgrade_state(player)
 	get_tree().change_scene_to_file(NEXT_AREA_SCENE)
 
 func _prepare_transition_rect() -> void:
@@ -196,7 +196,6 @@ func _configure_active_player(active_player: Node2D) -> void:
 		var collision_player := active_player as CollisionObject2D
 		collision_player.collision_layer = 2
 		collision_player.collision_mask = max(collision_player.collision_mask, 1)
-	GameManager.apply_player_progress(active_player)
 	_ensure_player_camera(active_player)
 
 func _ensure_player_camera(active_player: Node2D) -> void:

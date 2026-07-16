@@ -102,8 +102,16 @@ func _ready() -> void:
 	hearts = max_hearts
 	add_to_group(&"Player")
 	add_to_group(&"player")
+	if GameManager.current_game_mode == "coop":
+		input_mode = "keyboard"
+	call_deferred("_configure_input_mode_for_coop")
 	if camera_2d != null:
 		camera_2d.call_deferred("make_current")
+
+func _configure_input_mode_for_coop() -> void:
+	var parent := get_parent()
+	if parent != null and parent.has_node("Player2"):
+		input_mode = "keyboard"
 
 func _input(event: InputEvent) -> void:
 	if is_dead:
@@ -296,6 +304,33 @@ func unlock_projectile_upgrade(upgrade_index: int) -> bool:
 	_apply_active_projectile_upgrade()
 	_notify_active_powerup_icon()
 	return true
+
+func get_upgrade_state() -> Dictionary:
+	return {
+		"max_health": max_health,
+		"attack_damage": attack_damage,
+		"attack_cooldown": attack_cooldown,
+		"tiene_salto_infinito": tiene_salto_infinito,
+		"tiene_dash": tiene_dash,
+		"unlocked_projectile_upgrades": unlocked_projectile_upgrades.duplicate(),
+		"active_projectile_upgrade_index": active_projectile_upgrade_index,
+	}
+
+func apply_upgrade_state(state: Dictionary) -> void:
+	if state.is_empty():
+		return
+	max_health = int(state.get("max_health", max_health))
+	health = max_health
+	attack_damage = int(state.get("attack_damage", attack_damage))
+	attack_cooldown = float(state.get("attack_cooldown", attack_cooldown))
+	tiene_salto_infinito = bool(state.get("tiene_salto_infinito", tiene_salto_infinito))
+	tiene_dash = bool(state.get("tiene_dash", tiene_dash))
+	unlocked_projectile_upgrades.clear()
+	for idx in state.get("unlocked_projectile_upgrades", []):
+		unlocked_projectile_upgrades.append(int(idx))
+	active_projectile_upgrade_index = int(state.get("active_projectile_upgrade_index", -1))
+	_apply_active_projectile_upgrade()
+	_notify_active_powerup_icon()
 
 func cycle_projectile_upgrade() -> bool:
 	if unlocked_projectile_upgrades.is_empty():

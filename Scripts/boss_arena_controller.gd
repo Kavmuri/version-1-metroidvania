@@ -145,7 +145,6 @@ func _configure_single_player() -> void:
 		var collision_player := player as CollisionObject2D
 		collision_player.collision_layer = 2
 		collision_player.collision_mask = max(collision_player.collision_mask, 1)
-	GameManager.apply_player_progress(player)
 	_ensure_player_camera(player)
 
 func _ensure_player_camera(active_player: Node2D) -> void:
@@ -219,7 +218,7 @@ func _transition_to_previous_area() -> void:
 		"selected_single_player": GameManager.selected_single_player
 	}
 	GameManager.current_game_mode = "coop" if player2_exists else GameManager.current_game_mode
-	GameManager.capture_player_progress(p1)
+	GameManager.save_player_upgrade_state(p1)
 	get_tree().change_scene_to_file(previous_area_scene)
 
 func _transition_to_next_area() -> void:
@@ -239,7 +238,7 @@ func _transition_to_next_area() -> void:
 		"selected_single_player": GameManager.selected_single_player
 	}
 	GameManager.current_game_mode = "coop" if player2_exists else GameManager.current_game_mode
-	GameManager.capture_player_progress(p1)
+	GameManager.save_player_upgrade_state(p1)
 	get_tree().change_scene_to_file(next_area_scene)
 
 func _transition_to_section_1() -> void:

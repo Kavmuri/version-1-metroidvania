@@ -1,0 +1,213 @@
+[gd_scene format=3 uid="uid://d30l5dml8helb"]
+
+[ext_resource type="Script" uid="uid://b2uakt1m1divg" path="res://Scripts/crumbling_platform.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="2_platform_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(64, 616)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_top_detector"]
+size = Vector2(64, 659.5)
+
+[node name="CrumblingPlatform" type="AnimatableBody2D" unique_id=123275325]
+position = Vector2(-24, -24)
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=172259308]
+position = Vector2(1.9073486e-06, -2.000002)
+scale = Vector2(1.0526316, 0.8571428)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 102.33334, 76.66666, 56.666656)
+
+[node name="Sprite2D2" type="Sprite2D" parent="Sprite2D" unique_id=1883180050]
+position = Vector2(0, 37.33333)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D3" type="Sprite2D" parent="Sprite2D" unique_id=1313654581]
+position = Vector2(0, 61.16667)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D4" type="Sprite2D" parent="Sprite2D" unique_id=891400352]
+position = Vector2(0, 89.16667)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D5" type="Sprite2D" parent="Sprite2D" unique_id=825096015]
+position = Vector2(0, 117.16667)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D6" type="Sprite2D" parent="Sprite2D" unique_id=615694939]
+position = Vector2(0, 145.16667)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D7" type="Sprite2D" parent="Sprite2D" unique_id=846786132]
+position = Vector2(0, 169.00002)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D8" type="Sprite2D" parent="Sprite2D" unique_id=1485466689]
+position = Vector2(0, 197.00002)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D9" type="Sprite2D" parent="Sprite2D" unique_id=1309755012]
+position = Vector2(0, 225.00002)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D10" type="Sprite2D" parent="Sprite2D" unique_id=513427096]
+position = Vector2(-1.8119811e-06, 252.00002)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D11" type="Sprite2D" parent="Sprite2D" unique_id=1788022910]
+position = Vector2(-1.8119811e-06, 280.00003)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D12" type="Sprite2D" parent="Sprite2D" unique_id=1204019245]
+position = Vector2(-1.8119811e-06, 308.00003)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D13" type="Sprite2D" parent="Sprite2D" unique_id=1748789887]
+position = Vector2(-1.8119811e-06, 336.00003)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D14" type="Sprite2D" parent="Sprite2D" unique_id=1364837133]
+position = Vector2(-1.8119811e-06, 364)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D15" type="Sprite2D" parent="Sprite2D" unique_id=899348000]
+position = Vector2(-1.4305115e-06, 392.00003)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D16" type="Sprite2D" parent="Sprite2D" unique_id=1306655300]
+position = Vector2(-1.8119811e-06, 420)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D17" type="Sprite2D" parent="Sprite2D" unique_id=1698825541]
+position = Vector2(-1.8119811e-06, 448.00006)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D18" type="Sprite2D" parent="Sprite2D" unique_id=645118925]
+position = Vector2(-1.4305115e-06, 476.00006)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D19" type="Sprite2D" parent="Sprite2D" unique_id=457541844]
+position = Vector2(-1.4305115e-06, 504)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D20" type="Sprite2D" parent="Sprite2D" unique_id=914093971]
+position = Vector2(-1.4305115e-06, 532.00006)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D21" type="Sprite2D" parent="Sprite2D" unique_id=706263745]
+position = Vector2(-1.4305115e-06, 560.00006)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D22" type="Sprite2D" parent="Sprite2D" unique_id=1106160701]
+position = Vector2(-9.536743e-07, 588.00006)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D23" type="Sprite2D" parent="Sprite2D" unique_id=1160424004]
+position = Vector2(-9.536743e-07, 616)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D24" type="Sprite2D" parent="Sprite2D" unique_id=1247002113]
+position = Vector2(-1.4305115e-06, 644)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D25" type="Sprite2D" parent="Sprite2D" unique_id=771940079]
+position = Vector2(-1.4305115e-06, 672.00006)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(202.33334, 129.66699, 76.66666, 29.333008)
+
+[node name="Sprite2D26" type="Sprite2D" parent="Sprite2D" unique_id=1746507997]
+position = Vector2(-1.9073486e-06, 698.83344)
+texture = ExtResource("2_platform_texture")
+region_enabled = true
+region_rect = Rect2(209.10823, 159.00034, 64.891464, 25.218567)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1528702338]
+position = Vector2(0, 292)
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="TopDetector" type="Area2D" parent="." unique_id=1889563041]
+position = Vector2(0, -24)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopDetector" unique_id=889458414]
+position = Vector2(0, 317.75)
+shape = SubResource("RectangleShape2D_top_detector")
+
+[node name="WobbleParticles" type="CPUParticles2D" parent="." unique_id=1561272315]
+position = Vector2(0, 600)
+emitting = false
+amount = 10
+lifetime = 0.5
+direction = Vector2(0, 1)
+spread = 40.0
+gravity = Vector2(0, 80)
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+scale_amount_min = 0.8
+scale_amount_max = 1.4
+color = Color(0.5, 0.45, 0.4, 0.7)
+
+[node name="CollapseParticles" type="CPUParticles2D" parent="." unique_id=2145526338]
+position = Vector2(0, 600)
+emitting = false
+amount = 22
+lifetime = 0.7
+one_shot = true
+explosiveness = 0.9
+direction = Vector2(0, -1)
+spread = 90.0
+gravity = Vector2(0, 200)
+initial_velocity_min = 40.0
+initial_velocity_max = 110.0
+scale_amount_max = 2.0
+color = Color(0.55, 0.5, 0.55, 0.9)

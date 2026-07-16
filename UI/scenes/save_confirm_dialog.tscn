@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://UI/scripts/save_confirm_dialog.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cs1hffqgbdbo5" path="res://UI/Interfaz/DialogUI/spr_dialogue_box_9slice.png" id="2_panel_tex"]
+[ext_resource type="Texture2D" uid="uid://82pbfhv3xhyv" path="res://UI/Interfaz/DialogUI/spr_dialogue_box_button.png" id="3_button_tex"]
+[ext_resource type="FontFile" uid="uid://b4r8tw8nhijxg" path="res://UI/BoldPixels.otf" id="4_font"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_panel"]
+texture = ExtResource("2_panel_tex")
+texture_margin_left = 14.0
+texture_margin_top = 14.0
+texture_margin_right = 14.0
+texture_margin_bottom = 14.0
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_button"]
+texture = ExtResource("3_button_tex")
+texture_margin_left = 6.0
+texture_margin_top = 4.0
+texture_margin_right = 6.0
+texture_margin_bottom = 4.0
+content_margin_left = 14.0
+content_margin_right = 14.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+
+[node name="SaveConfirmDialog" type="CanvasLayer"]
+script = ExtResource("1_script")
+
+[node name="Panel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(220, 80)
+offset_right = 220.0
+offset_bottom = 80.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_panel")
+
+[node name="Content" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="StatusLabel" type="Label" parent="Panel/Content"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "Guardar progreso?"
+
+[node name="ButtonsRow" type="HBoxContainer" parent="Panel/Content"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="YesButton" type="Button" parent="Panel/Content/ButtonsRow"]
+custom_minimum_size = Vector2(60, 24)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_styles/normal = SubResource("StyleBoxTexture_button")
+theme_override_styles/hover = SubResource("StyleBoxTexture_button")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_button")
+theme_override_styles/focus = SubResource("StyleBoxTexture_button")
+text = "Si"
+
+[node name="NoButton" type="Button" parent="Panel/Content/ButtonsRow"]
+custom_minimum_size = Vector2(60, 24)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_styles/normal = SubResource("StyleBoxTexture_button")
+theme_override_styles/hover = SubResource("StyleBoxTexture_button")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_button")
+theme_override_styles/focus = SubResource("StyleBoxTexture_button")
+text = "No"

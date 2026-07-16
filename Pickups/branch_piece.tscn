@@ -1,0 +1,79 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Pickups/branch_piece.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cjruuqlv5ixja" path="res://Tileset/area1/cavecrystal/foreground .png" id="3_branch_texture"]
+
+[node name="BranchPiece" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Segment1" type="Sprite2D" parent="."]
+position = Vector2(0, 0)
+texture = ExtResource("3_branch_texture")
+region_enabled = true
+region_rect = Rect2(414, 158, 36, 36)
+
+[node name="Segment2" type="Sprite2D" parent="."]
+position = Vector2(0, 36)
+texture = ExtResource("3_branch_texture")
+region_enabled = true
+region_rect = Rect2(414, 158, 36, 36)
+
+[node name="Segment3" type="Sprite2D" parent="."]
+position = Vector2(0, 72)
+texture = ExtResource("3_branch_texture")
+region_enabled = true
+region_rect = Rect2(414, 158, 36, 36)
+
+[node name="Segment4" type="Sprite2D" parent="."]
+position = Vector2(0, 108)
+texture = ExtResource("3_branch_texture")
+region_enabled = true
+region_rect = Rect2(414, 158, 36, 36)
+
+[node name="Segment5" type="Sprite2D" parent="."]
+position = Vector2(0, 144)
+texture = ExtResource("3_branch_texture")
+region_enabled = true
+region_rect = Rect2(414, 158, 36, 36)
+
+[node name="Segment6" type="Sprite2D" parent="."]
+position = Vector2(0, 180)
+texture = ExtResource("3_branch_texture")
+region_enabled = true
+region_rect = Rect2(414, 158, 36, 36)
+
+[node name="Segment7" type="Sprite2D" parent="."]
+position = Vector2(0, 216)
+texture = ExtResource("3_branch_texture")
+region_enabled = true
+region_rect = Rect2(414, 158, 36, 36)
+
+[node name="Segment8" type="Sprite2D" parent="."]
+position = Vector2(0, 252)
+texture = ExtResource("3_branch_texture")
+region_enabled = true
+region_rect = Rect2(414, 158, 36, 36)
+
+[node name="Segment9" type="Sprite2D" parent="."]
+position = Vector2(0, 288)
+texture = ExtResource("3_branch_texture")
+region_enabled = true
+region_rect = Rect2(414, 158, 36, 36)
+
+[node name="DissolveParticles" type="CPUParticles2D" parent="."]
+position = Vector2(0, 162)
+emitting = false
+one_shot = true
+amount = 24
+lifetime = 0.8
+explosiveness = 0.9
+emission_shape = 3
+emission_rect_extents = Vector2(18, 162)
+direction = Vector2(0, -1)
+spread = 60.0
+gravity = Vector2(0, 40)
+initial_velocity_min = 40.0
+initial_velocity_max = 90.0
+scale_amount_min = 1.0
+scale_amount_max = 2.0
+color = Color(0.85, 0.2, 0.45, 0.9)
