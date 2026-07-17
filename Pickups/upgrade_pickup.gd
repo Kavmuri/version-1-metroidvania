@@ -5,6 +5,11 @@ extends Area2D
 @export var amount: int = 25
 @export var cooldown_delta: float = -0.05
 @export var use_linear_progression := true
+## -1 = da la siguiente mejora en la secuencia (comportamiento anterior).
+## 0-6 = fuerza una mejora especifica sin importar el orden de recoleccion:
+## 0=Doble salto, 1=nivel 2, 2=nivel 3, 3=nivel 4, 4=nivel 5, 5=nivel 6, 6=nivel 7.
+## (Kaizen: rapido/cargado/doble/perforante/rebote/onda. Eldric: dash/escudo/corazon/perforante/furia/planeo)
+@export_range(-1, 6) var target_upgrade_index: int = -1
 @export var consume_on_pickup := true
 
 var _collected := false
@@ -46,6 +51,10 @@ func _player_key(body: Node2D) -> String:
 	return ""
 
 func _apply_upgrade(player: Node2D) -> Dictionary:
+	if target_upgrade_index >= 0 and player.has_method("apply_specific_upgrade"):
+		var specific_result = player.apply_specific_upgrade(target_upgrade_index)
+		if specific_result is Dictionary:
+			return specific_result
 	if use_linear_progression and player.has_method("apply_next_linear_upgrade"):
 		var linear_result = player.apply_next_linear_upgrade()
 		if linear_result is Dictionary:
@@ -78,9 +87,12 @@ func _show_upgrade_feedback(player: Node2D, upgrade_result: Dictionary) -> void:
 		return
 	var title := str(upgrade_result.get("title", "Mejora obtenida"))
 	var description := str(upgrade_result.get("description", ""))
+	var control_hint := str(upgrade_result.get("control_hint", ""))
 	var text := title
 	if not description.is_empty():
 		text += "\n" + description
+	if not control_hint.is_empty():
+		text += "\nControl: " + control_hint
 	if hud.has_method("show_upgrade_text"):
 		hud.show_upgrade_text(text)
 	if _player_key(player) == "kaizen" and hud.has_method("set_player1_powerup_icon"):

@@ -29,7 +29,7 @@ var _single_timer_label: Label
 
 @onready var _boss_container = $BossContainer
 @onready var _boss_name = $BossContainer/BossName
-@onready var _boss_health = $BossContainer/BossHealth
+@onready var _boss_health = $BossContainer/BarContainer/BossHealth
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -137,7 +137,7 @@ func show_upgrade_text(text: String) -> void:
 		return
 	_upgrade_message_label.text = text
 	_upgrade_message_label.visible = true
-	_upgrade_message_timer = 2.5
+	_upgrade_message_timer = 3.5
 
 func show_narration(text: String, duration: float = 3.5) -> void:
 	_ensure_narration_label()

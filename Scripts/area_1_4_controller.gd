@@ -12,14 +12,15 @@ const MAP_MIN: Vector2 = Vector2(LIMIT_LEFT, LIMIT_TOP)
 const MAP_MAX: Vector2 = Vector2(LIMIT_RIGHT, LIMIT_BOTTOM)
 const START_PLAYER2_POSITION: Vector2 = Vector2(104, 16)
 const PLAYER2_SCENE: PackedScene = preload("res://Player2/player_2.tscn")
+const PLAYER2_SIDE_OFFSET: Vector2 = Vector2(40, 0)
 
-const COOP_CAMERA_CLOSE_ZOOM: Vector2 = Vector2(0.9, 0.9)
-const COOP_CAMERA_FAR_ZOOM: Vector2 = Vector2(0.55, 0.55)
+const COOP_CAMERA_CLOSE_ZOOM: Vector2 = Vector2(1.3, 1.3)
+const COOP_CAMERA_FAR_ZOOM: Vector2 = Vector2(0.95, 0.95)
 const COOP_CAMERA_CLOSE_DISTANCE: float = 140.0
 const COOP_CAMERA_FAR_DISTANCE: float = 420.0
 const COOP_CAMERA_FOLLOW_SPEED: float = 4.0
 const COOP_CAMERA_ZOOM_SPEED: float = 2.5
-const CAMERA_OFFSET: Vector2 = Vector2(0, -60)
+const CAMERA_OFFSET: Vector2 = Vector2(0, -85)
 
 const DUST_RUN_THRESHOLD: float = 40.0
 const DUST_LIFETIME: float = 0.35
@@ -30,9 +31,10 @@ const PREVIOUS_AREA_SCENE: String = "res://Tileset/area1/area_1_3.tscn"
 const PREVIOUS_AREA_PLAYER1_POSITION: Vector2 = Vector2(4208, -256)
 const PREVIOUS_AREA_PLAYER2_POSITION: Vector2 = Vector2(4160, -256)
 const NEXT_AREA_SCENE: String = "res://Tileset/area1/area_1_5.tscn"
-const NEXT_AREA_PLAYER1_POSITION: Vector2 = Vector2(3032, 32)
-const NEXT_AREA_PLAYER2_POSITION: Vector2 = Vector2(3080, 32)
+const NEXT_AREA_PLAYER1_POSITION: Vector2 = Vector2(100, 320)
+const NEXT_AREA_PLAYER2_POSITION: Vector2 = Vector2(140, 320)
 const FADE_WAIT_SECONDS: float = 0.55
+const HUD_SCENE: PackedScene = preload("res://UI/scenes/gameplay_hud.tscn")
 
 const CAMERA_EVENT_FOCUS_ZOOM: Vector2 = Vector2(0.7, 0.7)
 const CAMERA_EVENT_PAN_SPEED: float = 0.9
@@ -44,6 +46,8 @@ var _player2_dust: CPUParticles2D = null
 var transition_rect: ColorRect = null
 var animation_player: AnimationPlayer = null
 var _is_area_transitioning: bool = false
+var out2_locked: bool = false
+var _transition_area_bodies: Dictionary = {}
 
 const CAMERA_RETURN_DISTANCE_THRESHOLD: float = 4.0
 
@@ -55,11 +59,25 @@ var _camera_pre_event_zoom: Vector2 = Vector2.ONE
 
 func _ready() -> void:
 	_ensure_player2()
+	_ensure_gameplay_hud()
 	_prepare_transition_rect()
 	_connect_transition_area("transicionarea14ENTER2", _on_enter_transition_entered)
 	_connect_transition_area("transicionarea14OUT2", _on_out_transition_entered)
 	call_deferred("_apply_area_limits")
 	call_deferred("_apply_pending_transition_positions")
+
+func _ensure_gameplay_hud() -> Node:
+	var hud: Node = get_node_or_null("GameplayHUD")
+	if hud != null:
+		return hud
+	hud = HUD_SCENE.instantiate()
+	hud.name = "GameplayHUD"
+	add_child(hud)
+	hud.visible = true
+	var top_bar: Node = hud.get_node_or_null("TopBar")
+	if top_bar != null:
+		top_bar.visible = false
+	return hud
 
 func _process(delta: float) -> void:
 	_refresh_players()
@@ -178,10 +196,13 @@ func _on_enter_transition_entered(body: Node2D) -> void:
 		_transition_to_previous_area()
 
 func _on_out_transition_entered(body: Node2D) -> void:
-	if _is_area_transitioning:
+	if _is_area_transitioning or out2_locked:
 		return
 	if _is_player_body(body):
 		_transition_to_next_area()
+
+func set_out2_locked(locked: bool) -> void:
+	out2_locked = locked
 
 func _transition_to_previous_area() -> void:
 	_is_area_transitioning = true
@@ -221,8 +242,38 @@ func _connect_transition_area(area_name: String, callback: Callable) -> void:
 	if transition_area == null:
 		push_warning("No se encontro el area de transicion: " + area_name)
 		return
-	if not transition_area.body_entered.is_connected(callback):
-		transition_area.body_entered.connect(callback)
+
+	_transition_area_bodies[area_name] = []
+	var entered_callable: Callable = Callable(self, "_on_transition_area_body_entered").bind(area_name, callback)
+	var exited_callable: Callable = Callable(self, "_on_transition_area_body_exited").bind(area_name)
+
+	if not transition_area.body_entered.is_connected(entered_callable):
+		transition_area.body_entered.connect(entered_callable)
+	if not transition_area.body_exited.is_connected(exited_callable):
+		transition_area.body_exited.connect(exited_callable)
+
+func _on_transition_area_body_entered(body: Node2D, area_name: String, callback: Callable) -> void:
+	if not _is_player_body(body):
+		return
+	var bodies: Array = _transition_area_bodies.get(area_name, [])
+	if not bodies.has(body):
+		bodies.append(body)
+	_transition_area_bodies[area_name] = bodies
+	if _all_required_players_present(bodies):
+		callback.call(body)
+
+func _on_transition_area_body_exited(body: Node2D, area_name: String) -> void:
+	var bodies: Array = _transition_area_bodies.get(area_name, [])
+	bodies.erase(body)
+	_transition_area_bodies[area_name] = bodies
+
+func _all_required_players_present(bodies: Array) -> bool:
+	var valid_count: int = 0
+	for b in bodies:
+		if is_instance_valid(b):
+			valid_count += 1
+	var required: int = 2 if (GameManager.current_game_mode == "coop" and player2 != null and is_instance_valid(player2)) else 1
+	return valid_count >= required
 
 func _find_area2d_by_name(node_name: String) -> Area2D:
 	var node: Node = find_child(node_name, true, false)
@@ -326,6 +377,7 @@ func _apply_area_limits() -> void:
 func _apply_pending_transition_positions() -> void:
 	_refresh_players()
 	GameManager.apply_pending_positions(player, player2)
+	_snap_player2_beside_player1()
 	_clamp_players_to_area()
 
 func _refresh_players() -> void:
@@ -334,11 +386,21 @@ func _refresh_players() -> void:
 	if player2 == null or not is_instance_valid(player2):
 		player2 = get_node_or_null("Player2") as Node2D
 
+func _snap_player2_beside_player1() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if player2 == null or not is_instance_valid(player2):
+		return
+	player2.visible = true
+	player2.global_position = Vector2(player.global_position.x + PLAYER2_SIDE_OFFSET.x, player.global_position.y)
+	if player2 is CharacterBody2D:
+		(player2 as CharacterBody2D).velocity = Vector2.ZERO
+
 func _ensure_player2() -> void:
 	_refresh_players()
 	if player2 != null:
 		return
-	if GameManager.current_game_mode != "coop":
+	if not GameManager.should_restore_player2():
 		return
 
 	var new_player: Node = PLAYER2_SCENE.instantiate()

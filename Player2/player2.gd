@@ -19,12 +19,12 @@ const GRAVITY = 1200.0
 const HURT_ANIMATION_TIME = 0.25
 const ATTACK_ANIMATION_TIME = 0.45
 const BASE_MAX_HEARTS = 2
-const MAX_UPGRADE_LEVEL = 7
+const EXTRA_HEART_HEALTH_BONUS = 50
 const SHIELD_RECHARGE_SECONDS = 12.0
 const DASH_SPEED = 680.0
 const DASH_DURATION = 0.18
 const DASH_COOLDOWN = 0.45
-const PIERCING_SPEED = 760.0
+const PIERCING_SPEED = 600.0
 const PIERCING_DURATION = 0.28
 const GLIDE_DURATION = 1.0
 const FURY_MAX_HITS = 5
@@ -34,37 +34,44 @@ const ELDRIC_UPGRADES := [
 	{
 		"title": "Doble salto",
 		"description": "Eldric puede hacer un segundo salto en el aire.",
+		"control_hint": "Boton B / Circulo (salto, en el aire)",
 	},
 	{
 		"title": "Dash sombrio",
 		"description": "Eldric se desplaza rapidamente hacia adelante.",
+		"control_hint": "RB / R1",
 	},
 	{
 		"title": "Escudo espectral",
-		"description": "Manten clic derecho para absorber un golpe; se recarga despues de 12 segundos.",
+		"description": "Manten el boton de escudo para absorber un golpe; se recarga despues de 12 segundos.",
+		"control_hint": "Boton Guia / PS (mantener)",
 	},
 	{
 		"title": "Corazon adicional",
 		"description": "Eldric obtiene un corazon permanente adicional.",
+		"control_hint": "Automatico (mas vida maxima)",
 	},
 	{
 		"title": "Golpe perforante",
 		"description": "El dash golpea y atraviesa a los enemigos.",
+		"control_hint": "RB / R1 (el dash ahora perfora)",
 	},
 	{
 		"title": "Furia creciente",
 		"description": "Los golpes consecutivos aumentan el dano de Eldric.",
+		"control_hint": "Automatico (golpes seguidos)",
 	},
 	{
 		"title": "Planeo abisal",
 		"description": "Despues del dash aereo, Eldric suspende su caida por un segundo.",
+		"control_hint": "RB / R1 en el aire (planeo automatico)",
 	},
 ]
 
 @export var max_health: int = 100
 @export var max_hearts: int = 2
-@export var invulnerability_time: float = 1.2
-@export var attack_damage: int = 10
+@export var invulnerability_time: float = 1.6
+@export var attack_damage: int = 100
 @export var attack_range: float = 52.0
 @export var attack_cooldown: float = 0.35
 @export_enum("keyboard", "gamepad", "both") var input_mode: String = "both"
@@ -89,7 +96,7 @@ var tiene_planeo: bool = false
 var shield_ready := false
 var is_guarding := false
 var shield_recharge_timer := 0.0
-var eldric_upgrade_level := 0
+var _unlocked_tiers: Array[bool] = [false, false, false, false, false, false, false]
 var dash_timer := 0.0
 var dash_cooldown_timer := 0.0
 var dash_direction := 1.0
@@ -104,10 +111,12 @@ var debug_fury_counts_attacks := false
 var _air_jump_available := false
 var is_crouching := false
 var is_dead := false
+var _base_max_health: int = 0
 
 func _ready() -> void:
 	_shield_material = shield_visual.material as ShaderMaterial if shield_visual != null else null
 	_attack_palette_material = animated_sprite_2d.material as ShaderMaterial
+	_base_max_health = max_health
 	health = max_health
 	hearts = max_hearts
 	add_to_group(&"Player")
@@ -176,13 +185,13 @@ func handle_jump():
 		return
 
 	if is_on_floor():
-		AudioManager.play_sfx(&"player_jump")
+		AudioManager.play_sfx(&"eldric_jump", 0.03, 2.0)
 		velocity.y = JUMP_VELOCITY
 		jumped.emit()
 		if tiene_salto_infinito:
 			_air_jump_available = true
 	elif tiene_salto_infinito and _air_jump_available:
-		AudioManager.play_sfx(&"player_jump")
+		AudioManager.play_sfx(&"eldric_jump", 0.03, 2.0)
 		velocity.y = JUMP_VELOCITY
 		_air_jump_available = false
 
@@ -207,7 +216,7 @@ func _update_crouch_state() -> void:
 
 func _update_guard_state() -> void:
 	var was_guarding := is_guarding
-	is_guarding = tiene_escudo and shield_ready and _is_action_pressed_for_mode("shield", "")
+	is_guarding = tiene_escudo and shield_ready and _is_action_pressed_for_mode("shield", "shield_JOY")
 	if is_guarding != was_guarding:
 		_sync_shield_visual()
 
@@ -265,7 +274,7 @@ func handle_attack() -> void:
 	attack_animation_name = _attack_animation_for_current_motion()
 	if debug_fury_counts_attacks:
 		_register_fury_hit()
-	AudioManager.play_sfx(&"player_shoot")
+	AudioManager.play_sfx(&"eldric_attack", 0.04)
 
 func update_state():
 	if piercing_timer > 0.0:
@@ -312,16 +321,9 @@ func update_animations():
 	_sync_attack_palette()
 
 func apply_next_linear_upgrade() -> Dictionary:
-	if eldric_upgrade_level < MAX_UPGRADE_LEVEL:
-		var next_level := eldric_upgrade_level + 1
-		var upgrade: Dictionary = ELDRIC_UPGRADES[next_level - 1]
-		_apply_upgrade_level(next_level, false)
-		return {
-			"applied": true,
-			"title": str(upgrade["title"]),
-			"description": str(upgrade["description"]),
-			"icon_path": "",
-		}
+	for index in range(_unlocked_tiers.size()):
+		if not _unlocked_tiers[index]:
+			return _unlock_tier(index, false)
 	return {
 		"applied": false,
 		"title": "Mejoras completas",
@@ -329,23 +331,54 @@ func apply_next_linear_upgrade() -> Dictionary:
 		"icon_path": "",
 	}
 
+func apply_specific_upgrade(index: int) -> Dictionary:
+	var clamped_index: int = clampi(index, 0, _unlocked_tiers.size() - 1)
+	if _unlocked_tiers[clamped_index]:
+		return {
+			"applied": false,
+			"title": "Mejoras completas",
+			"description": "Eldric ya tiene esta mejora.",
+			"icon_path": "",
+		}
+	return _unlock_tier(clamped_index, false)
+
+func _unlock_tier(index: int, refill_resources: bool) -> Dictionary:
+	_unlocked_tiers[index] = true
+	_sync_upgrade_flags(refill_resources)
+	var upgrade: Dictionary = ELDRIC_UPGRADES[index]
+	return {
+		"applied": true,
+		"title": str(upgrade["title"]),
+		"description": str(upgrade["description"]),
+		"control_hint": str(upgrade.get("control_hint", "")),
+		"icon_path": "",
+	}
+
 func set_debug_upgrade_level(level: int) -> void:
 	debug_fury_counts_attacks = true
-	_apply_upgrade_level(level, true)
+	var clamped_level: int = clampi(level, 0, _unlocked_tiers.size())
+	for index in range(_unlocked_tiers.size()):
+		_unlocked_tiers[index] = index < clamped_level
+	_sync_upgrade_flags(true)
 
 func get_upgrade_level() -> int:
-	return eldric_upgrade_level
+	var count := 0
+	for unlocked in _unlocked_tiers:
+		if unlocked:
+			count += 1
+	return count
 
-func _apply_upgrade_level(level: int, refill_resources: bool) -> void:
+func _sync_upgrade_flags(refill_resources: bool) -> void:
 	var previous_max_hearts := max_hearts
-	eldric_upgrade_level = clampi(level, 0, MAX_UPGRADE_LEVEL)
-	tiene_salto_infinito = eldric_upgrade_level >= 1
-	tiene_dash = eldric_upgrade_level >= 2
-	tiene_escudo = eldric_upgrade_level >= 3
-	max_hearts = BASE_MAX_HEARTS + (1 if eldric_upgrade_level >= 4 else 0)
-	tiene_golpe_perforante = eldric_upgrade_level >= 5
-	tiene_furia_creciente = eldric_upgrade_level >= 6
-	tiene_planeo = eldric_upgrade_level >= 7
+	var previous_max_health := max_health
+	tiene_salto_infinito = _unlocked_tiers[0]
+	tiene_dash = _unlocked_tiers[1]
+	tiene_escudo = _unlocked_tiers[2]
+	max_hearts = BASE_MAX_HEARTS + (1 if _unlocked_tiers[3] else 0)
+	max_health = _base_max_health + (EXTRA_HEART_HEALTH_BONUS if _unlocked_tiers[3] else 0)
+	tiene_golpe_perforante = _unlocked_tiers[4]
+	tiene_furia_creciente = _unlocked_tiers[5]
+	tiene_planeo = _unlocked_tiers[6]
 	if not tiene_salto_infinito:
 		_air_jump_available = false
 	if tiene_escudo:
@@ -376,10 +409,15 @@ func _apply_upgrade_level(level: int, refill_resources: bool) -> void:
 		attack_timer = 0.0
 		attack_animation_timer = 0.0
 		velocity = Vector2.ZERO
-	elif max_hearts > previous_max_hearts:
-		hearts = mini(hearts + (max_hearts - previous_max_hearts), max_hearts)
 	else:
-		hearts = mini(hearts, max_hearts)
+		if max_hearts > previous_max_hearts:
+			hearts = mini(hearts + (max_hearts - previous_max_hearts), max_hearts)
+		else:
+			hearts = mini(hearts, max_hearts)
+		if max_health > previous_max_health:
+			health = mini(health + (max_health - previous_max_health), max_health)
+		else:
+			health = mini(health, max_health)
 
 func set_salto_infinito_activo(activo: bool) -> void:
 	tiene_salto_infinito = activo
@@ -392,7 +430,8 @@ func get_upgrade_state() -> Dictionary:
 		"attack_damage": attack_damage,
 		"attack_cooldown": attack_cooldown,
 		"tiene_salto_infinito": tiene_salto_infinito,
-		"eldric_upgrade_level": eldric_upgrade_level,
+		"unlocked_tiers": _unlocked_tiers.duplicate(),
+		"eldric_upgrade_level": get_upgrade_level(),
 	}
 
 func apply_upgrade_state(state: Dictionary) -> void:
@@ -402,8 +441,16 @@ func apply_upgrade_state(state: Dictionary) -> void:
 	max_health = int(state.get("max_health", max_health))
 	attack_damage = int(state.get("attack_damage", attack_damage))
 	attack_cooldown = float(state.get("attack_cooldown", attack_cooldown))
-	var stored_level := int(state.get("eldric_upgrade_level", 1 if bool(state.get("tiene_salto_infinito", false)) else 0))
-	_apply_upgrade_level(stored_level, true)
+	var stored_tiers = state.get("unlocked_tiers", null)
+	if stored_tiers is Array:
+		for index in range(_unlocked_tiers.size()):
+			_unlocked_tiers[index] = bool(stored_tiers[index]) if index < stored_tiers.size() else false
+	else:
+		# Compatibilidad con partidas guardadas antes de este cambio (nivel unico acumulativo).
+		var legacy_level := int(state.get("eldric_upgrade_level", 1 if bool(state.get("tiene_salto_infinito", false)) else 0))
+		for index in range(_unlocked_tiers.size()):
+			_unlocked_tiers[index] = index < legacy_level
+	_sync_upgrade_flags(true)
 
 func _advance_upgrade_timers(delta: float) -> void:
 	var dash_motion_was_active := dash_timer > 0.0 or piercing_timer > 0.0
@@ -565,6 +612,8 @@ func _apply_melee_damage() -> void:
 			hit_enemy = true
 	if hit_enemy and not debug_fury_counts_attacks:
 		_register_fury_hit()
+	if hit_enemy:
+		AudioManager.play_sfx(&"eldric_impact", 0.05)
 
 func _apply_piercing_damage() -> void:
 	var attack_origin := global_position + Vector2(piercing_direction * 34.0, -10.0)
@@ -588,6 +637,8 @@ func _apply_piercing_damage() -> void:
 			piercing_hit_targets[enemy_id] = true
 	if hit_enemy and not debug_fury_counts_attacks:
 		_register_fury_hit()
+	if hit_enemy:
+		AudioManager.play_sfx(&"eldric_impact", 0.05)
 
 func _is_action_just_pressed_for_mode(keyboard_action: StringName, gamepad_action: StringName) -> bool:
 	if (input_mode == "keyboard" or input_mode == "both") and keyboard_action != &"" and Input.is_action_just_pressed(keyboard_action):

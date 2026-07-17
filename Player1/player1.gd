@@ -26,6 +26,8 @@ const WALL_JUMP_HORIZONTAL_SPEED = 360.0
 const WALL_JUMP_VERTICAL_SPEED = -430.0
 const DOUBLE_JUMP_UPGRADE_NAME := "Doble salto"
 const DOUBLE_JUMP_UPGRADE_DESCRIPTION := "Kaizen puede hacer un segundo salto en el aire."
+const DOUBLE_JUMP_UPGRADE_CONTROL_HINT := "Barra espaciadora (salto en el aire)"
+const PROJECTILE_UPGRADE_CONTROL_HINT := "Click izquierdo: disparar | Click derecho: cambiar disparo"
 const BASE_PROJECTILE_SCENE := preload("res://Player1/bullet.tscn")
 const KAIZEN_PROJECTILE_UPGRADES := [
 	{
@@ -74,7 +76,7 @@ const KAIZEN_PROJECTILE_UPGRADES := [
 
 @export var max_health: int = 100
 @export var max_hearts: int = 3
-@export var invulnerability_time: float = 1.2
+@export var invulnerability_time: float = 1.6
 @export var projectile_scene: PackedScene
 @export var attack_cooldown: float = 0.45
 @export var attack_damage: int = 10
@@ -130,7 +132,6 @@ func _physics_process(delta: float):
 
 	if GameManager.dialogue_open:
 		velocity = Vector2.ZERO
-		update_animations()
 		return
 
 	invulnerability_timer = max(invulnerability_timer - delta, 0.0)
@@ -284,6 +285,7 @@ func apply_next_linear_upgrade() -> Dictionary:
 			"applied": true,
 			"title": DOUBLE_JUMP_UPGRADE_NAME,
 			"description": DOUBLE_JUMP_UPGRADE_DESCRIPTION,
+			"control_hint": DOUBLE_JUMP_UPGRADE_CONTROL_HINT,
 			"icon_path": "",
 		}
 
@@ -302,6 +304,39 @@ func apply_next_linear_upgrade() -> Dictionary:
 		"applied": true,
 		"title": str(upgrade["name"]),
 		"description": str(upgrade["description"]),
+		"control_hint": PROJECTILE_UPGRADE_CONTROL_HINT,
+		"icon_path": str(upgrade["icon"]),
+	}
+
+func apply_specific_upgrade(index: int) -> Dictionary:
+	if index <= 0:
+		var already_had := tiene_salto_infinito
+		set_salto_infinito_activo(true)
+		return {
+			"applied": not already_had,
+			"title": DOUBLE_JUMP_UPGRADE_NAME,
+			"description": DOUBLE_JUMP_UPGRADE_DESCRIPTION,
+			"control_hint": DOUBLE_JUMP_UPGRADE_CONTROL_HINT,
+			"icon_path": "",
+		}
+
+	var projectile_index := index - 1
+	if projectile_index < 0 or projectile_index >= KAIZEN_PROJECTILE_UPGRADES.size():
+		return {
+			"applied": false,
+			"title": "Mejoras completas",
+			"description": "Kaizen ya tiene todos los disparos disponibles.",
+			"icon_path": get_active_powerup_icon_path(),
+		}
+
+	var already_unlocked := unlocked_projectile_upgrades.has(projectile_index)
+	unlock_projectile_upgrade(projectile_index)
+	var upgrade: Dictionary = KAIZEN_PROJECTILE_UPGRADES[projectile_index]
+	return {
+		"applied": not already_unlocked,
+		"title": str(upgrade["name"]),
+		"description": str(upgrade["description"]),
+		"control_hint": PROJECTILE_UPGRADE_CONTROL_HINT,
 		"icon_path": str(upgrade["icon"]),
 	}
 

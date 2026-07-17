@@ -29,13 +29,14 @@ const PREVIOUS_AREA_SCENE: String = "res://Tileset/area1/area_1_2.tscn"
 const NEXT_AREA_SCENE: String = "res://Tileset/area1/area_1_4.tscn"
 const PREVIOUS_AREA_PLAYER1_POSITION: Vector2 = Vector2(3710, -94)
 const PREVIOUS_AREA_PLAYER2_POSITION: Vector2 = Vector2(3662, -94)
-const NEXT_AREA_PLAYER1_POSITION: Vector2 = Vector2(96, 176)
-const NEXT_AREA_PLAYER2_POSITION: Vector2 = Vector2(144, 176)
+const NEXT_AREA_PLAYER1_POSITION: Vector2 = Vector2(78, -46)
+const NEXT_AREA_PLAYER2_POSITION: Vector2 = Vector2(118, -46)
 const SECTION_1_PLAYER1_POSITION: Vector2 = Vector2(1888, 56)
 const SECTION_1_PLAYER2_POSITION: Vector2 = Vector2(1840, 56)
 const SECTION_2_PLAYER1_POSITION: Vector2 = Vector2(2208, 56)
 const SECTION_2_PLAYER2_POSITION: Vector2 = Vector2(2256, 56)
 const FADE_WAIT_SECONDS: float = 0.55
+const HUD_SCENE: PackedScene = preload("res://UI/scenes/gameplay_hud.tscn")
 
 const GLOW_TEXTURE: Texture2D = preload("res://Assets/Fx/light_glow.png")
 const DARKNESS_COLOR: Color = Color(0.08, 0.08, 0.12, 1.0)
@@ -50,6 +51,7 @@ const FALLING_PARTICLES_AMOUNT: int = 26
 const FALLING_PARTICLES_LIFETIME: float = 10.0
 
 var player_camera: Camera2D = null
+var _transition_area_bodies: Dictionary = {}
 var _camera_local_position: Vector2 = Vector2.ZERO
 var active_camera_limit_name: String = FIRST_SECTION_CAMERA_LIMIT_NAME
 var _is_transitioning: bool = false
@@ -84,6 +86,7 @@ var _camera_event_timer: float = 0.0
 func _ready() -> void:
 	_prepare_transition_rect()
 	_ensure_player2()
+	_ensure_gameplay_hud()
 	_connect_transition_area("transicionarea1_3ENTER2seccion1", _on_section_1_enter_transition_entered)
 	_connect_transition_area("transicionarea1_3OUTseccion1_22", _on_section_1_out_transition_entered)
 	_connect_transition_area("transicionarea1_3ENTER2seccion2", _on_section_2_enter_transition_entered)
@@ -95,6 +98,19 @@ func _ready() -> void:
 	call_deferred("_apply_area_limits")
 	call_deferred("_apply_pending_transition_positions")
 	call_deferred("_gather_camera_focus_nodes")
+
+func _ensure_gameplay_hud() -> Node:
+	var hud: Node = get_node_or_null("GameplayHUD")
+	if hud != null:
+		return hud
+	hud = HUD_SCENE.instantiate()
+	hud.name = "GameplayHUD"
+	add_child(hud)
+	hud.visible = true
+	var top_bar: Node = hud.get_node_or_null("TopBar")
+	if top_bar != null:
+		top_bar.visible = false
+	return hud
 
 func _gather_camera_focus_nodes() -> void:
 	_camera_focus_nodes.clear()
@@ -400,8 +416,37 @@ func _connect_transition_area(area_name: String, callback: Callable) -> void:
 		push_warning("No se encontro el area de transicion: " + area_name)
 		return
 
-	if not transition_area.body_entered.is_connected(callback):
-		transition_area.body_entered.connect(callback)
+	_transition_area_bodies[area_name] = []
+	var entered_callable: Callable = Callable(self, "_on_transition_area_body_entered").bind(area_name, callback)
+	var exited_callable: Callable = Callable(self, "_on_transition_area_body_exited").bind(area_name)
+
+	if not transition_area.body_entered.is_connected(entered_callable):
+		transition_area.body_entered.connect(entered_callable)
+	if not transition_area.body_exited.is_connected(exited_callable):
+		transition_area.body_exited.connect(exited_callable)
+
+func _on_transition_area_body_entered(body: Node2D, area_name: String, callback: Callable) -> void:
+	if not _is_player_body(body):
+		return
+	var bodies: Array = _transition_area_bodies.get(area_name, [])
+	if not bodies.has(body):
+		bodies.append(body)
+	_transition_area_bodies[area_name] = bodies
+	if _all_required_players_present(bodies):
+		callback.call(body)
+
+func _on_transition_area_body_exited(body: Node2D, area_name: String) -> void:
+	var bodies: Array = _transition_area_bodies.get(area_name, [])
+	bodies.erase(body)
+	_transition_area_bodies[area_name] = bodies
+
+func _all_required_players_present(bodies: Array) -> bool:
+	var valid_count: int = 0
+	for b in bodies:
+		if is_instance_valid(b):
+			valid_count += 1
+	var required: int = 2 if (GameManager.current_game_mode == "coop" and player2 != null and is_instance_valid(player2)) else 1
+	return valid_count >= required
 
 func _find_area2d_by_name(node_name: String) -> Area2D:
 	var node: Node = find_child(node_name, true, false)
@@ -476,7 +521,7 @@ func _ensure_player2() -> void:
 	_refresh_players()
 	if player2 != null:
 		return
-	if GameManager.current_game_mode != "coop":
+	if not GameManager.should_restore_player2():
 		return
 
 	var new_player: Node = PLAYER2_SCENE.instantiate()

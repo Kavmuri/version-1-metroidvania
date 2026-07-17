@@ -12,7 +12,8 @@ var _is_attacking: bool = false
 
 func _ready() -> void:
 	max_health = 500
-	contact_damage = 100
+	contact_damage = 15
+	contact_damage_enabled = false
 	move_speed = agis_zombie_speed
 	super._ready()
 	_find_player()

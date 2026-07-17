@@ -3,6 +3,10 @@
 [ext_resource type="Script" uid="uid://brl66sbrrmky4" path="res://UI/scripts/gameplay_hud.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://yxwkjyqntjx1" path="res://UI/CrimsonFantasyGUI/GUISprite.png" id="2_gui"]
 [ext_resource type="Texture2D" uid="uid://oatyrytwlh4q" path="res://UI/CrimsonFantasyGUI/Inventory.png" id="3_inventory"]
+[ext_resource type="Texture2D" uid="uid://cphd5otrh7l4q" path="res://UI/Interfaz/PlayersUI/InGameUI/agis ui/barraNUEVA.png" id="4_agis_bar_frame"]
+[ext_resource type="FontFile" uid="uid://c6e435u5sdah0" path="res://UI/DungeonFont.ttf" id="5_dungeon_font"]
+[ext_resource type="FontFile" uid="uid://b4r8tw8nhijxg" path="res://UI/BoldPixels.otf" id="6_bold_pixels"]
+[ext_resource type="Texture2D" uid="uid://dgpsl4v5iiq2a" path="res://UI/Interfaz/PlayersUI/spr_mana_bar.png" id="7_mana_bar"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_heart_full"]
 atlas = ExtResource("2_gui")
@@ -36,6 +40,20 @@ region_rect = Rect2(17, 37, 62, 7)
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_boss_health_fill"]
 texture = ExtResource("2_gui")
 region_rect = Rect2(106, 36, 61, 8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_agis_health_bg"]
+bg_color = Color(0.1, 0.02, 0.04, 0.9)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_agis_health_fill"]
+bg_color = Color(0.75, 0.06, 0.1, 1.0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
 
 [node name="GameplayHUD" type="CanvasLayer" unique_id=370620952]
 script = ExtResource("1_script")
@@ -206,29 +224,61 @@ texture_progress = SubResource("AtlasTexture_health_progress")
 
 [node name="BossContainer" type="VBoxContainer" parent="." unique_id=1876967134]
 visible = false
-anchors_preset = 5
+anchors_preset = 7
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -160.0
-offset_top = 56.0
-offset_right = 160.0
-offset_bottom = 92.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -230.0
+offset_top = -70.0
+offset_right = 230.0
+offset_bottom = -20.0
 grow_horizontal = 2
+grow_vertical = 0
 size_flags_horizontal = 4
+theme_override_constants/separation = 4
+alignment = 1
 
 [node name="BossName" type="Label" parent="BossContainer" unique_id=1064254046]
 layout_mode = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 15
-text = "Agis"
+theme_override_fonts/font = ExtResource("6_bold_pixels")
+theme_override_colors/font_color = Color(0.93, 0.9, 0.88, 1)
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 13
+text = "Dark Sun Agis Guardián Corrupto del Hollow"
 horizontal_alignment = 1
 
-[node name="BossHealth" type="ProgressBar" parent="BossContainer" unique_id=311474959]
-custom_minimum_size = Vector2(320, 14)
+[node name="BarContainer" type="Control" parent="BossContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/background = SubResource("StyleBoxTexture_health_bg")
-theme_override_styles/fill = SubResource("StyleBoxTexture_boss_health_fill")
+custom_minimum_size = Vector2(460, 115)
+
+[node name="BossHealth" type="TextureProgressBar" parent="BossContainer/BarContainer" unique_id=311474959]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 70.0
+offset_top = 40.0
+offset_right = -70.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
 value = 100.0
-show_percentage = false
+fill_mode = 0
+texture_under = ExtResource("7_mana_bar")
+texture_progress = ExtResource("7_mana_bar")
+tint_under = Color(0.12, 0.02, 0.14, 0.9)
+tint_progress = Color(1.5, 0.15, 1.6, 1)
+
+[node name="BarFrame" type="TextureRect" parent="BossContainer/BarContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_agis_bar_frame")
+expand_mode = 1
+stretch_mode = 5

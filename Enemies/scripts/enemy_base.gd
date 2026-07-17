@@ -12,6 +12,13 @@ extends CharacterBody2D
 @export var flip_h_when_facing_right: bool = true
 @export var death_effect_scene: PackedScene = preload("res://Enemies/basic/enemy_death_effect.tscn")
 @export var auto_create_hurtbox: bool = true
+@export var show_world_health_bar: bool = true
+@export var world_health_bar_offset: Vector2 = Vector2(0, -54)
+@export var world_health_bar_scale: float = 0.4
+
+const WORLD_HEALTH_BAR_TEXTURE: Texture2D = preload("res://UI/Interfaz/EnemyUI/skulls.png")
+const WORLD_HEALTH_BAR_FRAME_REGION: Rect2 = Rect2(24, 9, 86, 19)
+const WORLD_HEALTH_BAR_FILL_REGION: Rect2 = Rect2(32, 42, 67, 10)
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var contact_area: Area2D = get_node_or_null("ContactArea") as Area2D
@@ -24,6 +31,7 @@ var _contact_damage_cooldowns: Dictionary = {}
 var hurtbox: Area2D
 var _player_in_attack_area := false
 var is_dying := false
+var _world_health_bar_fill: Sprite2D = null
 
 func _ready() -> void:
 	health = max_health
@@ -31,6 +39,8 @@ func _ready() -> void:
 	_setup_hurtbox()
 	_find_player()
 	play_anim("idle")
+	if show_world_health_bar:
+		_create_world_health_bar()
 
 func has_attack_animation() -> bool:
 	return sprite != null and sprite.sprite_frames != null and sprite.sprite_frames.has_animation(&"attack")
@@ -39,11 +49,30 @@ func _physics_process(delta: float) -> void:
 	if is_dying:
 		velocity = Vector2.ZERO
 		return
-	if player == null or not is_instance_valid(player):
-		_find_player()
+	_update_nearest_player()
 	if uses_gravity and not is_on_floor():
 		velocity.y += gravity * delta
 	_tick_contact_damage(delta)
+
+func _update_nearest_player() -> void:
+	var candidates: Array = get_tree().get_nodes_in_group("Player")
+	if candidates.is_empty():
+		candidates = get_tree().get_nodes_in_group("player")
+	if candidates.is_empty():
+		if player == null or not is_instance_valid(player):
+			_find_player()
+		return
+
+	var nearest: Node2D = null
+	var nearest_dist: float = INF
+	for candidate in candidates:
+		if candidate is Node2D and is_instance_valid(candidate):
+			var dist: float = global_position.distance_to((candidate as Node2D).global_position)
+			if dist < nearest_dist:
+				nearest_dist = dist
+				nearest = candidate as Node2D
+	if nearest != null:
+		player = nearest
 
 func _find_player() -> void:
 	player = get_tree().get_first_node_in_group("Player") as Node2D
@@ -113,6 +142,7 @@ func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> voi
 	if is_dying:
 		return
 	health -= amount
+	_update_world_health_bar()
 	JuiceManager.flash_sprite(sprite, Color(1.0, 0.35, 0.35))
 	JuiceManager.spawn_hit_particles(global_position + Vector2(0, -12), Color(1.0, 0.85, 0.3), 6)
 	JuiceManager.hit_stop(0.04, 0.05)
@@ -123,6 +153,49 @@ func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> voi
 	else:
 		AudioManager.play_sfx(&"enemy_hit")
 		JuiceManager.screen_shake(2.5, 0.12)
+
+func _create_world_health_bar() -> void:
+	var bar_root := Node2D.new()
+	bar_root.name = "WorldHealthBar"
+	bar_root.position = world_health_bar_offset
+	bar_root.scale = Vector2(world_health_bar_scale, world_health_bar_scale)
+	add_child(bar_root)
+
+	var fill := Sprite2D.new()
+	fill.name = "Fill"
+	fill.texture = WORLD_HEALTH_BAR_TEXTURE
+	fill.centered = false
+	fill.region_enabled = true
+	fill.region_rect = WORLD_HEALTH_BAR_FILL_REGION
+	fill.position = Vector2(
+		WORLD_HEALTH_BAR_FILL_REGION.position.x - WORLD_HEALTH_BAR_FRAME_REGION.position.x - WORLD_HEALTH_BAR_FRAME_REGION.size.x * 0.5,
+		-WORLD_HEALTH_BAR_FILL_REGION.size.y * 0.5
+	)
+	fill.modulate = Color(1, 1, 1, 1)
+	bar_root.add_child(fill)
+	_world_health_bar_fill = fill
+
+	var frame := Sprite2D.new()
+	frame.name = "Frame"
+	frame.texture = WORLD_HEALTH_BAR_TEXTURE
+	frame.centered = true
+	frame.region_enabled = true
+	frame.region_rect = WORLD_HEALTH_BAR_FRAME_REGION
+	bar_root.add_child(frame)
+
+	_update_world_health_bar()
+
+func _update_world_health_bar() -> void:
+	if _world_health_bar_fill == null or max_health <= 0:
+		return
+	var ratio: float = clampf(float(health) / float(max_health), 0.0, 1.0)
+	var full_width: float = WORLD_HEALTH_BAR_FILL_REGION.size.x
+	_world_health_bar_fill.region_rect = Rect2(
+		WORLD_HEALTH_BAR_FILL_REGION.position.x,
+		WORLD_HEALTH_BAR_FILL_REGION.position.y,
+		full_width * ratio,
+		WORLD_HEALTH_BAR_FILL_REGION.size.y
+	)
 
 func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> void:
 	receive_damage(cantidad, fuente_pos)

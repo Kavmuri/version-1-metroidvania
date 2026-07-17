@@ -13,7 +13,10 @@ const SFX_STREAMS := {
 	&"player_hurt": preload("res://Audio/sfx/player_hurt.ogg"),
 	&"death_retry": preload("res://Audio/sfx/death_retry.ogg"),
 	&"enemy_hit": preload("res://Audio/sfx/enemy_hit.ogg"),
-	&"enemy_death": preload("res://Audio/sfx/enemy_death.ogg")
+	&"enemy_death": preload("res://Audio/sfx/enemy_death.ogg"),
+	&"eldric_jump": preload("res://Audio/sfx/player_jump.ogg"),
+	&"eldric_attack": preload("res://Audio/sfx/player_shoot.ogg"),
+	&"eldric_impact": preload("res://Audio/sfx/enemy_hit.ogg")
 }
 
 const SFX_POOL_SIZE := 8
@@ -55,7 +58,7 @@ func play_world_ambience() -> void:
 func stop_ambience() -> void:
 	_ambience_player.stop()
 
-func play_sfx(sound_name: StringName) -> void:
+func play_sfx(sound_name: StringName, pitch_variance: float = 0.0, volume_db_offset: float = 0.0) -> void:
 	var stream = SFX_STREAMS.get(sound_name)
 	if stream == null:
 		push_warning("AudioManager: unknown SFX '" + str(sound_name) + "'.")
@@ -63,6 +66,8 @@ func play_sfx(sound_name: StringName) -> void:
 
 	var player = _next_available_sfx_player()
 	player.stream = stream
+	player.pitch_scale = 1.0 + randf_range(-pitch_variance, pitch_variance)
+	player.volume_db = -5.0 + volume_db_offset
 	player.play()
 
 func _play_music(stream: AudioStream, music_name: StringName) -> void:

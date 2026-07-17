@@ -41,10 +41,10 @@ position = Vector2(4, 0)
 shape = SubResource("RectangleShape2D_proximity")
 
 [node name="PromptPanel" type="PanelContainer" parent="." unique_id=1554831934]
-offset_left = -89.0
-offset_top = -8.0
-offset_right = -22.0
-offset_bottom = 11.0
+offset_left = -95.0
+offset_top = -20.0
+offset_right = 5.0
+offset_bottom = 4.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8fbwi")
 
 [node name="PromptLabel" type="Label" parent="PromptPanel" unique_id=953341129]
@@ -53,7 +53,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.60933006, 0.6093301, 0.60933006, 1)
 theme_override_constants/line_spacing = 0
 theme_override_constants/outline_size = 1
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 14
 text = "f para hablar"
 horizontal_alignment = 1
 vertical_alignment = 1

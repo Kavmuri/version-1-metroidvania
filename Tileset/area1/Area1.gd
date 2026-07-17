@@ -18,6 +18,7 @@ const NEXT_PLAYER2_POSITION: Vector2 = Vector2(145, -94)
 const START_PLAYER2_POSITION: Vector2 = Vector2(128, -32)
 const PLAYER2_SCENE: PackedScene = preload("res://Player2/player_2.tscn")
 const FADE_WAIT_SECONDS: float = 0.55
+const HUD_SCENE: PackedScene = preload("res://UI/scenes/gameplay_hud.tscn")
 
 const MAP_MIN: Vector2 = Vector2(LIMIT_LEFT, LIMIT_TOP)
 const MAP_MAX: Vector2 = Vector2(LIMIT_RIGHT, LIMIT_BOTTOM)
@@ -33,15 +34,31 @@ var _parallax_stopped = false
 var _is_transitioning: bool = false
 var player_camera: Camera2D = null
 var _camera_local_position: Vector2 = Vector2.ZERO
+var _transition_trigger_bodies: Array = []
 
 func _ready() -> void:
 	transition_rect.color.a = 0
 	_prepare_transition_rect()
 	_ensure_player2()
+	_ensure_gameplay_hud()
 	$TransitionTrigger.body_entered.connect(_on_transition_trigger_entered)
+	$TransitionTrigger.body_exited.connect(_on_transition_trigger_exited)
 	_hide_parallax_until_camera_ready()
 	call_deferred("_apply_area_limits")
 	call_deferred("_apply_pending_transition_positions")
+
+func _ensure_gameplay_hud() -> Node:
+	var hud: Node = get_node_or_null("GameplayHUD")
+	if hud != null:
+		return hud
+	hud = HUD_SCENE.instantiate()
+	hud.name = "GameplayHUD"
+	add_child(hud)
+	hud.visible = true
+	var top_bar: Node = hud.get_node_or_null("TopBar")
+	if top_bar != null:
+		top_bar.visible = false
+	return hud
 
 func _hide_parallax_until_camera_ready() -> void:
 	if parallax_bg != null:
@@ -101,10 +118,23 @@ func _update_coop_camera(delta: float) -> void:
 	player_camera.zoom = player_camera.zoom.lerp(target_zoom, zoom_weight)
 
 func _on_transition_trigger_entered(body: Node2D) -> void:
-	if _is_transitioning:
+	if _is_transitioning or not _is_player_body(body):
 		return
-	if _is_player_body(body):
+	if not _transition_trigger_bodies.has(body):
+		_transition_trigger_bodies.append(body)
+	if _all_required_players_present(_transition_trigger_bodies):
 		_transition_to_next_area()
+
+func _on_transition_trigger_exited(body: Node2D) -> void:
+	_transition_trigger_bodies.erase(body)
+
+func _all_required_players_present(bodies: Array) -> bool:
+	var valid_count: int = 0
+	for b in bodies:
+		if is_instance_valid(b):
+			valid_count += 1
+	var required: int = 2 if (GameManager.current_game_mode == "coop" and player2 != null and is_instance_valid(player2)) else 1
+	return valid_count >= required
 
 func _transition_to_next_area() -> void:
 	_is_transitioning = true

@@ -19,15 +19,16 @@ content_margin_bottom = 8.0
 script = ExtResource("1_script")
 
 [node name="Panel" type="PanelContainer" parent="."]
-custom_minimum_size = Vector2(210, 46)
-offset_right = 210.0
-offset_bottom = 46.0
+custom_minimum_size = Vector2(260, 72)
+offset_right = 260.0
+offset_bottom = 72.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_panel")
 
 [node name="Content" type="VBoxContainer" parent="Panel"]
 layout_mode = 2
 
 [node name="MessageLabel" type="Label" parent="Panel/Content"]
+custom_minimum_size = Vector2(236, 56)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 14
