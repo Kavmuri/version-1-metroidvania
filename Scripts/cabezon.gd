@@ -3,12 +3,12 @@ extends AnimatableBody2D
 @export var cabezas3_path: NodePath
 @export var cabezas3_paths: Array[NodePath] = []
 @export var camera_focus_delay: float = 2.5
-@export var camera_focus_hold_duration: float = 15.0
+@export var camera_focus_hold_duration: float = 5.5
+@export var message_pages: Array[String] = ["...", "hmmm", "Ya no habra vuelta atras."]
 
 const INTERACT_KEY := KEY_F
 const INTERACT_JOY_BUTTON := JOY_BUTTON_Y
 const MESSAGE_DIALOG_SCENE := preload("res://UI/scenes/npc_message_dialog.tscn")
-const MESSAGE_PAGES: Array = ["...", "El mundo se abre para los nobles..."]
 
 @onready var _prompt_panel: Control = get_node_or_null("PromptPanel") as Control
 @onready var _proximity_area: Area2D = get_node_or_null("ProximityArea") as Area2D
@@ -61,7 +61,7 @@ func _activate() -> void:
 	_dialog = MESSAGE_DIALOG_SCENE.instantiate()
 	get_tree().root.add_child(_dialog)
 	_dialog.closed.connect(_on_dialog_closed)
-	_dialog.open_dialog(MESSAGE_PAGES)
+	_dialog.open_dialog(message_pages)
 
 func _on_dialog_closed() -> void:
 	_dialog = null

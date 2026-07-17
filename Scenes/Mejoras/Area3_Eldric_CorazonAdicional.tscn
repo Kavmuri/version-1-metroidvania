@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://Pickups/upgrade_pickup.tscn" id="1_pickup"]
+
+[node name="Area3_Eldric_CorazonAdicional" instance=ExtResource("1_pickup")]
+target_player = "eldric"
+target_upgrade_index = 3

@@ -1,6 +1,8 @@
 extends "res://Enemies/scripts/enemy_base.gd"
 
 @export var patrol_points: Node
+@export var patrol_distance: float = 96.0
+@export var start_facing_right: bool = false
 @export var idle_patrol_speed: float = 28.0
 @export var patrol_wait_time: float = 1.0
 @export var melee_attack_range: float = 58.0
@@ -21,6 +23,13 @@ var _think_remaining: float = 0.0
 
 func _ready() -> void:
 	super._ready()
+	# This enemy already deals damage on a timed hit-frame during its own
+	# attack animation (_update_attack); disable the generic contact-damage
+	# system so touching it doesn't ALSO deal damage outside of that attack.
+	contact_damage_enabled = false
+	if start_facing_right:
+		facing = 1
+		sprite.flip_h = facing > 0 if flip_h_when_facing_right else facing < 0
 	_think_remaining = initial_think_time
 	_load_patrol_points()
 	_patrol_timer = get_node_or_null("PatrolTimer") as Timer
@@ -69,11 +78,17 @@ func _physics_process(delta: float) -> void:
 
 func _load_patrol_points() -> void:
 	_patrol_positions.clear()
-	if patrol_points == null:
-		return
-	for point in patrol_points.get_children():
-		if point is Node2D:
-			_patrol_positions.append((point as Node2D).global_position)
+	if patrol_points != null:
+		for point in patrol_points.get_children():
+			if point is Node2D:
+				_patrol_positions.append((point as Node2D).global_position)
+
+	if _patrol_positions.is_empty():
+		var patrol_extent: float = max(patrol_distance, 8.0)
+		_patrol_positions = [
+			global_position + Vector2.LEFT * patrol_extent,
+			global_position + Vector2.RIGHT * patrol_extent
+		]
 
 func _chase_player() -> void:
 	_is_chasing_player = true
@@ -87,7 +102,8 @@ func _update_patrol(_delta: float) -> void:
 		return
 
 	if _patrol_positions.is_empty():
-		velocity.x = facing * idle_patrol_speed
+		_waiting_for_patrol = true
+		velocity.x = 0.0
 		return
 
 	var target := _patrol_positions[_patrol_target_index]

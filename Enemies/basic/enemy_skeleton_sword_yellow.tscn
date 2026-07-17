@@ -441,16 +441,17 @@ height = 50.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 96.0
 
-[node name="SkeletonSwordYellow" type="CharacterBody2D" unique_id=2033292627 groups=["enemy"]]
+[node name="SkeletonSwordYellow" type="CharacterBody2D" unique_id=2033292627 groups=["enemy"] node_paths=PackedStringArray("patrol_points")]
 collision_layer = 4
 script = ExtResource("1_script")
+patrol_points = NodePath("PatrolPoints")
 idle_patrol_speed = 24.0
 patrol_wait_time = 0.7
 melee_attack_range = 44.0
 melee_attack_cooldown = 1.0
 melee_attack_hit_delay = 0.3
 initial_think_time = 0.6
-max_health = 4
+max_health = 200
 contact_damage = 8
 move_speed = 42.0
 flip_h_when_facing_right = false
@@ -466,6 +467,14 @@ frame_progress = 1.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2112395118]
 position = Vector2(-3, -23)
 shape = SubResource("CapsuleShape2D_q6hvq")
+
+[node name="PatrolPoints" type="Node2D" parent="." unique_id=9200004]
+
+[node name="Point1" type="Marker2D" parent="PatrolPoints" unique_id=9200005]
+position = Vector2(-96, 0)
+
+[node name="Point2" type="Marker2D" parent="PatrolPoints" unique_id=9200006]
+position = Vector2(96, 0)
 
 [node name="ContactArea" type="Area2D" parent="." unique_id=839124158]
 collision_layer = 4

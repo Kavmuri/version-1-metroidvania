@@ -23,6 +23,7 @@ GameManager="*uid://d4dgdlvf0feyv"
 AudioManager="*res://Audio/audio_manager.gd"
 PauseManager="*res://UI/scenes/pause_menu.tscn"
 CursorManager="*res://UI/scripts/cursor_manager.gd"
+JuiceManager="*res://Scripts/juice_manager.gd"
 
 [display]
 

@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://1xmbiscca4jx"]
+
+[ext_resource type="Script" uid="uid://mseb0a2l4cud" path="res://UI/scripts/player_kaizen_hud.gd" id="1_1iw07"]
+[ext_resource type="Texture2D" uid="uid://co1gj15lmnd3x" path="res://UI/Interfaz/PlayersUI/InGameUI/spr_item_slot.png" id="2_fpjqm"]
+[ext_resource type="Texture2D" uid="uid://cv5sqq8bofpab" path="res://Enemies/boss/agis sprites/idle.png" id="3_fpjqm"]
+[ext_resource type="Texture2D" uid="uid://dr5rsb8qcahjg" path="res://UI/Interfaz/PlayersUI/spr_health_bar.png" id="4_k5sya"]
+[ext_resource type="Texture2D" uid="uid://do6y0dwh3xt20" path="res://UI/Interfaz/PlayersUI/InGameUI/spr_money_interface.png" id="5_haot3"]
+
+[node name="PlayerKaizenHUD" type="CanvasLayer" unique_id=1518095320]
+layer = 20
+visible = false
+script = ExtResource("1_1iw07")
+target_player_name = "Agis"
+anchor_to_top_center = true
+enable_health_bar_growth = false
+
+[node name="HudRoot" type="Node2D" parent="." unique_id=1600000003]
+position = Vector2(261, 296)
+scale = Vector2(0.75, 0.75)
+
+[node name="FaceFrame" type="Sprite2D" parent="HudRoot" unique_id=1339174651]
+position = Vector2(11.816677, 19.033333)
+scale = Vector2(2.1984847, 2.1484847)
+texture = ExtResource("2_fpjqm")
+
+[node name="FaceIcon" type="Sprite2D" parent="HudRoot/FaceFrame" unique_id=526089103]
+position = Vector2(-0.5230789, -4.5148315)
+scale = Vector2(0.22922014, 0.21512024)
+texture = ExtResource("3_fpjqm")
+region_enabled = true
+region_rect = Rect2(2337.7483, 69.636185, 127.40747, 116.22722)
+
+[node name="HealthFill" type="Sprite2D" parent="HudRoot" unique_id=1976538529]
+modulate = Color(1.6000001, 1.6000001, 1.6000001, 1)
+self_modulate = Color(0.4688336, 0, 0.97, 1)
+z_index = 1
+position = Vector2(52.666656, 10.666666)
+scale = Vector2(139.33333, 4.266666)
+texture = ExtResource("4_k5sya")
+centered = false
+
+[node name="SprMoneyInterface2" type="Sprite2D" parent="HudRoot" unique_id=1476332795]
+position = Vector2(122.83333, 20.916676)
+scale = Vector2(1.2575759, 2.0625)
+texture = ExtResource("5_haot3")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(25.333778, 0.037036896, 110.81481, 8.888889)

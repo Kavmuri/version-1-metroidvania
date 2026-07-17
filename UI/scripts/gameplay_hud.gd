@@ -25,7 +25,7 @@ var _upgrade_message_timer := 0.0
 
 @onready var _boss_container = $BossContainer
 @onready var _boss_name = $BossContainer/BossName
-@onready var _boss_health = $BossContainer/BossHealth
+@onready var _boss_health = $BossContainer/BarContainer/BossHealth
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -109,7 +109,7 @@ func show_upgrade_text(text: String) -> void:
 		return
 	_upgrade_message_label.text = text
 	_upgrade_message_label.visible = true
-	_upgrade_message_timer = 2.5
+	_upgrade_message_timer = 3.5
 
 func _update_upgrade_message(delta: float) -> void:
 	if _upgrade_message_timer <= 0.0:

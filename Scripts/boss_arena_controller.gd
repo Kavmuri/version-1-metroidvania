@@ -20,6 +20,7 @@ extends Node2D
 @export var camera_zoom_lerp_speed: float = 0.9
 @export var gate_zoom_distance: float = 260.0
 @export var boss_scene: bool = false
+@export var use_single_camera_config: bool = false
 @export var create_extra_limit_walls_enabled: bool = false
 @export var previous_area_scene: String = "res://Tileset/area1/area_1_3.tscn"
 @export var previous_area_player1_position: Vector2 = Vector2(4208, -256)
@@ -27,12 +28,17 @@ extends Node2D
 @export var next_area_scene: String = "res://Tileset/area1/area_1_5.tscn"
 @export var next_area_player1_position: Vector2 = Vector2(3032, 32)
 @export var next_area_player2_position: Vector2 = Vector2(3080, 32)
+@export var intro_dialogue_pages: Array[String] = []
+@export var teleport_in_trigger_page_index: int = -1
 
+const INTRO_DIALOG_SCENE: PackedScene = preload("res://UI/scenes/npc_message_dialog.tscn")
+const HUD_SCENE: PackedScene = preload("res://UI/scenes/gameplay_hud.tscn")
 const PLAYER2_SCENE: PackedScene = preload("res://Player2/player_2.tscn")
 const SECTION_1_PLAYER1_POSITION: Vector2 = Vector2(96, 176)
 const SECTION_1_PLAYER2_POSITION: Vector2 = Vector2(144, 176)
 const SECTION_2_PLAYER1_POSITION: Vector2 = Vector2(3032, 32)
 const SECTION_2_PLAYER2_POSITION: Vector2 = Vector2(3080, 32)
+const PLAYER2_SIDE_OFFSET: Vector2 = Vector2(40, 0)
 const FADE_WAIT_SECONDS: float = 0.55
 const SECTION_1_NAME: String = "section_1"
 const SECTION_2_NAME: String = "section_2"
@@ -46,6 +52,7 @@ var transition_rect: ColorRect = null
 var animation_player: AnimationPlayer = null
 var _area_transitioning: bool = false
 var active_section_name: String = SECTION_1_NAME
+var _transition_area_bodies: Dictionary = {}
 var _camera_focus_until_msec: int = 0
 var _last_applied_section_name: String = ""
 var _cached_gate_centers: Array[Vector2] = []
@@ -114,19 +121,42 @@ func _register_scene_players() -> void:
 	if p2 != null:
 		GameManager.register_player2(p2)
 
-	var hud: Node = get_node_or_null("GameplayHUD")
+	var hud: Node = _ensure_gameplay_hud()
 	if hud != null:
-		hud.visible = false
+		hud.visible = true
+		var top_bar: Node = hud.get_node_or_null("TopBar")
+		if top_bar != null:
+			top_bar.visible = false
 		if hud.has_method("setup"):
 			hud.setup(p1, p2)
+
+func _ensure_gameplay_hud() -> Node:
+	var hud: Node = get_node_or_null("GameplayHUD")
+	if hud != null:
+		return hud
+	hud = HUD_SCENE.instantiate()
+	hud.name = "GameplayHUD"
+	add_child(hud)
+	return hud
 
 func _apply_pending_transition_positions() -> void:
 	var p1: Node2D = get_node_or_null("Player1") as Node2D
 	var p2: Node2D = get_node_or_null("Player2") as Node2D
 	GameManager.apply_pending_positions(p1, p2)
+	_snap_player2_beside_player1(p1, p2)
 	_update_active_section_from_players()
 	_apply_section_camera_limits()
 	_start_camera_focus()
+
+func _snap_player2_beside_player1(p1: Node2D, p2: Node2D) -> void:
+	if p1 == null or not is_instance_valid(p1):
+		return
+	if p2 == null or not is_instance_valid(p2):
+		return
+	p2.visible = true
+	p2.global_position = Vector2(p1.global_position.x + PLAYER2_SIDE_OFFSET.x, p1.global_position.y)
+	if p2 is CharacterBody2D:
+		(p2 as CharacterBody2D).velocity = Vector2.ZERO
 
 func _ensure_player2_from_pending() -> void:
 	if get_node_or_null("Player2") != null:
@@ -242,6 +272,8 @@ func _apply_section_camera_limits() -> void:
 			_configure_camera(camera, _get_active_section_limits())
 
 func _update_active_section_from_players() -> void:
+	if use_single_camera_config:
+		return
 	var p1: Node2D = get_node_or_null("Player1") as Node2D
 	if p1 == null:
 		return
@@ -303,8 +335,39 @@ func _connect_transition_area(area_name: String, callback: Callable) -> void:
 	var transition_area: Area2D = _find_area2d_by_name(area_name)
 	if transition_area == null:
 		return
-	if not transition_area.body_entered.is_connected(callback):
-		transition_area.body_entered.connect(callback)
+
+	_transition_area_bodies[area_name] = []
+	var entered_callable: Callable = Callable(self, "_on_transition_area_body_entered").bind(area_name, callback)
+	var exited_callable: Callable = Callable(self, "_on_transition_area_body_exited").bind(area_name)
+
+	if not transition_area.body_entered.is_connected(entered_callable):
+		transition_area.body_entered.connect(entered_callable)
+	if not transition_area.body_exited.is_connected(exited_callable):
+		transition_area.body_exited.connect(exited_callable)
+
+func _on_transition_area_body_entered(body: Node2D, area_name: String, callback: Callable) -> void:
+	if not _is_player_body(body):
+		return
+	var bodies: Array = _transition_area_bodies.get(area_name, [])
+	if not bodies.has(body):
+		bodies.append(body)
+	_transition_area_bodies[area_name] = bodies
+	if _all_required_players_present(bodies):
+		callback.call(body)
+
+func _on_transition_area_body_exited(body: Node2D, area_name: String) -> void:
+	var bodies: Array = _transition_area_bodies.get(area_name, [])
+	bodies.erase(body)
+	_transition_area_bodies[area_name] = bodies
+
+func _all_required_players_present(bodies: Array) -> bool:
+	var valid_count: int = 0
+	for b in bodies:
+		if is_instance_valid(b):
+			valid_count += 1
+	var player2_node: Node = get_node_or_null("Player2")
+	var required: int = 2 if (GameManager.current_game_mode == "coop" and player2_node != null and is_instance_valid(player2_node)) else 1
+	return valid_count >= required
 
 func _find_area2d_by_name(node_name: String) -> Area2D:
 	var node: Node = find_child(node_name, true, false)
@@ -400,6 +463,32 @@ func _check_activation() -> void:
 
 func _activate_boss_fight() -> void:
 	active = true
+	call_deferred("_lock_arena_walls")
+	_lock_camera()
+	if intro_dialogue_pages.is_empty():
+		_start_boss_combat()
+	else:
+		_play_intro_dialogue()
+
+func _play_intro_dialogue() -> void:
+	var dialog: CanvasLayer = INTRO_DIALOG_SCENE.instantiate()
+	get_tree().root.add_child(dialog)
+	dialog.closed.connect(_on_intro_dialogue_closed)
+	if teleport_in_trigger_page_index >= 0:
+		dialog.page_shown.connect(_on_intro_dialogue_page_shown)
+	dialog.open_dialog(intro_dialogue_pages)
+
+func _on_intro_dialogue_page_shown(index: int) -> void:
+	if index != teleport_in_trigger_page_index:
+		return
+	var agis: Node2D = find_child("Agis", true, false) as Node2D
+	if agis != null and agis.has_method("begin_teleport_in"):
+		agis.begin_teleport_in()
+
+func _on_intro_dialogue_closed() -> void:
+	_start_boss_combat()
+
+func _start_boss_combat() -> void:
 	var agis: Node2D = find_child("Agis", true, false) as Node2D
 	if agis != null:
 		if agis.has_method("activate"):
@@ -409,9 +498,6 @@ func _activate_boss_fight() -> void:
 		_configure_agis_spawns(agis)
 		# El HUD ahora lo muestra Agis después del delay y del teleportIN.
 		# _show_combat_hud(agis)
-
-	call_deferred("_lock_arena_walls")
-	_lock_camera()
 
 func _show_combat_hud(agis: Node2D) -> void:
 	var hud: Node = get_node_or_null("GameplayHUD")
@@ -479,6 +565,13 @@ func _configure_agis_spawns(agis: Node2D) -> void:
 func _clamp_players_to_arena() -> void:
 	var min_position: Vector2 = arena_rect.position
 	var max_position: Vector2 = arena_rect.position + arena_rect.size
+
+	var agis: Node = find_child("Agis", true, false)
+	if agis != null and agis.has_method("get_combat_bounds_x") and bool(agis.get("is_active")):
+		var bounds_x: Vector2 = agis.get_combat_bounds_x()
+		min_position.x = bounds_x.x
+		max_position.x = bounds_x.y
+
 	for player in _get_all_players():
 		if player is Node2D:
 			var player_2d: Node2D = player as Node2D

@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://cc7pwt1cey5nt"]
+
+[ext_resource type="Script" uid="uid://ckv15obpkcfci" path="res://Scripts/floating_mushroom.gd" id="1_p1bvs"]
+[ext_resource type="Texture2D" uid="uid://bebcsbu10r2k5" path="res://Tileset/area1/cavecrystal/mushroom caps.png" id="2_1cq77"]
+[ext_resource type="PackedScene" path="res://Scenes/coral_glow.tscn" id="3_8tre6"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_glowanim"]
+particles_animation = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id="Gradient_glowtrail"]
+colors = PackedColorArray(2, 2, 2, 0.85, 2, 2, 2, 0)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8jmo1"]
+radius = 48.6621
+
+[node name="HONGOS" type="Node2D" unique_id=123275325]
+script = ExtResource("1_p1bvs")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=172259308]
+texture = ExtResource("2_1cq77")
+region_enabled = true
+region_rect = Rect2(26.685928, 12.704072, 72.59258, 21.925926)
+
+[node name="CoralGlow16" parent="Sprite2D" unique_id=1409118269 instance=ExtResource("3_8tre6")]
+position = Vector2(4272, -192)
+scale = Vector2(0.2, 0.2)
+
+[node name="GlowParticles" type="CPUParticles2D" parent="Sprite2D" unique_id=452019887]
+material = SubResource("CanvasItemMaterial_glowanim")
+position = Vector2(-9, 6)
+amount = 14
+lifetime = 21.200000000000003
+randomness = 0.4
+direction = Vector2(0, 1)
+spread = 60.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 8.0
+scale_amount_min = 0.8
+scale_amount_max = 1.3
+color_ramp = SubResource("Gradient_glowtrail")
+
+[node name="GlowParticles2" type="CPUParticles2D" parent="Sprite2D" unique_id=2104267788]
+material = SubResource("CanvasItemMaterial_glowanim")
+position = Vector2(8, 6)
+amount = 14
+lifetime = 23.200000000000003
+randomness = 0.4
+direction = Vector2(0, 1)
+spread = 60.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 8.0
+scale_amount_min = 0.8
+scale_amount_max = 1.3
+color_ramp = SubResource("Gradient_glowtrail")
+
+[node name="GlowParticles3" type="CPUParticles2D" parent="Sprite2D" unique_id=188387747]
+material = SubResource("CanvasItemMaterial_glowanim")
+position = Vector2(0, 6)
+amount = 17
+lifetime = 10.5
+randomness = 0.4
+direction = Vector2(0, 1)
+spread = 60.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 8.0
+scale_amount_min = 0.8
+scale_amount_max = 1.3
+color_ramp = SubResource("Gradient_glowtrail")
+
+[node name="DetectionArea" type="Area2D" parent="." unique_id=38722922]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=331517872]
+shape = SubResource("CircleShape2D_8jmo1")

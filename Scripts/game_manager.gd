@@ -23,7 +23,9 @@ const DEFAULT_JOYPAD_BUTTONS := {
 	"jump_JOY": 1,
 	"attack_JOY": 2,
 	"crouch_JOY": 12,
-	"aim_up_JOY": 11
+	"aim_up_JOY": 11,
+	"dash_JOY": 10,
+	"shield_JOY": 5
 }
 
 const DEFAULT_JOYPAD_MOTIONS := {

@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://cphmtffc2cvg2"]
+
+[ext_resource type="Script" path="res://Scripts/ui_player_kaizen.gd" id="1_ewcmf"]
+[ext_resource type="Texture2D" uid="uid://co1gj15lmnd3x" path="res://UI/Interfaz/PlayersUI/InGameUI/spr_item_slot.png" id="2_h8qqj"]
+[ext_resource type="Texture2D" uid="uid://curuo6mtkvpt3" path="res://Player1/player-idle.png" id="3_buxbk"]
+[ext_resource type="Texture2D" uid="uid://dr5rsb8qcahjg" path="res://UI/Interfaz/PlayersUI/spr_health_bar.png" id="4_frlie"]
+[ext_resource type="Texture2D" uid="uid://do6y0dwh3xt20" path="res://UI/Interfaz/PlayersUI/InGameUI/spr_money_interface.png" id="5_syc6b"]
+
+[node name="CABEZON" type="AnimatableBody2D" unique_id=123275325]
+position = Vector2(1, 0)
+script = ExtResource("1_ewcmf")
+
+[node name="cara" type="Sprite2D" parent="." unique_id=1286714414]
+z_index = 2
+position = Vector2(7.7545185, 16.617853)
+scale = Vector2(1.385953, 1.3074675)
+texture = ExtResource("2_h8qqj")
+
+[node name="SprPlayerStatus3BarsVersion2" type="Sprite2D" parent="cara" unique_id=339809426]
+position = Vector2(0.17712116, 0.292279)
+scale = Vector2(0.90808916, 0.88819945)
+texture = ExtResource("3_buxbk")
+region_enabled = true
+region_rect = Rect2(29.170544, 20.537275, 18.304527, 17.777777)
+
+[node name="redbar0" type="Sprite2D" parent="." unique_id=281729946]
+z_index = 1
+position = Vector2(35.25, 81.25)
+scale = Vector2(8.5, 3.7)
+texture = ExtResource("4_frlie")
+
+[node name="barra de vida" type="Sprite2D" parent="." unique_id=2143664132]
+z_index = 1
+position = Vector2(102.437515, 16.00001)
+scale = Vector2(147.12498, 3.7)
+texture = ExtResource("4_frlie")
+
+[node name="redbar" type="Sprite2D" parent="." unique_id=1835495224]
+z_index = 1
+position = Vector2(67.24999, 81.25)
+scale = Vector2(8.5, 3.7)
+texture = ExtResource("4_frlie")
+
+[node name="redbar2" type="Sprite2D" parent="." unique_id=1745956028]
+z_index = 1
+position = Vector2(59.249992, 81.25)
+scale = Vector2(8.5, 3.7)
+texture = ExtResource("4_frlie")
+
+[node name="redbar3" type="Sprite2D" parent="." unique_id=849827984]
+z_index = 1
+position = Vector2(51.249992, 81.25)
+scale = Vector2(8.5, 3.7)
+texture = ExtResource("4_frlie")
+
+[node name="redbar4" type="Sprite2D" parent="." unique_id=1746625295]
+z_index = 1
+position = Vector2(43.249992, 81.25)
+scale = Vector2(8.5, 3.7)
+texture = ExtResource("4_frlie")
+
+[node name="SprMoneyInterface" type="Sprite2D" parent="." unique_id=910101437]
+position = Vector2(184, 16)
+scale = Vector2(2.972727, 1.7777779)
+texture = ExtResource("5_syc6b")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(7.249425, 0.044317245, 9.422954, 9.01326)
+
+[node name="barra completa" type="Sprite2D" parent="." unique_id=1249966307]
+position = Vector2(100, 16.000002)
+scale = Vector2(4.950649, 1.7777779)
+texture = ExtResource("5_syc6b")
+flip_h = true
+flip_v = true
+region_enabled = true
+region_rect = Rect2(26.095333, 0, 28.904667, 9)
+
+[node name="SprMoneyInterface3" type="Sprite2D" parent="." unique_id=893211880]
+position = Vector2(208, 16)
+scale = Vector2(2.972727, 1.7777779)
+texture = ExtResource("5_syc6b")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(-0.12506045, 0.022455215, 7.140375, 9.013261)

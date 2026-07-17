@@ -13,6 +13,7 @@ var _shown_y: float = 0.0
 var _closing: bool = false
 var _pages: Array = []
 var _page_index: int = -1
+var _locked_open: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -34,10 +35,24 @@ func open_dialog(pages: Array) -> void:
 func _show_next_page() -> void:
 	_page_index += 1
 	if _page_index >= _pages.size():
+		if _locked_open:
+			_page_index = _pages.size() - 1
+			return
 		_close_dialog()
 		return
 	_message_label.text = str(_pages[_page_index])
 	page_shown.emit(_page_index)
+
+func lock_open() -> void:
+	_locked_open = true
+
+func set_text(text: String) -> void:
+	if _message_label != null:
+		_message_label.text = text
+
+func force_close() -> void:
+	_locked_open = false
+	_close_dialog()
 
 func _setup_positions() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
@@ -45,14 +60,17 @@ func _setup_positions() -> void:
 	_shown_y = viewport_size.y - _panel.size.y - 12.0
 	_hidden_y = viewport_size.y + 12.0
 
+func _is_locked_on_last_page() -> bool:
+	return _locked_open and _page_index >= _pages.size() - 1
+
 func _on_panel_gui_input(event: InputEvent) -> void:
-	if _closing:
+	if _closing or _is_locked_on_last_page():
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_advance()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _closing:
+	if _closing or _is_locked_on_last_page():
 		return
 	var triggered := false
 	if event.is_action_pressed("ui_accept"):

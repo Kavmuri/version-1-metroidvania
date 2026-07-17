@@ -21,6 +21,7 @@ const PREVIOUS_PLAYER2_POSITION: Vector2 = Vector2(1548, 122)
 const NEXT_PLAYER1_POSITION: Vector2 = Vector2(296, 56)
 const NEXT_PLAYER2_POSITION: Vector2 = Vector2(344, 56)
 const FADE_WAIT_SECONDS: float = 0.55
+const HUD_SCENE: PackedScene = preload("res://UI/scenes/gameplay_hud.tscn")
 
 const GLOW_TEXTURE: Texture2D = preload("res://Assets/Fx/light_glow.png")
 const DARKNESS_COLOR: Color = Color(0.08, 0.08, 0.12, 1.0)
@@ -62,10 +63,12 @@ var _wide_camera_active: bool = false
 var _last_player_x: Dictionary = {}
 var _glow_lights: Array[PointLight2D] = []
 var _glow_pulse_time: float = 0.0
+var _transition_area_bodies: Dictionary = {}
 
 func _ready() -> void:
 	_prepare_transition_rect()
 	_ensure_player2()
+	_ensure_gameplay_hud()
 	_connect_transition_area("areadetransicionINICIO1_2", _on_start_transition_entered, ["areadetransicionINICIO1_5"])
 	_connect_transition_area("areadetransicionFINAL1_2", _on_final_transition_entered, ["areadetransicionFINAL1_3", "TransitionTrigger"])
 	_connect_camera_transition_area("transicioncamaraENTER", _on_camera_enter_transition)
@@ -73,6 +76,19 @@ func _ready() -> void:
 	_apply_darkness_effect()
 	call_deferred("_apply_area_limits")
 	call_deferred("_apply_pending_transition_positions")
+
+func _ensure_gameplay_hud() -> Node:
+	var hud: Node = get_node_or_null("GameplayHUD")
+	if hud != null:
+		return hud
+	hud = HUD_SCENE.instantiate()
+	hud.name = "GameplayHUD"
+	add_child(hud)
+	hud.visible = true
+	var top_bar: Node = hud.get_node_or_null("TopBar")
+	if top_bar != null:
+		top_bar.visible = false
+	return hud
 
 func _apply_darkness_effect() -> void:
 	var darkness := CanvasModulate.new()
@@ -316,8 +332,37 @@ func _connect_transition_area(area_name: String, callback: Callable, fallback_na
 		push_warning("No se encontro el area de transicion: " + area_name)
 		return
 
-	if not transition_area.body_entered.is_connected(callback):
-		transition_area.body_entered.connect(callback)
+	_transition_area_bodies[area_name] = []
+	var entered_callable: Callable = Callable(self, "_on_transition_area_body_entered").bind(area_name, callback)
+	var exited_callable: Callable = Callable(self, "_on_transition_area_body_exited").bind(area_name)
+
+	if not transition_area.body_entered.is_connected(entered_callable):
+		transition_area.body_entered.connect(entered_callable)
+	if not transition_area.body_exited.is_connected(exited_callable):
+		transition_area.body_exited.connect(exited_callable)
+
+func _on_transition_area_body_entered(body: Node2D, area_name: String, callback: Callable) -> void:
+	if not _is_player_body(body):
+		return
+	var bodies: Array = _transition_area_bodies.get(area_name, [])
+	if not bodies.has(body):
+		bodies.append(body)
+	_transition_area_bodies[area_name] = bodies
+	if _all_required_players_present(bodies):
+		callback.call(body)
+
+func _on_transition_area_body_exited(body: Node2D, area_name: String) -> void:
+	var bodies: Array = _transition_area_bodies.get(area_name, [])
+	bodies.erase(body)
+	_transition_area_bodies[area_name] = bodies
+
+func _all_required_players_present(bodies: Array) -> bool:
+	var valid_count: int = 0
+	for b in bodies:
+		if is_instance_valid(b):
+			valid_count += 1
+	var required: int = 2 if (GameManager.current_game_mode == "coop" and player2 != null and is_instance_valid(player2)) else 1
+	return valid_count >= required
 
 func _find_area2d_by_name(node_name: String) -> Area2D:
 	var node: Node = find_child(node_name, true, false)
@@ -390,7 +435,7 @@ func _ensure_player2() -> void:
 	_refresh_players()
 	if player2 != null:
 		return
-	if GameManager.current_game_mode != "coop":
+	if not GameManager.should_restore_player2():
 		return
 
 	var new_player: Node = PLAYER2_SCENE.instantiate()
