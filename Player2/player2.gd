@@ -356,8 +356,9 @@ func _unlock_tier(index: int, refill_resources: bool) -> Dictionary:
 
 func set_debug_upgrade_level(level: int) -> void:
 	debug_fury_counts_attacks = true
-	for index in range(mini(level, _unlocked_tiers.size())):
-		_unlocked_tiers[index] = true
+	var clamped_level: int = clampi(level, 0, _unlocked_tiers.size())
+	for index in range(_unlocked_tiers.size()):
+		_unlocked_tiers[index] = index < clamped_level
 	_sync_upgrade_flags(true)
 
 func get_upgrade_level() -> int:
@@ -430,6 +431,7 @@ func get_upgrade_state() -> Dictionary:
 		"attack_cooldown": attack_cooldown,
 		"tiene_salto_infinito": tiene_salto_infinito,
 		"unlocked_tiers": _unlocked_tiers.duplicate(),
+		"eldric_upgrade_level": get_upgrade_level(),
 	}
 
 func apply_upgrade_state(state: Dictionary) -> void:

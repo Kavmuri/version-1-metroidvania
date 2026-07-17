@@ -25,7 +25,8 @@ const MAIN_BUTTON_TEXTURE: Texture2D = preload("uid://de3bu12siwek4")
 
 var _enemy_arena_hold_time := 0.0
 var _enemy_arena_opened := false
-var _online_hold_active := false
+var _character_debug_hold_active := false
+var _debug_hold_character := ""
 var _selected_character := ""
 
 func _ready() -> void:
@@ -52,11 +53,11 @@ func _notification(what: int) -> void:
 func _process(delta: float) -> void:
 	if _enemy_arena_opened:
 		return
-	if _online_hold_active:
+	if _character_debug_hold_active:
 		_enemy_arena_hold_time += delta
 		if _enemy_arena_hold_time >= ENEMY_ARENA_HOLD_SECONDS:
 			_enemy_arena_opened = true
-			GameManager.open_enemy_arena()
+			GameManager.open_enemy_arena(_debug_hold_character)
 		return
 	if (_message_panel != null and _message_panel.visible) or (_controls_menu != null and _controls_menu.visible):
 		_enemy_arena_hold_time = 0.0
@@ -72,11 +73,13 @@ func _connect_buttons() -> void:
 	_single_button.pressed.connect(_on_single_pressed)
 	_coop_button.pressed.connect(_on_coop_pressed)
 	_online_button.pressed.connect(_on_online_pressed)
-	_online_button.button_down.connect(_on_online_button_down)
-	_online_button.button_up.connect(_on_online_button_up)
 	_mode_back_button.pressed.connect(_close_mode_panel)
 	_player1_button.pressed.connect(_on_player1_pressed)
 	_player2_button.pressed.connect(_on_player2_pressed)
+	_player1_button.button_down.connect(_on_player1_debug_button_down)
+	_player1_button.button_up.connect(_on_character_debug_button_up)
+	_player2_button.button_down.connect(_on_player2_debug_button_down)
+	_player2_button.button_up.connect(_on_character_debug_button_up)
 	_character_back_button.pressed.connect(_close_character_panel)
 	_character_start_button.pressed.connect(_on_character_start_pressed)
 	_controls_menu.closed.connect(func(): _safe_grab_focus(_config_button))
@@ -145,12 +148,20 @@ func _on_coop_pressed() -> void:
 func _on_online_pressed() -> void:
 	pass
 
-func _on_online_button_down() -> void:
-	_online_hold_active = true
+func _on_player1_debug_button_down() -> void:
+	_begin_character_debug_hold("player1")
+
+func _on_player2_debug_button_down() -> void:
+	_begin_character_debug_hold("player2")
+
+func _begin_character_debug_hold(character_id: String) -> void:
+	_character_debug_hold_active = true
+	_debug_hold_character = character_id
 	_enemy_arena_hold_time = 0.0
 
-func _on_online_button_up() -> void:
-	_online_hold_active = false
+func _on_character_debug_button_up() -> void:
+	_character_debug_hold_active = false
+	_debug_hold_character = ""
 	_enemy_arena_hold_time = 0.0
 
 func _on_continue_pressed() -> void:
@@ -187,7 +198,8 @@ func _open_mode_panel() -> void:
 
 func _close_mode_panel() -> void:
 	AudioManager.play_sfx(&"ui_back")
-	_online_hold_active = false
+	_character_debug_hold_active = false
+	_debug_hold_character = ""
 	_enemy_arena_hold_time = 0.0
 	_mode_panel.visible = false
 	_character_panel.visible = false
@@ -196,7 +208,8 @@ func _close_mode_panel() -> void:
 	_safe_grab_focus(_play_button)
 
 func _open_character_panel() -> void:
-	_online_hold_active = false
+	_character_debug_hold_active = false
+	_debug_hold_character = ""
 	_enemy_arena_hold_time = 0.0
 	_selected_character = ""
 	_character_start_button.visible = false
@@ -206,6 +219,9 @@ func _open_character_panel() -> void:
 	get_viewport().gui_release_focus()
 
 func _close_character_panel() -> void:
+	_character_debug_hold_active = false
+	_debug_hold_character = ""
+	_enemy_arena_hold_time = 0.0
 	_selected_character = ""
 	_character_start_button.visible = false
 	_character_panel.visible = false

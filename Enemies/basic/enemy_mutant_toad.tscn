@@ -116,7 +116,7 @@ radius = 107.37784
 [node name="MutantToad" type="CharacterBody2D" unique_id=2043244279 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_script")
-max_health = 4
+max_health = 40
 flip_h_when_facing_right = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=344535587]

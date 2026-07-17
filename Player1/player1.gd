@@ -28,6 +28,7 @@ const DOUBLE_JUMP_UPGRADE_NAME := "Doble salto"
 const DOUBLE_JUMP_UPGRADE_DESCRIPTION := "Kaizen puede hacer un segundo salto en el aire."
 const DOUBLE_JUMP_UPGRADE_CONTROL_HINT := "Barra espaciadora (salto en el aire)"
 const PROJECTILE_UPGRADE_CONTROL_HINT := "Click izquierdo: disparar | Click derecho: cambiar disparo"
+const BASE_PROJECTILE_SCENE := preload("res://Player1/bullet.tscn")
 const KAIZEN_PROJECTILE_UPGRADES := [
 	{
 		"id": "01_disparo_rapido",
@@ -78,7 +79,7 @@ const KAIZEN_PROJECTILE_UPGRADES := [
 @export var invulnerability_time: float = 1.6
 @export var projectile_scene: PackedScene
 @export var attack_cooldown: float = 0.45
-@export var attack_damage: int = 100
+@export var attack_damage: int = 10
 @export var projectile_spawn_offset: Vector2 = Vector2(32, -24)
 @export_enum("keyboard", "gamepad", "both") var input_mode: String = "both"
 
@@ -339,6 +340,29 @@ func apply_specific_upgrade(index: int) -> Dictionary:
 		"icon_path": str(upgrade["icon"]),
 	}
 
+func set_debug_upgrade_level(level: int) -> void:
+	var debug_level := clampi(level, 0, KAIZEN_PROJECTILE_UPGRADES.size() + 1)
+	set_salto_infinito_activo(debug_level >= 1)
+	unlocked_projectile_upgrades.clear()
+	for upgrade_index in range(maxi(debug_level - 1, 0)):
+		unlocked_projectile_upgrades.append(upgrade_index)
+	active_projectile_upgrade_index = unlocked_projectile_upgrades.size() - 1
+	if active_projectile_upgrade_index >= 0:
+		_apply_active_projectile_upgrade()
+	else:
+		projectile_scene = BASE_PROJECTILE_SCENE
+	health = max_health
+	hearts = max_hearts
+	invulnerability_timer = 0.0
+	hurt_timer = 0.0
+	attack_timer = 0.0
+	shoot_animation_timer = 0.0
+	velocity = Vector2.ZERO
+	_notify_active_powerup_icon()
+
+func get_upgrade_level() -> int:
+	return clampi((1 if tiene_salto_infinito else 0) + unlocked_projectile_upgrades.size(), 0, KAIZEN_PROJECTILE_UPGRADES.size() + 1)
+
 func unlock_projectile_upgrade(upgrade_index: int) -> bool:
 	if upgrade_index < 0 or upgrade_index >= KAIZEN_PROJECTILE_UPGRADES.size():
 		return false
@@ -485,6 +509,8 @@ func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> voi
 
 	health = max(health - cantidad, 0)
 	AudioManager.play_sfx(&"player_hurt")
+	JuiceManager.screen_shake(4.0, 0.15)
+	JuiceManager.hit_stop(0.05, 0.05)
 	invulnerability_timer = invulnerability_time
 	hurt_timer = HURT_ANIMATION_TIME
 	if health <= 0:
@@ -502,6 +528,11 @@ func recibir_daño(cantidad: int = 1, fuente_pos: Vector2 = Vector2.ZERO) -> voi
 func receive_damage(amount: int = 1, source_pos: Vector2 = Vector2.ZERO) -> void:
 	recibir_daño(amount, source_pos)
 
+func force_death() -> void:
+	health = 0
+	hearts = 0
+	_die()
+
 func _die() -> void:
 	if is_dead:
 		return
@@ -512,6 +543,7 @@ func _die() -> void:
 	is_dead = true
 	velocity = Vector2.ZERO
 	animated_sprite_2d.modulate = Color.WHITE
+	JuiceManager.screen_shake(10.0, 0.3)
 	GameManager.show_death_screen()
 
 func _update_invulnerability_blink() -> void:

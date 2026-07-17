@@ -2,11 +2,19 @@ extends Node
 
 const MAIN_MENU_SCENE := "res://UI/scenes/main_menu.tscn"
 const WORLD_SCENE := "res://Tileset/area1/Area1.tscn"
-const SINGLE_WORLD_SCENE := "res://Levels/single/Tileset/area1/Area1.tscn"
+const SINGLE_WORLD_SCENE := "res://Levels/single/spawn/SpawnRoom.tscn"
 const ENEMY_ARENA_SCENE := "res://Levels/test_levels/enemy_arena.tscn"
 const DEATH_SCREEN_SCENE := preload("res://UI/Interfaz/menuMuerte/MenuMuerte.tscn")
+const SINGLE_GAME_OVER_SCENE := preload("res://UI/scenes/single_game_over.tscn")
+const SINGLE_RUN_DIRECTOR_SCRIPT := preload("res://Scripts/single_run_director.gd")
 const SAVE_PATH := "user://save_game.cfg"
 const CONTROLS_PATH := "user://controls.cfg"
+const SINGLE_RECORDS_PATH := "user://single_records.cfg"
+const SINGLE_RUN_DURATION_SECONDS := 60.0
+const SINGLE_ROOM_SCENES: Array[String] = [
+	"res://Levels/single/Tileset/area1/area_1_2.tscn",
+	"res://Levels/single/Tileset/area1/area_1_3.tscn",
+]
 
 const DEFAULT_KEYS := {
 	"move_left": KEY_A,
@@ -16,6 +24,7 @@ const DEFAULT_KEYS := {
 	"aim_up": KEY_W,
 	"dash": KEY_F,
 	"attack": MOUSE_BUTTON_LEFT,
+	"shield": MOUSE_BUTTON_RIGHT,
 	"pause_game": KEY_ESCAPE
 }
 
@@ -59,18 +68,29 @@ var completed_areas: Dictionary = {}
 var current_world_seed: int = 0
 var current_game_mode: String = "single"
 var selected_single_player: String = "player1"
+var debug_arena_player: String = "player1"
 var pending_load_data: Dictionary = {}
 var dialogue_open: bool = false
 var _death_screen: CanvasLayer = null
+var _single_game_over: CanvasLayer = null
 var _is_restoring_save := false
+var _single_run_director: SingleRunDirector = null
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color(0.44, 0.12, 0.53, 1.00))
 	_ensure_control_actions()
 	load_controls()
 
+func _process(delta: float) -> void:
+	if current_game_mode != "single" or _single_run_director == null:
+		return
+	if _single_run_director.advance_time(delta):
+		_show_single_game_over()
+
 func start_new_game(mode: String = "single", selected_player: String = "player1") -> void:
 	get_tree().paused = false
+	_clear_death_screen()
+	_clear_single_game_over()
 	pending_load_data.clear()
 	player1_upgrade_state.clear()
 	player2_upgrade_state.clear()
@@ -81,17 +101,24 @@ func start_new_game(mode: String = "single", selected_player: String = "player1"
 	current_world = null
 	current_player1 = null
 	current_player2 = null
+	if current_game_mode == "single":
+		_reset_single_run()
+	else:
+		_clear_single_run()
 	get_tree().change_scene_to_file(_world_scene_for_mode(mode))
 
 func continue_game() -> bool:
-	var data = _read_save_data()
-	if data.is_empty():
+	var stored_data = _read_save_data()
+	if stored_data.is_empty():
 		return false
+	var data := _normalize_save_data(stored_data)
+	var recovered_invalid_scene := str(data.get("scene", "")) != str(stored_data.get("scene", ""))
 
 	get_tree().paused = false
 	_clear_death_screen()
+	_clear_single_game_over()
 	pending_load_data = data
-	_is_restoring_save = true
+	_is_restoring_save = not recovered_invalid_scene
 	current_game_mode = str(data.get("game_mode", "coop" if bool(data.get("player2_exists", false)) else "single"))
 	selected_single_player = str(data.get("selected_single_player", "player1"))
 	current_world_seed = int(data.get("world_seed", _make_seed()))
@@ -101,22 +128,54 @@ func continue_game() -> bool:
 	current_world = null
 	current_player1 = null
 	current_player2 = null
+	if current_game_mode == "single":
+		_reset_single_run()
+	else:
+		_clear_single_run()
 	var scene_path = str(data.get("scene", _world_scene_for_mode(current_game_mode)))
 	if scene_path.is_empty():
 		scene_path = _world_scene_for_mode(current_game_mode)
 	return get_tree().change_scene_to_file(scene_path) == OK
 
+func _normalize_save_data(data: Dictionary) -> Dictionary:
+	var normalized := data.duplicate(true)
+	var mode := str(normalized.get("game_mode", "coop" if bool(normalized.get("player2_exists", false)) else "single"))
+	var fallback_scene := _world_scene_for_mode(mode)
+	var saved_scene := str(normalized.get("scene", fallback_scene))
+	var is_deprecated_single_scene := mode == "single" and saved_scene.ends_with("/world_procedural.tscn")
+	if not is_deprecated_single_scene and not saved_scene.is_empty() and ResourceLoader.exists(saved_scene):
+		return normalized
+
+	normalized["scene"] = fallback_scene
+	normalized.erase("player1_position")
+	normalized.erase("player2_position")
+	if mode == "single":
+		normalized["player2_exists"] = false
+		normalized["player1_upgrade_state"] = {}
+		normalized["player2_upgrade_state"] = {}
+		normalized["completed_areas"] = {}
+	return normalized
+
 func go_to_main_menu() -> void:
 	get_tree().paused = false
 	_clear_death_screen()
+	_clear_single_game_over()
 	pending_load_data.clear()
 	current_world = null
 	current_player1 = null
 	current_player2 = null
+	_clear_single_run()
 	PauseManager.force_close()
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
-func open_enemy_arena() -> void:
+func set_debug_arena_player(selected_player: String) -> void:
+	debug_arena_player = selected_player if selected_player in ["player1", "player2"] else "player1"
+
+func get_debug_arena_player() -> String:
+	return debug_arena_player
+
+func open_enemy_arena(selected_player: String = "player1") -> void:
+	set_debug_arena_player(selected_player)
 	get_tree().paused = false
 	_clear_death_screen()
 	pending_load_data.clear()
@@ -177,12 +236,48 @@ func show_death_screen() -> void:
 	_death_screen = DEATH_SCREEN_SCENE.instantiate()
 	get_tree().root.add_child(_death_screen)
 
+func retry_single_run() -> void:
+	var character_id := selected_single_player
+	_clear_single_game_over()
+	start_new_game("single", character_id)
+
 func get_world_seed_for_generation() -> int:
 	if pending_load_data.has("world_seed"):
 		current_world_seed = int(pending_load_data["world_seed"])
 	elif current_world_seed == 0:
 		current_world_seed = _make_seed()
 	return current_world_seed
+
+func begin_single_run() -> void:
+	if current_game_mode != "single":
+		return
+	if _single_run_director == null:
+		_reset_single_run()
+	_single_run_director.begin_run()
+
+func get_next_single_room(current_room: String = "") -> String:
+	if _single_run_director == null:
+		_reset_single_run()
+	return _single_run_director.pick_next_room(current_room)
+
+func get_single_encounter_seed(room_path: String) -> int:
+	if _single_run_director == null:
+		_reset_single_run()
+	return _single_run_director.encounter_seed(room_path)
+
+func get_single_visit_index() -> int:
+	if _single_run_director == null:
+		return 0
+	return _single_run_director.get_visit_index()
+
+func is_single_run_active() -> bool:
+	return _single_run_director != null and _single_run_director.is_active()
+
+func get_single_time_left() -> float:
+	return _single_run_director.get_time_left() if _single_run_director != null else SINGLE_RUN_DURATION_SECONDS
+
+func get_single_remaining_seconds() -> int:
+	return _single_run_director.get_remaining_seconds() if _single_run_director != null else int(SINGLE_RUN_DURATION_SECONDS)
 
 func register_world(world: Node2D, seed_value: int) -> void:
 	current_world = world
@@ -238,14 +333,54 @@ func _clear_death_screen() -> void:
 		_death_screen.queue_free()
 	_death_screen = null
 
+func _show_single_game_over() -> void:
+	if _single_game_over != null and is_instance_valid(_single_game_over):
+		return
+	var rooms_completed := 0
+	if _single_run_director != null:
+		rooms_completed = maxi(_single_run_director.get_visit_index() - 1, 0)
+	var previous_record := _load_single_best_rooms()
+	var is_new_record := rooms_completed > previous_record
+	var best_record := maxi(previous_record, rooms_completed)
+	if is_new_record:
+		_save_single_best_rooms(best_record)
+
+	get_tree().paused = true
+	_single_game_over = SINGLE_GAME_OVER_SCENE.instantiate()
+	get_tree().root.add_child(_single_game_over)
+	if _single_game_over.has_method("setup"):
+		_single_game_over.setup(rooms_completed, best_record, is_new_record, selected_single_player)
+
+func _clear_single_game_over() -> void:
+	if _single_game_over != null and is_instance_valid(_single_game_over):
+		_single_game_over.queue_free()
+	_single_game_over = null
+
+func _load_single_best_rooms() -> int:
+	var cfg := ConfigFile.new()
+	if cfg.load(SINGLE_RECORDS_PATH) != OK:
+		return 0
+	return maxi(int(cfg.get_value("single", "best_rooms", 0)), 0)
+
+func _save_single_best_rooms(best_rooms: int) -> void:
+	var cfg := ConfigFile.new()
+	cfg.set_value("single", "best_rooms", maxi(best_rooms, 0))
+	cfg.save(SINGLE_RECORDS_PATH)
+
+func _reset_single_run() -> void:
+	_single_run_director = SINGLE_RUN_DIRECTOR_SCRIPT.new(SINGLE_ROOM_SCENES, get_world_seed_for_generation(), SINGLE_RUN_DURATION_SECONDS)
+
+func _clear_single_run() -> void:
+	_single_run_director = null
+
 func set_keyboard_action(action_name: String, physical_keycode: int) -> void:
 	if not is_keyboard_action_allowed(action_name, physical_keycode):
 		physical_keycode = DEFAULT_KEYS.get(action_name, physical_keycode)
 	_ensure_action(action_name)
 	InputMap.action_erase_events(action_name)
-	if action_name == "attack":
+	if action_name == "attack" or action_name == "shield":
 		var mouse_event = InputEventMouseButton.new()
-		mouse_event.button_index = MOUSE_BUTTON_LEFT
+		mouse_event.button_index = MOUSE_BUTTON_RIGHT if action_name == "shield" else MOUSE_BUTTON_LEFT
 		InputMap.action_add_event(action_name, mouse_event)
 	else:
 		var event = InputEventKey.new()

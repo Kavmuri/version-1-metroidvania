@@ -574,6 +574,7 @@ radius = 105.0
 [node name="Bat" type="CharacterBody2D" unique_id=1538282596 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_script")
+max_health = 20
 chase_height_offset = 36.0
 dive_horizontal_range = 24.0
 contact_damage = 8

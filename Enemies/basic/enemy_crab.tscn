@@ -87,6 +87,7 @@ radius = 120.0
 collision_layer = 4
 script = ExtResource("1_bihbv")
 world_health_bar_offset = Vector2(0, -34)
+max_health = 20
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1985894946]
 position = Vector2(0, -15)

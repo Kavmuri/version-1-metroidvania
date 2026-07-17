@@ -45,11 +45,11 @@ layout_mode = 2
 text = "Sala de enemigos"
 horizontal_alignment = 1
 
-[node name="PlayerLabel" type="Label" parent="UI/Panel/Content" unique_id=1463222418]
+[node name="UpgradeLabel" type="Label" parent="UI/Panel/Content" unique_id=1463222418]
 layout_mode = 2
-text = "Jugador"
+text = "Nivel de mejoras"
 
-[node name="PlayerSelector" type="OptionButton" parent="UI/Panel/Content" unique_id=1420934507]
+[node name="UpgradeSelector" type="OptionButton" parent="UI/Panel/Content" unique_id=1420934507]
 custom_minimum_size = Vector2(280, 32)
 layout_mode = 2
 

@@ -1,9 +1,8 @@
-[gd_scene format=4 uid="uid://c16j78qifd8iu"]
+[gd_scene format=4 uid="uid://cp7uw4x0f08pq"]
 
 [ext_resource type="Texture2D" uid="uid://cjnvliaxl7366" path="res://Tileset/area3/tileset.png" id="1_5rj4u"]
-[ext_resource type="Script" uid="uid://bpxgmilh40csg" path="res://Tileset/area1/area_1_3.gd" id="1_agrqf"]
+[ext_resource type="Script" uid="uid://654rtbwwuix2" path="res://Levels/single/Tileset/area1/area_1_3.gd" id="1_agrqf"]
 [ext_resource type="Texture2D" uid="uid://cp7qtfjj58tia" path="res://Background/background.png" id="2_4qlin"]
-[ext_resource type="PackedScene" uid="uid://dvreujng6yft4" path="res://Player1/player.tscn" id="3_4qlin"]
 [ext_resource type="Texture2D" uid="uid://b0p0rmct5kf7r" path="res://Background/middleground.png" id="3_p4m4k"]
 [ext_resource type="Texture2D" uid="uid://cf3frdflg8dg8" path="res://Tileset/area1/GAME_TILESET1.png" id="5_agrqf"]
 [ext_resource type="Texture2D" uid="uid://ci4w045j1m0y7" path="res://Tileset/area1/GAME_TILESET_WALLS.png" id="6_riv6i"]
@@ -821,8 +820,17 @@ texture = ExtResource("3_p4m4k")
 region_enabled = true
 region_rect = Rect2(56, 56, 168, 112)
 
-[node name="Player1" parent="." unique_id=1444006201 instance=ExtResource("3_4qlin")]
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1444006201]
 position = Vector2(1888, 56)
+
+[node name="EnemySpawn1" type="Marker2D" parent="."]
+position = Vector2(296, 56)
+
+[node name="EnemySpawn2" type="Marker2D" parent="."]
+position = Vector2(1888, 56)
+
+[node name="EnemySpawn3" type="Marker2D" parent="."]
+position = Vector2(2208, 56)
 
 [node name="ground" type="TileMapLayer" parent="." unique_id=1596836496]
 z_index = 1

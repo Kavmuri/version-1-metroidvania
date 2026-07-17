@@ -1,7 +1,7 @@
 extends CanvasLayer
 
 const KEYBOARD_ACTIONS: Array[String] = ["move_left", "move_right", "jump", "crouch", "aim_up", "dash", "pause_game"]
-const GAMEPAD_ACTIONS: Array[String] = ["jump", "attack", "crouch", "aim_up"]
+const GAMEPAD_ACTIONS: Array[String] = ["jump", "attack", "dash", "crouch", "aim_up"]
 
 const ACTION_LABELS := {
 	"move_left": "Mover izquierda",

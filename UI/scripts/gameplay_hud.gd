@@ -11,10 +11,14 @@ var _heart_one_third_texture: Texture2D
 var _heart_empty_texture: Texture2D
 var _upgrade_message_label: Label
 var _upgrade_message_timer := 0.0
+var _narration_label: Label
+var _narration_timer := 0.0
+var _single_timer_label: Label
 
 @onready var _p1_container = _find_required_node(["TopBar/Player1Container", "TopBar/HBox/Player1Container"]) as VBoxContainer
 @onready var _p1_name = _find_required_node(["TopBar/Player1Container/Player1Header/Player1Name", "TopBar/HBox/Player1Container/Player1Header/Player1Name", "TopBar/HBox/Player1Container/Player1Name"]) as Label
 @onready var _p1_powerup_icon = _find_required_node(["TopBar/Player1Container/PowerupSlot/PowerupIcon", "TopBar/HBox/Player1Container/PowerupSlot/PowerupIcon", "TopBar/HBox/Player1Container/Player1Header/PowerupSlot/PowerupIcon"]) as TextureRect
+@onready var _p1_powerup_slot = _find_required_node(["TopBar/Player1Container/PowerupSlot", "TopBar/HBox/Player1Container/PowerupSlot"]) as Control
 @onready var _p1_hearts = _find_required_node(["TopBar/Player1Container/Player1Hearts", "TopBar/HBox/Player1Container/Player1Hearts"]) as HBoxContainer
 @onready var _p1_health = _find_required_node(["TopBar/Player1Container/Player1Health", "TopBar/HBox/Player1Container/Player1Health"]) as Range
 
@@ -33,12 +37,16 @@ func _ready() -> void:
 	visible = false
 	_ensure_player1_hud_nodes()
 	_ensure_upgrade_message_label()
+	_ensure_narration_label()
+	_ensure_single_timer_label()
 	_setup_heart_textures()
 
 func _process(delta: float) -> void:
 	_update_players()
 	_update_boss()
 	_update_upgrade_message(delta)
+	_update_narration(delta)
+	_update_single_timer()
 
 func setup(p1: Node2D = null, p2: Node2D = null, p1_name: String = "", p2_name: String = "") -> void:
 	player1 = p1
@@ -63,7 +71,23 @@ func _update_players() -> void:
 	if player2 == null or not is_instance_valid(player2):
 		player2 = _find_player_by_name("Player2")
 
-	if player1 != null and is_instance_valid(player1):
+	var has_p1 := player1 != null and is_instance_valid(player1)
+	var has_p2 := player2 != null and is_instance_valid(player2)
+	var is_solo := has_p1 != has_p2
+
+	if is_solo:
+		_p2_container.visible = false
+		_p1_container.visible = true
+		var solo_player: Node2D = player1 if has_p1 else player2
+		if _p1_name != null:
+			_p1_name.text = player1_name if has_p1 else player2_name
+		_update_player_hearts(solo_player, _p1_hearts, _p1_health)
+		_set_p1_powerup_slot_visible(has_p1)
+		return
+
+	_set_p1_powerup_slot_visible(true)
+
+	if has_p1:
 		_p1_container.visible = true
 		if _p1_name != null:
 			_p1_name.text = player1_name
@@ -71,12 +95,16 @@ func _update_players() -> void:
 	else:
 		_p1_container.visible = false
 
-	if player2 != null and is_instance_valid(player2):
+	if has_p2:
 		_p2_container.visible = true
 		_p2_name.text = "Eldric"
 		_update_player_hearts(player2, _p2_hearts, _p2_health, true)
 	else:
 		_p2_container.visible = false
+
+func _set_p1_powerup_slot_visible(should_show: bool) -> void:
+	if _p1_powerup_slot != null:
+		_p1_powerup_slot.visible = should_show
 
 func _update_boss() -> void:
 	if boss == null or not is_instance_valid(boss):
@@ -110,6 +138,78 @@ func show_upgrade_text(text: String) -> void:
 	_upgrade_message_label.text = text
 	_upgrade_message_label.visible = true
 	_upgrade_message_timer = 3.5
+
+func show_narration(text: String, duration: float = 3.5) -> void:
+	_ensure_narration_label()
+	if _narration_label == null:
+		return
+	_narration_label.text = "\"" + text + "\""
+	_narration_label.visible = true
+	_narration_label.modulate.a = 1.0
+	_narration_timer = duration
+
+func _update_narration(delta: float) -> void:
+	if _narration_timer <= 0.0:
+		return
+	_narration_timer = max(_narration_timer - delta, 0.0)
+	if _narration_label == null:
+		return
+	if _narration_timer <= 0.5:
+		_narration_label.modulate.a = _narration_timer / 0.5
+	if _narration_timer <= 0.0:
+		_narration_label.visible = false
+
+func _ensure_narration_label() -> void:
+	if _narration_label != null and is_instance_valid(_narration_label):
+		return
+	_narration_label = Label.new()
+	_narration_label.name = "NarrationLabel"
+	_narration_label.visible = false
+	_narration_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_narration_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_narration_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_narration_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	_narration_label.offset_left = 24
+	_narration_label.offset_right = -24
+	_narration_label.offset_top = -64
+	_narration_label.offset_bottom = -24
+	_narration_label.add_theme_font_size_override("font_size", 16)
+	_narration_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.95, 1.0))
+	_narration_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.9))
+	_narration_label.add_theme_constant_override("shadow_offset_x", 2)
+	_narration_label.add_theme_constant_override("shadow_offset_y", 2)
+	add_child(_narration_label)
+
+func _ensure_single_timer_label() -> void:
+	if _single_timer_label != null and is_instance_valid(_single_timer_label):
+		return
+	_single_timer_label = Label.new()
+	_single_timer_label.name = "SingleRunTimer"
+	_single_timer_label.visible = false
+	_single_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_single_timer_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_single_timer_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_single_timer_label.offset_top = 12.0
+	_single_timer_label.offset_bottom = 48.0
+	_single_timer_label.add_theme_font_size_override("font_size", 24)
+	_single_timer_label.add_theme_color_override("font_color", Color.WHITE)
+	_single_timer_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.9))
+	_single_timer_label.add_theme_constant_override("shadow_offset_x", 2)
+	_single_timer_label.add_theme_constant_override("shadow_offset_y", 2)
+	add_child(_single_timer_label)
+
+func _update_single_timer() -> void:
+	_ensure_single_timer_label()
+	var should_show := GameManager.current_game_mode == "single" and GameManager.is_single_run_active()
+	_single_timer_label.visible = should_show
+	if not should_show:
+		return
+	var remaining_seconds := GameManager.get_single_remaining_seconds()
+	var minutes := floori(remaining_seconds / 60.0)
+	var seconds := remaining_seconds % 60
+	_single_timer_label.text = "%02d:%02d" % [minutes, seconds]
+	var timer_color := Color(1.0, 0.32, 0.28, 1.0) if remaining_seconds <= 10 else Color.WHITE
+	_single_timer_label.add_theme_color_override("font_color", timer_color)
 
 func _update_upgrade_message(delta: float) -> void:
 	if _upgrade_message_timer <= 0.0:
@@ -197,7 +297,7 @@ func _ensure_player1_hud_nodes() -> void:
 		for heart_index in range(4):
 			var heart := TextureRect.new()
 			heart.name = "Heart" + str(heart_index + 1)
-			heart.custom_minimum_size = Vector2(24, 24)
+			heart.custom_minimum_size = Vector2(18, 18)
 			heart.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			hearts_row.add_child(heart)
 		_p1_hearts = hearts_row
@@ -211,8 +311,8 @@ func _ensure_upgrade_message_label() -> void:
 	_upgrade_message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_upgrade_message_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_upgrade_message_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_upgrade_message_label.offset_top = 112
-	_upgrade_message_label.offset_bottom = 168
+	_upgrade_message_label.offset_top = 88
+	_upgrade_message_label.offset_bottom = 136
 	_upgrade_message_label.add_theme_font_size_override("font_size", 18)
 	_upgrade_message_label.add_theme_color_override("font_color", Color(1.0, 0.94, 0.62))
 	_upgrade_message_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.85))
