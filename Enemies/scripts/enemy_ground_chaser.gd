@@ -44,7 +44,7 @@ func _physics_process(delta: float) -> void:
 	elif _is_attacking:
 		transition_state(&"MeleeAttack")
 		_update_attack(delta)
-	elif is_player_in_attack_area() and distance_to_player() <= melee_attack_range and _attack_cooldown_timer <= 0.0:
+	elif has_attack_animation() and is_player_in_attack_area() and distance_to_player() <= melee_attack_range and _attack_cooldown_timer <= 0.0:
 		_start_attack()
 	elif is_player_in_attack_area():
 		transition_state(&"Chase")

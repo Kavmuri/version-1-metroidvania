@@ -64,10 +64,16 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_9")
 }],
-"loop": true,
+"loop": false,
 "name": &"attack",
-"speed": 6.0
+"speed": 7.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -116,15 +122,18 @@ radius = 107.37784
 [node name="MutantToad" type="CharacterBody2D" unique_id=2043244279 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_script")
+initial_think_time = 0.35
+close_attack_range = 96.0
 max_health = 40
 flip_h_when_facing_right = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=344535587]
 position = Vector2(0, -33)
 sprite_frames = SubResource("SpriteFrames_1")
-animation = &"jump"
+animation = &"attack"
 autoplay = "idle"
-frame_progress = 0.49316722
+frame = 4
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=7605026]
 position = Vector2(-1, -20)

@@ -16,10 +16,10 @@ func _ready() -> void:
 	_retry_button.grab_focus()
 
 
-func setup(rooms_completed: int, best_record: int, is_new_record: bool, selected_player: String) -> void:
-	var character_name := "Eldric" if selected_player == "player2" else "Kaizen"
+func setup(rooms_completed: int, best_record: int, is_new_record: bool, _selected_player: String) -> void:
 	_title.text = "TIEMPO AGOTADO"
-	_subtitle.text = "%s fue expulsado de la grieta" % character_name
+	_subtitle.text = ""
+	_subtitle.hide()
 	_score.text = "Salas completadas: %d" % rooms_completed
 	_record.text = "Mejor marca: %d" % best_record
 	if is_new_record:

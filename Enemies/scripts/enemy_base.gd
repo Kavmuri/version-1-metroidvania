@@ -27,9 +27,13 @@ var is_dying := false
 
 func _ready() -> void:
 	health = max_health
+	contact_damage_enabled = contact_damage_enabled and not has_attack_animation()
 	_setup_hurtbox()
 	_find_player()
 	play_anim("idle")
+
+func has_attack_animation() -> bool:
+	return sprite != null and sprite.sprite_frames != null and sprite.sprite_frames.has_animation(&"attack")
 
 func _physics_process(delta: float) -> void:
 	if is_dying:

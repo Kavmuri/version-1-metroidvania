@@ -10,10 +10,15 @@ const SINGLE_RUN_DIRECTOR_SCRIPT := preload("res://Scripts/single_run_director.g
 const SAVE_PATH := "user://save_game.cfg"
 const CONTROLS_PATH := "user://controls.cfg"
 const SINGLE_RECORDS_PATH := "user://single_records.cfg"
-const SINGLE_RUN_DURATION_SECONDS := 60.0
+const SINGLE_RUN_DURATION_SECONDS := 120.0
 const SINGLE_ROOM_SCENES: Array[String] = [
 	"res://Levels/single/Tileset/area1/area_1_2.tscn",
 	"res://Levels/single/Tileset/area1/area_1_3.tscn",
+	"res://Levels/single/rooms/area1_variants/room_area1.tscn",
+	"res://Levels/single/rooms/area1_variants/room_area1_2.tscn",
+	"res://Levels/single/rooms/area1_variants/room_area1_3.tscn",
+	"res://Levels/single/rooms/area1_variants/room_area1_4.tscn",
+	"res://Levels/single/rooms/area1_variants/room_area1_4_1.tscn",
 ]
 
 const DEFAULT_KEYS := {
@@ -72,6 +77,8 @@ var pending_load_data: Dictionary = {}
 var dialogue_open: bool = false
 var _death_screen: CanvasLayer = null
 var _single_game_over: CanvasLayer = null
+var _last_reported_single_scene_path := ""
+var _last_reported_single_scene_instance_id := 0
 var _is_restoring_save := false
 var _single_run_director: SingleRunDirector = null
 
@@ -81,10 +88,26 @@ func _ready() -> void:
 	load_controls()
 
 func _process(delta: float) -> void:
+	_report_current_single_scene()
 	if current_game_mode != "single" or _single_run_director == null:
 		return
 	if _single_run_director.advance_time(delta):
 		_show_single_game_over()
+
+func _report_current_single_scene() -> void:
+	if current_game_mode != "single" or get_tree().current_scene == null:
+		return
+	var active_scene := get_tree().current_scene
+	var scene_path := active_scene.scene_file_path
+	var scene_instance_id := active_scene.get_instance_id()
+	if scene_path.is_empty() or scene_instance_id == _last_reported_single_scene_instance_id:
+		return
+	_last_reported_single_scene_path = scene_path
+	_last_reported_single_scene_instance_id = scene_instance_id
+	print("[SINGLE] ESCENA ACTUAL: ", scene_path)
+
+func get_last_reported_single_scene_path() -> String:
+	return _last_reported_single_scene_path
 
 func start_new_game(mode: String = "single", selected_player: String = "player1") -> void:
 	get_tree().paused = false
@@ -258,6 +281,9 @@ func get_next_single_room(current_room: String = "") -> String:
 	if _single_run_director == null:
 		_reset_single_run()
 	return _single_run_director.pick_next_room(current_room)
+
+func get_single_room_scenes() -> Array[String]:
+	return SINGLE_ROOM_SCENES.duplicate()
 
 func get_single_encounter_seed(room_path: String) -> int:
 	if _single_run_director == null:

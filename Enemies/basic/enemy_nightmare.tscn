@@ -79,7 +79,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"run",
-"speed": 10.0
+"speed": 7.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -109,14 +109,13 @@ radius = 165.04848
 collision_layer = 4
 script = ExtResource("1_script")
 max_health = 50
-contact_damage = 10
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2080658009]
 position = Vector2(6, -48)
 sprite_frames = SubResource("SpriteFrames_1")
-animation = &"idle"
+animation = &"run"
 autoplay = "idle"
-frame_progress = 0.78797835
+frame_progress = 0.1392012
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2104132092]
 position = Vector2(13.75, -37.5)

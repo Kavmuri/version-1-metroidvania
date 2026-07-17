@@ -5,6 +5,11 @@ const ROOM_PATHS: Array[String] = [
 	SPAWN_ROOM,
 	"res://Levels/single/Tileset/area1/area_1_2.tscn",
 	"res://Levels/single/Tileset/area1/area_1_3.tscn",
+	"res://Levels/single/rooms/area1_variants/room_area1.tscn",
+	"res://Levels/single/rooms/area1_variants/room_area1_2.tscn",
+	"res://Levels/single/rooms/area1_variants/room_area1_3.tscn",
+	"res://Levels/single/rooms/area1_variants/room_area1_4.tscn",
+	"res://Levels/single/rooms/area1_variants/room_area1_4_1.tscn",
 ]
 
 var _failures: Array[String] = []
@@ -73,10 +78,68 @@ func _load_and_check_room(room_path: String, selected_player: String) -> void:
 	_check(current_scene.find_child(unexpected_name, true, false) == null, "%s no aparece en %s" % [unexpected_name, room_path])
 	_check(current_scene.find_child("GameplayHUD", true, false) != null, "hay HUD en %s" % room_path)
 	_check(current_scene.find_child("PauseMenu", true, false) != null, "hay pausa en %s" % room_path)
+	var reports_scene := _game_manager.has_method("get_last_reported_single_scene_path")
+	_check(reports_scene, "GameManager registra la escena single actual")
+	if reports_scene:
+		_check(str(_game_manager.call("get_last_reported_single_scene_path")) == room_path, "imprime y registra %s" % room_path)
 	if room_path == SPAWN_ROOM:
 		_check(not bool(_game_manager.call("is_single_run_active")), "el reloj no corre en SpawnRoom")
+		_check(is_equal_approx(float(_game_manager.call("get_single_time_left")), 120.0), "el single dispone de dos minutos")
 	else:
 		_check(bool(_game_manager.call("is_single_run_active")), "el reloj corre en %s" % room_path)
+		_check(_count_nodes_in_group(current_scene, &"enemy") > 0, "hay enemigos activos en %s" % room_path)
+	if room_path.ends_with("room_area1_4.tscn"):
+		var left_transition := current_scene.find_child("transicionarea14ENTER2", true, false) as Area2D
+		_check(
+			left_transition != null
+			and left_transition.monitoring
+			and left_transition.collision_mask == 2
+			and not left_transition.body_entered.get_connections().is_empty(),
+			"la transicion izquierda de room_area1_4 esta activa"
+		)
+	if room_path.ends_with("room_area1_2.tscn"):
+		var active_player := current_scene.find_child(expected_name, true, false) as CharacterBody2D
+		await _check_room_area1_2_entry(active_player, expected_name)
+	if room_path.ends_with("room_area1_4_1.tscn"):
+		var active_player := current_scene.find_child(expected_name, true, false) as Node2D
+		_check(not _overlaps_level_collision(active_player), "%s aparece fuera del TileMap en room_area1_4_1" % expected_name)
+
+
+func _count_nodes_in_group(node: Node, group_name: StringName) -> int:
+	var count := 1 if node.is_in_group(group_name) else 0
+	for child in node.get_children():
+		count += _count_nodes_in_group(child, group_name)
+	return count
+
+
+func _overlaps_level_collision(active_player: Node2D) -> bool:
+	if active_player == null:
+		return true
+	var query := PhysicsPointQueryParameters2D.new()
+	query.position = active_player.global_position
+	query.collision_mask = 1
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	for hit in current_scene.get_world_2d().direct_space_state.intersect_point(query, 32):
+		var collider := hit.get("collider") as Node
+		if collider != null and collider != active_player:
+			return true
+	return false
+
+
+func _check_room_area1_2_entry(active_player: CharacterBody2D, player_name: String) -> void:
+	if active_player == null:
+		_check(false, "%s existe para probar la entrada de room_area1_2" % player_name)
+		return
+	var viewport_width: float = current_scene.get_viewport_rect().size.x
+	var screen_position: Vector2 = current_scene.get_viewport().get_canvas_transform() * active_player.global_position
+	_check(screen_position.x >= viewport_width * 0.25, "%s aparece dentro de la zona visible de room_area1_2" % player_name)
+	var start_x := active_player.global_position.x
+	Input.action_press("move_right")
+	for _frame in range(30):
+		await physics_frame
+	Input.action_release("move_right")
+	_check(active_player.global_position.x >= start_x + 80.0, "%s puede avanzar a la derecha en room_area1_2" % player_name)
 
 
 func _test_invalid_single_save_recovery() -> void:
@@ -110,7 +173,7 @@ func _test_timeout_game_over() -> void:
 		return
 	var health_before := int(active_player.get("health"))
 	var hearts_before := int(active_player.get("hearts"))
-	_game_manager.call("_process", 60.0)
+	_game_manager.call("_process", 120.0)
 	_check(int(active_player.get("health")) == health_before and int(active_player.get("hearts")) == hearts_before, "el tiempo agotado no mata al personaje")
 	var game_over := root.find_child("SingleGameOver", true, false)
 	_check(game_over != null, "el tiempo agotado abre su propia pantalla")
@@ -118,8 +181,10 @@ func _test_timeout_game_over() -> void:
 	_check(paused, "la pantalla de tiempo agotado pausa la partida")
 	if game_over != null:
 		var title := game_over.find_child("Title", true, false) as Label
+		var subtitle := game_over.find_child("Subtitle", true, false) as Label
 		var score := game_over.find_child("Score", true, false) as Label
 		_check(title != null and title.text == "TIEMPO AGOTADO", "muestra el motivo del fin de la partida")
+		_check(subtitle != null and not subtitle.visible and not subtitle.text.contains("expulsado"), "no muestra que Kaizen o Eldric fueron expulsados")
 		_check(score != null and score.text.contains("Salas completadas"), "muestra el resultado para intentar superarlo")
 		_check(game_over.find_child("Retry", true, false) != null, "ofrece reintentar la partida")
 		_check(game_over.find_child("MainMenu", true, false) != null, "ofrece volver al menu principal")
