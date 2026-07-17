@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://box57uxfv84bp" path="res://Tileset/area1/GAME_TILSET_PROPS.png" id="3_6hnu3"]
 [ext_resource type="Texture2D" uid="uid://bleys7bgpee68" path="res://Background/blue-stars.png" id="4_dbhdx"]
 [ext_resource type="Texture2D" uid="uid://bjrfmtnaxpvd3" path="res://Tileset/area1/cavecrystal/background tileset.png" id="5_04rff"]
-[ext_resource type="TileSet" uid="uid://dwoae3wqtlmvi" path="res://Levels/single/Tileset/area1/tileset.tres" id="5_yh4op"]
+[ext_resource type="TileSet" uid="uid://c5x1v8xhydulh" path="res://Levels/single/Tileset/area1/tileset.tres" id="5_yh4op"]
 [ext_resource type="Texture2D" uid="uid://glfflp3pbhjc" path="res://Tileset/area1/cavecrystal/trees.png" id="8_jstn8"]
 [ext_resource type="Texture2D" uid="uid://8aykfgsu2qf5" path="res://Tileset/area1/cavecrystal/Stones.png" id="9_nlise"]
 [ext_resource type="Texture2D" uid="uid://bebcsbu10r2k5" path="res://Tileset/area1/cavecrystal/mushroom caps.png" id="10_tlhhg"]

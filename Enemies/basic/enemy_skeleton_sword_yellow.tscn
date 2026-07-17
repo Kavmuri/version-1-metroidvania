@@ -455,6 +455,7 @@ max_health = 200
 contact_damage = 8
 move_speed = 42.0
 flip_h_when_facing_right = false
+death_sfx = &"skeleton_hit"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1573190523]
 position = Vector2(0, -32)

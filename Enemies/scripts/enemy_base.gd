@@ -15,6 +15,8 @@ extends CharacterBody2D
 @export var show_world_health_bar: bool = true
 @export var world_health_bar_offset: Vector2 = Vector2(0, -54)
 @export var world_health_bar_scale: float = 0.4
+@export var hit_sfx: StringName = &"enemy_hit"
+@export var death_sfx: StringName = &"enemy_death"
 
 const WORLD_HEALTH_BAR_TEXTURE: Texture2D = preload("res://UI/Interfaz/EnemyUI/skulls.png")
 const WORLD_HEALTH_BAR_FRAME_REGION: Rect2 = Rect2(24, 9, 86, 19)
@@ -147,11 +149,11 @@ func receive_damage(amount: int = 1, _source_pos: Vector2 = Vector2.ZERO) -> voi
 	JuiceManager.spawn_hit_particles(global_position + Vector2(0, -12), Color(1.0, 0.85, 0.3), 6)
 	JuiceManager.hit_stop(0.04, 0.05)
 	if health <= 0:
-		AudioManager.play_sfx(&"enemy_death")
+		AudioManager.play_sfx(death_sfx)
 		JuiceManager.screen_shake(7.0, 0.22)
 		die()
 	else:
-		AudioManager.play_sfx(&"enemy_hit")
+		AudioManager.play_sfx(hit_sfx)
 		JuiceManager.screen_shake(2.5, 0.12)
 
 func _create_world_health_bar() -> void:

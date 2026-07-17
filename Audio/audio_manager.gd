@@ -16,7 +16,8 @@ const SFX_STREAMS := {
 	&"enemy_death": preload("res://Audio/sfx/enemy_death.ogg"),
 	&"eldric_jump": preload("res://Audio/sfx/player_jump.ogg"),
 	&"eldric_attack": preload("res://Audio/sfx/player_shoot.ogg"),
-	&"eldric_impact": preload("res://Audio/sfx/enemy_hit.ogg")
+	&"eldric_impact": preload("res://Audio/sfx/enemy_hit.ogg"),
+	&"skeleton_hit": preload("res://Audio/sfx/bone_snap.wav")
 }
 
 const SFX_POOL_SIZE := 8
